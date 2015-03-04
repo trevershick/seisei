@@ -89,3 +89,21 @@
 	)
 )
 
+(def ^:private js6
+	( json/read-str
+		"{ \"x\": [\"{{repeat(3)}}\", { \"idx\": \"{{index(3)}}\" }] }"
+		:key-fn keyword
+	)
+)
+(deftest repeat-test-with-index
+	(testing "repeat should process and index should be updated"
+		(let [ processed ( process js6 ) ]
+			(println "processed->" processed)
+			(is (= 3 (count (:x processed))))
+			(is (= 0 (:idx (nth (:x processed) 0))))
+			(is (= 1 (:idx (nth (:x processed) 1))))
+			(is (= 2 (:idx (nth (:x processed) 2))))
+			
+		)
+	)
+)
