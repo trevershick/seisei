@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/trevershick/seisei.svg?branch=master)](https://travis-ci.org/trevershick/seisei)
+
 # seisei
 
 FIXME: description
