@@ -57,16 +57,34 @@
 
 (def ^:private js4
 	( json/read-str
-		"{ \"x\": [\"{{repeat(5)}}\", { \"x\": 1 }, {\"x\":3}] }"
+		"{ \"x\": [\"{{repeat(5)}}\", { \"x\": 1 }, {\"x\":3}, \"{{repeat(7)}}\", { \"x\": 2 }, {\"x\":19}] }"
 		:key-fn keyword
 	)
 )
 (deftest repeat-test
 	(testing "repeat should repeat the following item"
 		(let [ processed ( process js4 ) ]
-			(is (= 6 (count (:x processed))))
+			(is (= 14 (count (:x processed))))
 			(is (= {:x 1} (first (:x processed))))
-			(is (= {:x 3} (last (:x processed))))
+			(is (= {:x 19} (last (:x processed))))
+		)
+	)
+)
+(def ^:private js5
+	( json/read-str
+		"{ \"x\": [\"{{repeat(5)}}\", { \"id\": \"{{objectId(3)}}\" }] }"
+		:key-fn keyword
+	)
+)
+(deftest repeat-test-with-nested
+	(testing "repeat should process repeated items with tags properly"
+		(let [ processed ( process js5 ) ]
+			(is (= 5 (count (:x processed))))
+			(is (not-nil? (re-matches uuid-regex (:id (first (:x processed))))))
+			(is
+				(not= (-> processed :x first :id)
+					(-> processed :x last :id))
+			)
 		)
 	)
 )

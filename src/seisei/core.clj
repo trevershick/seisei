@@ -66,7 +66,7 @@
   (let [ n (first (:params operation)) 
     a (:arg operation) ]
     (if-not (nil? a) 
-      (repeat n (process a))
+      (repeatedly n #(process a))
       "You must follow a repeat statement with an element"
     )
   )
@@ -89,21 +89,27 @@
 (defmethod process String [s & {:keys [arg] :or [arg nil]}]
 	(if (is-tag s) (execute (parse-operation (tag-contents s) arg)) s)
 )
-(defmethod process :default [s & {:keys [arg] :or [arg nil]}] s)
+(defmethod process Long [s & {:keys [arg] :or [arg nil]}] s)
+(comment (defmethod process :default [s & {:keys [arg] :or [arg nil]}] s))
 (defmethod process clojure.lang.PersistentArrayMap [m & {:keys [arg] :or [arg nil]}]
 	(into {} (for [[k v] m] [k (process v)]))
 )
 (defmethod process clojure.lang.PersistentVector [v & {:keys [arg] :or [arg nil]}]
   (comment "iterate over items, and process each, pasing the tail to 'process'")  
-  (let [ length (count v) head (get v 0) tail (nthrest v 2)]
+  (let [ length (count v) 
+    head (get v 0) 
+    arg (get v 1)
+    tail2 (vec (nthrest v 2))
+    tail (vec (rest v)) ]
     (cond
       (= 0 length) []
       (= 1 length) [(process head)]
       (and 
+        (instance? String head)
         (is-tag head) 
         (= "repeat" (:name (parse-operation head)))
-      ) (concat (process head :arg (get v 1)) (process (nthrest v 2)))
-      :else (map process v)
+      ) (concat (process head :arg arg) (process tail2))
+      :else (cons head (process tail))
     )
   )
 )
