@@ -43,10 +43,10 @@
 	(let [matcher (re-matcher #"([a-zA-Z]+)\(([^\)]+)\)" clause)]
 		(if (re-find matcher)
 			(struct-map operation
-			 :name (get (re-groups matcher) 1)
-			 :params (parse-operation-params (get (re-groups matcher) 2))
-       :arg arg
-       :i i
+				:name (get (re-groups matcher) 1)
+				:params (parse-operation-params (get (re-groups matcher) 2))
+				:arg arg
+				:i i
 			)
 			nil
 		)
@@ -65,18 +65,18 @@
 )
 
 (defmethod execute "index" [operation] 
-  (:i operation)
+	(:i operation)
 )
 
 (defmethod execute "repeat" [operation]
-  (let [ n (first (:params operation)) 
-    a (:arg operation) ]
-    (if-not (nil? a)
-      (for [i (range 0 n)] 
-        (process a :i i))
-      "You must follow a repeat statement with an element"
-    )
-  )
+	(let [ n (first (:params operation)) 
+		a (:arg operation) ]
+		(if-not (nil? a)
+			(for [i (range 0 n)] 
+				(process a :i i))
+			"You must follow a repeat statement with an element"
+		)
+	)
 )
 (defmethod execute "random" [operation]
 	( let [
@@ -95,9 +95,9 @@
 
 (defmethod process String [s & {:keys [arg i]}]
 	(if (is-tag s) (
-    execute ( parse-operation (tag-contents s) arg i)) 
-    s
-  )
+		execute ( parse-operation (tag-contents s) arg i)) 
+		s
+	)
 )
 (defmethod process Long [s & {:keys [arg i]}] s)
 (comment (defmethod process :default [s & {:keys [arg i]}] s))
@@ -105,23 +105,23 @@
 	(into {} (for [[k v] m] [k (process v :arg arg :i i)]))
 )
 (defmethod process clojure.lang.PersistentVector [v & {:keys [arg i]}]
-  (comment "iterate over items, and process each, pasing the tail to 'process'")  
-  (let [ length (count v) 
-      head (get v 0) 
-      arg (get v 1)
-      tail2 (vec (nthrest v 2))
-      tail (vec (rest v)) ]
-    (cond
-      (= 0 length) []
-      (= 1 length) [(process head :arg arg :i i)]
-      (and 
-        (instance? String head)
-        (is-tag head) 
-        (= "repeat" (:name (parse-operation head)))
-      ) (concat (process head :arg arg :i i) (process tail2 :arg arg :i i))
-      :else (cons head (process tail :arg arg :i i))
-    )
-  )
+	(comment "iterate over items, and process each, pasing the tail to 'process'")  
+	(let [ length (count v) 
+			head (get v 0) 
+			arg (get v 1)
+			tail2 (vec (nthrest v 2))
+			tail (vec (rest v)) ]
+		(cond
+			(= 0 length) []
+			(= 1 length) [(process head :arg arg :i i)]
+			(and 
+				(instance? String head)
+				(is-tag head) 
+				(= "repeat" (:name (parse-operation head)))
+			) (concat (process head :arg arg :i i) (process tail2 :arg arg :i i))
+			:else (cons head (process tail :arg arg :i i))
+		)
+	)
 )
 
 
