@@ -1,4 +1,5 @@
 (ns seisei.core-test
+	 (:use midje.sweet)    
   (:require [clojure.test :refer :all]
 			[clojure.data.json :as json]
 			[seisei.core :refer :all]))
@@ -6,13 +7,26 @@
 (def uuid-regex #"[a-f0-9]+-[a-f0-9]+-[a-f0-9]+-[a-f0-9]+-[a-f0-9]+")
 (def not-nil? (complement nil?))
 
+(facts "about `parse-operation`"
+	(fact "it can handle parameters"
+		(let [x (parse-operation "random(3)" "thearg" 3)]
+			(:params x) => '(3)
+			(:name x) => "random"
+			(:arg x) => "thearg"
+			(:i x) => 3
+		))
+	(fact "it can handle no params"
+		(let [x (parse-operation "random()" "thearg" 3)]
+			(:params x) => '()
+			(:name x) => "random"
+			(:arg x) => "thearg"
+			(:i x) => 3
+		)))
 
-(def ^:private js1
-	( json/read-str
-		( json/write-str { :id "{{objectId(3)}}" } )
-		:key-fn keyword
-	)
-)
+(defn jsonfixture [data] ( json/read-str ( json/write-str data ) :key-fn keyword ))
+
+(def js1 (jsonfixture { :id "{{objectId(3)}}" } ))
+
 
 (deftest uuid-test
 	(testing "objectId should return a uuid"
@@ -23,12 +37,8 @@
 	)
 )
 
-(def ^:private js2
-	( json/read-str
-		( json/write-str { :x { :y 1 :z "{{objectId(3)}}"} } )
-		:key-fn keyword
-	)
-)
+(def js2 (jsonfixture { :x { :y 1 :z "{{objectId(3)}}"} }))
+
 
 (deftest nested-uuid-test
 	(testing "objectId should return a uuid even when nested"
@@ -40,12 +50,8 @@
 	)
 )
 
-(def ^:private js3
-	( json/read-str
-		"{ \"x\": \"{{random('blue','brown','green')}}\" }"
-		:key-fn keyword
-	)
-)
+(def js3 (jsonfixture { :x "{{random('blue','brown','green')}}" }))
+
 
 (deftest random-test
 	(testing "random() should return a random value"
@@ -98,7 +104,6 @@
 (deftest repeat-test-with-index
 	(testing "repeat should process and index should be updated"
 		(let [ processed ( process js6 ) ]
-			(println "processed->" processed)
 			(is (= 3 (count (:x processed))))
 			(is (= 0 (:idx (nth (:x processed) 0))))
 			(is (= 1 (:idx (nth (:x processed) 1))))

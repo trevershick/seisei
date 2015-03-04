@@ -37,10 +37,13 @@
 
 (defstruct operation :name :params :arg)
 (defn ^:private parse-operation-params [paramsString]
-	(map jsonify (clojure.string/split paramsString #","))
+	(cond 
+		(clojure.string/blank? paramsString) '()
+		:else (map jsonify (clojure.string/split paramsString #","))
+	)	
 )
 (defn parse-operation [clause & [arg i]]
-	(let [matcher (re-matcher #"([a-zA-Z]+)\(([^\)]+)\)" clause)]
+	(let [matcher (re-matcher #"([a-zA-Z]+)\(([^\)]*)\)" clause)]
 		(if (re-find matcher)
 			(struct-map operation
 				:name (get (re-groups matcher) 1)

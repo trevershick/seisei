@@ -6,7 +6,9 @@
   :dependencies [
     [org.clojure/clojure "1.6.0"]
     [org.clojure/data.json "0.2.5"]
+    [midje "1.6.3" :exclusions [org.clojure/clojure]]
   ]
+  :plugins [[lein-midje "3.1.3"]]
   :main ^:skip-aot seisei.core
   :target-path "target/%s"
-  :profiles {:uberjar {:aot :all}})
+  :profiles {:uberjar {:aot :all} })
