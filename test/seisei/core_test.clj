@@ -49,11 +49,25 @@
 
 (deftest random-test
 	(testing "random() should return a random value"
-
 		(let [ processed ( process js3 ) ]
 			(is (contains? #{"blue" "brown" "green"} (:x processed)))
 		)
 	)
 )
 
+(def ^:private js4
+	( json/read-str
+		"{ \"x\": [\"{{repeat(5)}}\", { \"x\": 1 }, {\"x\":3}] }"
+		:key-fn keyword
+	)
+)
+(deftest repeat-test
+	(testing "repeat should repeat the following item"
+		(let [ processed ( process js4 ) ]
+			(is (= 6 (count (:x processed))))
+			(is (= {:x 1} (first (:x processed))))
+			(is (= {:x 3} (last (:x processed))))
+		)
+	)
+)
 
