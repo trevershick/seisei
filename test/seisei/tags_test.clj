@@ -6,7 +6,7 @@
 			[seisei.test-helpers :refer :all :as h]))
 
 
-(def js1 (h/jsonfixture { :id "{{objectId(3)}}" } ))
+(def js1 (h/jsonfixture { :id "{{objectId()}}" } ))
 (facts "about objectId()"
 	(let [ processed (process js1) ]
 		(fact "it should return a UUID"
@@ -47,3 +47,102 @@
 			(:idx (nth (:x processed) 1)) => 1
 			(:idx (nth (:x processed) 2)) => 2
 		)))
+
+
+
+
+(facts "about company()"
+	(let [ processed (process (h/jsonfixture { :id "{{company(3)}}" } )) ]
+		(fact "it should return a value"
+			(:id processed) => truthy
+			(:id processed) => #".+"
+		)))
+
+
+(facts "about firstName()"
+	(let [ processed (process (h/jsonfixture { :id "{{firstName()}}" } )) ]
+		(fact "it should return a value"
+			(:id processed) => truthy
+			(:id processed) => #".+"
+		)))
+
+(facts "about firstName('gender')"
+	(let [ processed (process (h/jsonfixture { :id "{{firstName('male')}}" } )) ]
+		(fact "it should return a male value"
+			(:id processed) => truthy
+			(:id processed) => #".+"
+		)))
+
+(facts "about surname()"
+	(let [ processed (process (h/jsonfixture { :id "{{surname()}}" } )) ]
+		(fact "it should return a value"
+			(:id processed) => truthy
+			(:id processed) => #".+"
+		)))
+
+(facts "about company()"
+	(let [ processed (process (h/jsonfixture { :id "{{company()}}" } )) ]
+		(fact "it should return a value"
+			(:id processed) => truthy
+			(:id processed) => #".+"
+		)))
+
+(facts "about bool()"
+	(let [ processed ( process (h/jsonfixture { :x "{{bool()}}" }) ) ]
+		(fact "it should return a random boolean value"
+			(:x processed) => truthy
+			(:x processed) => #(contains? #{ "true" "false" } %)
+		)))
+
+(facts "about guid()"
+	(let [ processed (process (h/jsonfixture { :id "{{guid()}}" } )) ]
+		(fact "it should return a UUID"
+			(:id processed) => truthy
+			(:id processed) => h/uuid-regex
+		)))
+
+(facts "about street()"
+	(let [ processed (process (h/jsonfixture { :id "{{street()}}" } )) ]
+		(fact "it should return a value"
+			(:id processed) => truthy
+			(:id processed) => #".+"
+		)))
+
+(facts "about city()"
+	(let [ processed (process (h/jsonfixture { :id "{{city()}}" } )) ]
+		(fact "it should return a value"
+			(:id processed) => truthy
+			(:id processed) => #".+"
+		)))
+
+(facts "about state()"
+	(let [ processed (process (h/jsonfixture { :id "{{state()}}" } )) ]
+		(fact "it should return a state value"
+			(:id processed) => truthy
+			(:id processed) => #".+"
+		)))
+
+(facts "about state(true)"
+	(let [ processed (process (h/jsonfixture { :id "{{state(true)}}" } )) ]
+		(fact "it should return an abbreviated state value"
+			(:id processed) => truthy
+			(:id processed) => #".+"
+		)))
+
+
+(def all [
+	"floating(1000, 4000, 2, '$0,0.00')"
+	"integer(20, 40)"
+	"phone([format])"
+	"range([start], stop, [step])"
+	"date(?)"
+	"lorem(1, 'words|sentences|paragraphs')"
+	"{{integer(100, 999)}} {{street()}}, {{city()}}, {{state()}}, {{integer(100, 10000)}}"
+	"country(true)" (comment "abbreviated")
+	"country()"
+	"date([min], [max])"
+	"domainZone()"
+	"floating([min], [max], [fixed], [format])"
+	"gauss([mu], [sigma])"
+])
+
