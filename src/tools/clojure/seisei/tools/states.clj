@@ -1,39 +1,34 @@
-(ns seisei.tools.cities
+(ns seisei.tools.states
   (:require
     [clojure.java.io :as io]
     [seisei.tools.util :as u]
     [clojure.string :as s])
   (:gen-class))
 
-;; http://download.maxmind.com/download/worldcities/worldcitiespop.txt.gz
 
-(def f 50)
-(def params {
-             :input "./data/cities.csv"
-             :output "src/generated/clojure/seisei/generated/cities.clj"
-             :ns "seisei.generated.cities" })
-
+(def params {:input "./data/state_table.csv"
+             :output "src/generated/clojure/seisei/generated/states.clj"
+             :ns "seisei.generated.states" })
 
 
 (defn to-map
+  "Create a {:abbrev 'AL' :name 'Alabama' } style map"
   [cols]
-  (u/capitalize (nth cols 11)))
+  (hash-map :abbrev (nth cols 2) :name (nth cols 1)))
 
 (defn parse-file []
   (with-open [rdr (io/reader (:input params))
               wrt (io/writer (:output params)) ]
     (.write wrt (s/join " " [ "(" "ns" (:ns params) ")" ]))
-    (.write wrt (s/join " " [ "(" "def" "cities" "[" ]))
+    (.write wrt (s/join " " [ "(" "def" "states" "[" ]))
 
     (let [total-count (->> rdr
                            line-seq
                            rest ;; skip the first line
-                           (filter (u/random-sample f))
                            (map u/replace-quotes)
                            (map u/split-csv)
                            (map to-map)
-                           set
-                           (map #(str "\"" % "\"\n" ))
+                           (map #(str % "\n" ))
                            (map #(.write wrt %))
                            count
                            )]
@@ -42,8 +37,6 @@
 
 
 (defn -main
-  "I don't do a whole lot ... yet."
+  "Read the state_table.csv file and generate a states constant .clj file."
   [& args]
   (parse-file))
-
-

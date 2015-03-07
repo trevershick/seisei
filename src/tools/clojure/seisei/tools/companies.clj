@@ -1,29 +1,27 @@
-(ns seisei.tools.cities
+(ns seisei.tools.companies
   (:require
     [clojure.java.io :as io]
     [seisei.tools.util :as u]
     [clojure.string :as s])
   (:gen-class))
 
-;; http://download.maxmind.com/download/worldcities/worldcitiespop.txt.gz
-
-(def f 50)
+(def f 3)
 (def params {
-             :input "./data/cities.csv"
-             :output "src/generated/clojure/seisei/generated/cities.clj"
-             :ns "seisei.generated.cities" })
+             :input "./data/companies.csv"
+             :output "src/generated/clojure/seisei/generated/companies.clj"
+             :ns "seisei.generated.companies" })
 
 
 
 (defn to-map
   [cols]
-  (u/capitalize (nth cols 11)))
+  (u/capitalize (nth cols 1)))
 
 (defn parse-file []
   (with-open [rdr (io/reader (:input params))
               wrt (io/writer (:output params)) ]
     (.write wrt (s/join " " [ "(" "ns" (:ns params) ")" ]))
-    (.write wrt (s/join " " [ "(" "def" "cities" "[" ]))
+    (.write wrt (s/join " " [ "(" "def" "companies" "[" ]))
 
     (let [total-count (->> rdr
                            line-seq
