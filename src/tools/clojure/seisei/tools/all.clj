@@ -3,7 +3,10 @@
     [seisei.tools.cities]
     [seisei.tools.states]
     [seisei.tools.companies]
-    [seisei.tools.zips])
+    [seisei.tools.zips]
+    [seisei.tools.names]
+    [seisei.tools.surnames]
+    [seisei.tools.streets])
   (:gen-class))
 
 (defn execute [what, with]
@@ -22,4 +25,7 @@
   (execute "Cities" seisei.tools.cities/parse-file)
   (execute "States" seisei.tools.states/parse-file)
   (execute "Zip Codes" seisei.tools.zips/parse-file)
+  (execute "Given Names" seisei.tools.names/parse-file)
+  (execute "Surnames" seisei.tools.surnames/parse-file)
+  (execute "Streets" seisei.tools.streets/parse-file)
   (println "Done"))

@@ -1,14 +1,18 @@
 (ns seisei.engine
   (:require [seisei.json :as json]
+            [clj-time.format :as f]
             [seisei.generated.states]
             [seisei.generated.cities]
             [seisei.generated.companies]
-            [seisei.generated.zips])
+            [seisei.generated.zips]
+            [seisei.generated.names]
+            [seisei.generated.surnames]
+            [seisei.generated.streets])
   (:gen-class)
   )
 
 
-(def ^:private tag-regex #"\{\{(.+)\}\}")
+(def tag-regex #"\{\{([^\}]+)\}\}")
 
 (defn tag-contents
   "Given a string in tag format {{x}} will return 'x' as a String"
@@ -33,7 +37,7 @@
     :else (map json/jsonify (clojure.string/split paramsString #","))))
 
 (defn parse-operation [clause & [arg i]]
-  (let [matcher (re-matcher #"([a-zA-Z]+)\(([^\)]*)\)" clause)]
+  (let [matcher (re-matcher #"([a-zA-Z]+)\(?([^\)]*)\)?" clause)]
     (if (re-find matcher)
       (struct-map operation
         :name (get (re-groups matcher) 1)
@@ -72,6 +76,24 @@
   (:i operation)
   )
 
+(defmethod execute "firstName" [op]
+  (let [params (:params op)
+        paramsz (count params)
+        all (->> seisei.generated.names/names (map :name))
+        m (->> seisei.generated.names/names (filter #(= "M" (:gender %))) (map :name))
+        f (->> seisei.generated.names/names (filter #(= "F" (:gender %))) (map :name))
+        byarg {"female" f "male" m}]
+    (cond
+      (= paramsz 0) (rand-nth all)
+      (> paramsz 0) (rand-nth (get byarg (first params))))))
+
+
+(defmethod execute "street" [_]
+  (:full (rand-nth seisei.generated.streets/streets)))
+
+(defmethod execute "surname" [_]
+  (rand-nth seisei.generated.surnames/surnames))
+
 (defmethod execute "company" [_]
   (rand-nth seisei.generated.companies/companies))
 
@@ -97,11 +119,74 @@
     )
   )
 
+(defn yesterday
+  []
+  (java.util.Date. (- (.getTime (java.util.Date.)) 86400000)))
+
+(defn now
+  []
+  (java.util.Date.))
+
+(def default-format "yyyyMMdd")
+(def default-date-formatter (f/formatter default-format))
+(defn start-of-time
+  []
+  (.toDate (f/parse default-date-formatter "19700101")))
+
+(defn date-fmt [in default-format]
+  (if (nil? in) default-format in))
+
+(defn date-val [in-str default-val]
+  (cond
+    (nil? in-str) default-val
+    (= "today" (str in-str)) (now)
+    (= "yesterday" (str in-str)) (yesterday)
+    :else (.toDate (f/parse default-date-formatter (str in-str)))
+  ))
+(defn local-date [from-date]
+  (org.joda.time.DateTime. from-date))
+
+(defn rand-date
+  [from to]
+  (let [fms     (.getTime from)
+        tms     (.getTime to)
+        maxms   (Math/max fms tms)
+        minms   (Math/min fms tms)
+        rangems (- maxms minms)
+        randms  (.longValue (* (rand) rangems))]
+    (java.util.Date. (+ minms randms))
+  ))
+
+(defmethod execute "date"
+  [op]
+  (let [ps        (:params op)
+        psz       (count (:params op))
+        pfrom     (nth ps 0 nil)
+        ptil      (nth ps 1 nil)
+        pfmt      (nth ps 2 nil)
+        fmt       (if (nil? pfmt) default-format pfmt)
+        from      (if (nil? pfrom) (start-of-time) (date-val pfrom (now)))
+        til       (if (nil? ptil) (now) (date-val ptil (now)))
+        formatter (f/formatter fmt)]
+        (f/unparse formatter (local-date (rand-date from til)))
+      ))
+
+(defmethod execute "integer"
+  [op]
+  (let [ps (:params op)
+        psz (count (:params op))
+        start (first ps)
+        end (first (rest ps))]
+    (cond
+      (and (= 2 psz) (every? #(instance? Number %) ps))
+        (let [n (- end start)] (+ start (rand-int n)))
+      :else (rand-int Integer/MAX_VALUE)
+      )))
+
 (defmethod execute "random" [operation]
   "Usage {{random(a,b,c)}}
   Returns a random element from the provided list"
-  ( let [
-         params (:params operation)
+  ( let [params (:params operation)
          paramsz (count (:params operation)) ]
    (if (= 0 (count params)) "random value here" (rand-nth params))
    )
@@ -114,9 +199,15 @@
 
 
 (defmethod process String [s & {:keys [arg i]}]
-  (if (is-tag s)
-    (execute ( parse-operation (tag-contents s) arg i))
-    s ))
+  (let [tags (->> (re-seq tag-regex s) (map #(get % 0)))
+        texts (clojure.string/split s tag-regex)
+        processed-tags (map #(execute ( parse-operation (tag-contents %) arg i)) tags)
+        zipped (clojure.string/join (interleave texts processed-tags))]
+      (cond (= 0 (count tags)) s
+            (and (= 0 (count texts)) (= 1 (count tags))) (first processed-tags)
+            :else zipped)))
+
+
 
 (defmethod process Long [s & {:keys [arg i]}] s)
 

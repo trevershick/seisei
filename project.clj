@@ -7,6 +7,7 @@
                  [org.clojure/clojure "1.6.0"]
                  [org.clojure/data.json "0.2.5"]
                  [midje "1.6.3" :exclusions [org.clojure/clojure]]
+                 [clj-time "0.9.0"]
                  ]
   :plugins [[lein-midje "3.1.3"]
             [lein-marginalia "0.8.0"]]
