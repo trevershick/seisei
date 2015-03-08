@@ -40,6 +40,7 @@
              }
   :source-paths ["src/main/clojure" "src/tools/clojure" "src/generated/clojure"]
   :target-path "target/%s"
+  :clean-targets [:target-path [:bower :directory]]
   :main ^:skip-aot seisei.core
   :profiles {:uberjar {:aot :all}
              :dev     {:dependencies [[javax.servlet/servlet-api "2.5"]
