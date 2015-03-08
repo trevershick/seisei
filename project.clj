@@ -13,10 +13,31 @@
                  [ring/ring-core "1.3.2"]
                  [ring/ring-json "0.3.1"]
                  ]
+   :bower-dependencies [[bootstrap "3.3.2"]
+                       [ace-builds "1.1.8"]
+                       [riotjs "2.0.12"]]
+
   :plugins [[lein-midje "3.1.3"]
             [lein-marginalia "0.8.0"]
-            [lein-ring "0.8.13"]]
+            [lein-resource "14.10.1"]
+            [lein-ring "0.8.13"]
+            [lein-bower "0.5.1"]]
   :ring {:handler seisei.handler/app :port 8888 :auto-refresh? true}
+  :bower {:directory "bower_components"}
+  :resource {
+    :resource-paths [
+      ["bower_components/riotjs" { :includes [#".*/riot\+compiler.min.js"] }]
+      ["bower_components/bootstrap/dist/js" { :includes [#".*/bootstrap.min.js"] }]
+      ["bower_components/bootstrap/dist/css" { :includes [#".*/bootstrap.min.css"] }]
+      ["bower_components/jquery/dist" { :includes [#".*/jquery.min.js"] }]
+      ["bower_components/ace-builds/src-min" { :includes [#".*/ace.js"
+                                                     #".*/mode-javascript.js"
+                                                     #".*/theme-twilight.js"
+                                                     #".*/worker-javascript.js"] }]
+    ]
+    :target-path "resources/public/vendor"
+    :verbose false
+  }
   :source-paths ["src/main/clojure" "src/tools/clojure" "src/generated/clojure"]
   :target-path "target/%s"
   :main ^:skip-aot seisei.core

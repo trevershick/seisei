@@ -4,7 +4,7 @@
 
 	</div>
 	<style scoped>
-    .editor { 
+    .editor {
       width:100%;
       height:100%;
     }
@@ -27,7 +27,7 @@
 			self.text = self.editor.getValue();
 			opts.state.setTemplate(self.text);
 		});
-		this.editor.setTheme("ace/theme/monokai");
+		this.editor.setTheme("ace/theme/twilight");
 		this.editor.getSession().setMode("ace/mode/javascript");
 		this.editor.setHighlightActiveLine(false);
 

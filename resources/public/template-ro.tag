@@ -4,7 +4,7 @@
 
 	</div>
 	<style scoped>
-    .editor { 
+    .editor {
       width:100%;
       height:100%;
     }
@@ -25,11 +25,11 @@
 
 	this.on('mount', function(eventName) {
 		this.editor = ace.edit(this.editorElement);
-		this.editor.setTheme("ace/theme/monokai");
+		this.editor.setTheme("ace/theme/twilight");
 		this.editor.getSession().setMode("ace/mode/javascript");
 		this.editor.setReadOnly(true);
 		this.update();
   	}.bind(this));
 
-	
+
 </template-ro>
