@@ -14,7 +14,9 @@
 	var self = this;
 
 	this.on('update', function() {
-		this.editor && this.editor.setValue(opts.state.template);
+		console.log("update template-editor");
+		this.template = opts.state.template
+		this.editor && this.editor.setValue(this.template);
 	}.bind(this));
 
 	this.on('unmount', function() {
@@ -22,6 +24,7 @@
 	}.bind(this));
 
 	this.on('mount', function(eventName) {
+		console.log("mounting the editor");
 		this.editor = ace.edit(this.editorElement);
 		this.editor.on("change", function() {
 			self.text = self.editor.getValue();
@@ -30,6 +33,7 @@
 		this.editor.setTheme("ace/theme/twilight");
 		this.editor.getSession().setMode("ace/mode/javascript");
 		this.editor.setHighlightActiveLine(false);
+		this.editor.setValue(this.template);
 
 		this.editor.commands.addCommand({
     		name: 'myCommand',
@@ -39,8 +43,6 @@
     		},
     		readOnly: true // false if this command should not apply in readOnly mode
 		});
-		this.update();
-
   	}.bind(this));
 
 

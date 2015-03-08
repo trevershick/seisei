@@ -30,6 +30,13 @@ div.row {
 <script src="vendor/theme-twilight.js" type="text/javascript" charset="utf-8"></script>
 <script src="vendor/mode-javascript.js" type="text/javascript" charset="utf-8"></script>
 
+  <script src="store.js"></script>
+  <script src="template-editor.tag" type="riot/tag"></script>
+  <script src="template-ro.tag" type="riot/tag"></script>
+  <script src="template-dropdown.tag" type="riot/tag"></script>
+  <script src="login-with-github.tag" type="riot/tag"></script>
+  <script src="vendor/riot+compiler.min.js"></script>
+
 <link rel="stylesheet" href="vendor/bootstrap.min.css">
 <link rel="stylesheet" href="https://bootswatch.com/superhero/bootstrap.min.css">
 
@@ -88,12 +95,6 @@ div.row {
 
 
 
-  <script src="store.js"></script>
-  <script src="template-editor.tag" type="riot/tag"></script>
-  <script src="template-ro.tag" type="riot/tag"></script>
-  <script src="template-dropdown.tag" type="riot/tag"></script>
-  <script src="login-with-github.tag" type="riot/tag"></script>
-  <script src="vendor/riot+compiler.min.js"></script>
 
   <script>
     var test_template = {
@@ -101,14 +102,14 @@ div.row {
     };
 
     var editorStore = new EditorStore();
-    editorStore.on('templates', function() {
-      riot.update();
-    });
     editorStore.init();
+    $(function() {
+      riot.mount('template-editor', { state: editorStore });
+      riot.mount('template-ro', { state: editorStore });
+      riot.mount(document.getElementById('template-dd-menu'), 'template-dropdown', {state:editorStore});
+      riot.mount(document.getElementById('xxx'), 'login-with-github', {state:editorStore});
+    });
 
-    riot.mount('*', { state: editorStore });
-    riot.mount(document.getElementById('template-dd-menu'), 'template-dropdown', {state:editorStore});
-    riot.mount(document.getElementById('xxx'), 'login-with-github', {state:editorStore});
   </script>
 
 </body>

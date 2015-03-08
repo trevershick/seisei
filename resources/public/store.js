@@ -14,6 +14,7 @@ EditorStore.prototype.init = function() {
 		{id :"KDLI3J", name: "Template 3"},
 		{id :"ADKIEJ", name: "Template 5"}
 	];
+	console.log("triggering 'templates'", this.templates);
 
 	this.trigger('templates', this.templates);
 }
@@ -25,7 +26,7 @@ EditorStore.prototype.login = function() {
 		this.user = data;
 		this.trigger('loggedin', this.user);
 	}.bind(this);
-	
+
 	$.ajax({
 	  dataType: "json",
 	  url: url,
@@ -35,9 +36,9 @@ EditorStore.prototype.login = function() {
 	  },
 	  success: onSuccess
 	});
-	
+
 	// do the login here.
-	
+
 }
 
 EditorStore.prototype.setTemplate = function(text) {
