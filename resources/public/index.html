@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+<style>
+body {
+  position:absolute;
+  top:0;
+  bottom:0;
+  left:0;
+  right:0;
+}
+div.row {
+  margin-left:0px;
+  margin-right:0px;
+}
+</style>
+ <!--[if lt IE 9]>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/es5-shim/4.0.5/es5-shim.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.2/html5shiv.min.js"></script>
+  <script>html5.addElements('todo')</script>
+  <![endif]-->
+<script src="https://code.jquery.com/jquery-1.11.2.min.js" type="text/javascript"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/js/bootstrap.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/ace/1.1.8/ace.js" type="text/javascript" charset="utf-8"></script>
+
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css">
+<link rel="stylesheet" href="https://bootswatch.com/superhero/bootstrap.min.css"> 
+
+</head>
+<body>
+<div class="row">
+
+<nav class="navbar navbar-default">
+  <div class="container-fluid">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="#">Brand</a>
+    </div>
+
+    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+      <ul class="nav navbar-nav">
+        <li class="active"><a href="#">Link <span class="sr-only">(current)</span></a></li>
+        <li><a href="#">Save</a></li>
+        <li class="dropdown">
+          <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Templates <span class="caret"></span></a>
+          <ul class="dropdown-menu" role="menu" id="template-dd-menu" ></ul>
+        </li>
+      </ul>
+
+      <ul class="nav navbar-nav navbar-right">
+        <li id="xxx"></li>
+      </ul>      
+    </div>
+  </div>
+</nav>
+</div>
+<div class="row" style="height:75%">
+
+  <div class="row" style="height:100%">
+    <div class="col-sm-6" style="height:100%">
+      <template-editor></template-editor>  
+    </div>
+    <div class="col-sm-6" style="height:100%">
+      <template-ro></template-ro>
+    </div>
+  </div>
+  
+
+</div>
+
+
+
+
+
+
+
+
+
+  <script src="store.js"></script>
+  <script src="template-editor.tag" type="riot/tag"></script>
+  <script src="template-ro.tag" type="riot/tag"></script>
+  <script src="template-dropdown.tag" type="riot/tag"></script>
+  <script src="login-with-github.tag" type="riot/tag"></script>
+  <script src="https://cdn.jsdelivr.net/g/riot@2.0(riot.min.js+compiler.min.js)"></script>
+
+  <script>
+    var test_template = {
+      x: "{{city}}"
+    };
+
+    var editorStore = new EditorStore();
+    editorStore.on('templates', function() {
+      riot.update();
+    });
+    editorStore.init();
+
+    riot.mount('*', { state: editorStore });
+    riot.mount(document.getElementById('template-dd-menu'), 'template-dropdown', {state:editorStore});
+    riot.mount(document.getElementById('xxx'), 'login-with-github', {state:editorStore});
+  </script>
+
+</body>
+</html>
