@@ -36,9 +36,9 @@ div.row {
   <script src="store.js"></script>
 
 <link rel="stylesheet" href="vendor/bootstrap.min.css">
-<link rel="stylesheet" href="https://bootswatch.com/superhero/bootstrap.min.css">
-
-</head>
+<link rel="stylesheet" href="vendor/font-awesome.min.css">
+<link rel="stylesheet" href="https://bootswatch.com/superhero/bootstrap.min.css"></head>
+<link rel="stylesheet" href="vendor/bootstrap-social.css">
 <body>
 <div class="row">
 
@@ -65,7 +65,7 @@ div.row {
       </ul>
 
       <ul class="nav navbar-nav navbar-right">
-        <li id="xxx"></li>
+        <li><login-with-github/></li>
       </ul>
     </div>
   </div>
@@ -106,7 +106,7 @@ div.row {
       riot.mount('template-editor', { state: editorStore });
       riot.mount('template-ro', { state: editorStore });
       riot.mount(document.getElementById('template-dd-menu'), 'template-dropdown', {state:editorStore});
-      riot.mount(document.getElementById('xxx'), 'login-with-github', {state:editorStore});
+      riot.mount('login-with-github', {state:editorStore});
     });
 
   </script>

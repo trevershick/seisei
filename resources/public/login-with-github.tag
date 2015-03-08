@@ -1,5 +1,9 @@
 <login-with-github>
-	<a onclick={onLogin}>Login</a>
+
+	<a onclick={onLogin} class="btn btn-block btn-social btn-github">
+		<i class="fa fa-github"></i>
+		Sign in with Github
+	</a>
 
 	onLogin() {
 		console.log("onLogin Clicked");
