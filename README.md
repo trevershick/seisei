@@ -5,35 +5,20 @@
 
 FIXME: description
 
-## Installation
+## Building
 
-Download from http://example.com/FIXME.
+Right now it's crazy. I'll eventually get this in a clean pipeline in Leiningen.
 
-## Usage
+lein bower install
+lein resource
+./riot.sh
+(export github vars here - just start ring if you don't know what they are)
+lein ring server
 
-FIXME: explanation
 
-    $ java -jar seisei-0.1.0-standalone.jar [args]
-
-## Options
-
-FIXME: listing of options this app accepts.
-
-## Examples
-
-...
 
 ### Bugs
 
-...
-
-### Any Other Sections
-### That You Think
-### Might be Useful
 
 ## License
 
-Copyright © 2015 FIXME
-
-Distributed under the Eclipse Public License either version 1.0 or (at
-your option) any later version.
