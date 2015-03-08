@@ -12,7 +12,7 @@
                  [ring/ring-defaults "0.1.2"]
                  [ring/ring-core "1.3.2"]
                  [ring/ring-json "0.3.1"]
-                 ]
+                 [clj-http "1.0.1"]]
   :bower-dependencies [[bootstrap "3.3.2"]
                        [ace-builds "1.1.8"]
                        [riotjs "2.0.12"]]
@@ -22,11 +22,14 @@
             [lein-resource "14.10.1"]
             [lein-ring "0.8.13"]
             [lein-bower "0.5.1"]]
-  :ring {:handler seisei.handler/app :port 8888 :auto-refresh? true}
+  :ring {:handler seisei.web.handler/app
+         :port 8888
+         :auto-refresh? true
+         :init seisei.web.handler/startupcheck }
   :bower {:directory "bower_components"}
   :resource {
              :resource-paths [
-                              ["bower_components/riotjs" { :includes [#".*/riot\+compiler.min.js"] }]
+                              ["bower_components/riotjs" { :includes [#".*/riot.min.js"] }]
                               ["bower_components/bootstrap/dist/js" { :includes [#".*/bootstrap.min.js"] }]
                               ["bower_components/bootstrap/dist/css" { :includes [#".*/bootstrap.min.css"] }]
                               ["bower_components/jquery/dist" { :includes [#".*/jquery.min.js"] }]
@@ -50,6 +53,4 @@
             "cities" ["run" "-m" "seisei.tools.cities"]
             "states" ["run" "-m" "seisei.tools.states"]
             }
-  :hooks [leiningen.resource]
-
   )

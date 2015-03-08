@@ -3,6 +3,7 @@ function EditorStore() {
 
 	this.template = JSON.stringify(test_template,null,4);
 	this.templates = [];
+	this.errors = [];
 	this.user = null;
 	return this;
 }
@@ -14,31 +15,33 @@ EditorStore.prototype.init = function() {
 		{id :"KDLI3J", name: "Template 3"},
 		{id :"ADKIEJ", name: "Template 5"}
 	];
+	var me = this;
 	console.log("triggering 'templates'", this.templates);
+	$.ajax({
+		url: "/my/templates",
+		accepts: "application/json",
+		dataType: "json",
+		cache: false,
+		error: me.onReceivedTemplatesError.bind(this),
+		success: me.onReceivedTemplates.bind(this)
+	})
+}
 
-	this.trigger('templates', this.templates);
+EditorStore.prototype.onReceivedTemplatesError = function(err) {
+	console.error("onReceivedTemplatesError", err);
+	this.errors.push(err);
+	this.trigger('received-error', err);
+}
+
+EditorStore.prototype.onReceivedTemplates = function(templatesData) {
+	console.debug("onReceivedTemplates", templatesData);
+	this.templates = templatesData;
+	this.trigger('templates', templatesData);
 }
 
 EditorStore.prototype.login = function() {
-	var url="https://github.com/login/oauth/authorize";
-	var onSuccess = function(data) {
-		console.log("data", data);
-		this.user = data;
-		this.trigger('loggedin', this.user);
-	}.bind(this);
-
-	$.ajax({
-	  dataType: "json",
-	  url: url,
-	  data: {
-	  	"client_id": "742c2c34f988aa8658a3",
-	  	"scope": "user:email"
-	  },
-	  success: onSuccess
-	});
-
-	// do the login here.
-
+	// maybe save here
+	window.location.assign("/auth/github");
 }
 
 EditorStore.prototype.setTemplate = function(text) {
