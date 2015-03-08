@@ -1,3 +1,4 @@
+[![Stories in Ready](https://badge.waffle.io/trevershick/seisei.png?label=ready&title=Ready)](https://waffle.io/trevershick/seisei)
 [![Build Status](https://travis-ci.org/trevershick/seisei.svg?branch=master)](https://travis-ci.org/trevershick/seisei)
 
 # seisei
