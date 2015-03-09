@@ -34,6 +34,27 @@
       (ring.util.response/redirect github-login-url)
     ))
 
+(defn github-account [access-token]
+  (let [u           "https://api.github.com/user"
+        _           (println "u" u)
+        getargs     {:accept :json 
+                     :headers {"Authorization" (str "token " access-token)}
+                     :as :json}
+        _           (println "getargs" getargs)
+        response    (client/get u getargs)
+        _           (println "response" response)]
+    (:body response)
+  ))
+(defn github-email [access-token]
+  (let [u           "https://api.github.com/user/emails"
+        getargs     {:accept :json 
+                     :headers {"Authorization" (str "token " access-token)}
+                     :as :json}
+        response    (client/get u getargs)]
+    (:email (first (:body response)))
+  ))
+
+
 (defn github-access-token
   [github-session-code]
   (let [form-params {:client_id github-oauth-client-id
@@ -55,8 +76,13 @@
   (let [github-response (github-access-token code)
         body (:body github-response :body)
         access-token (:access_token body)
+        github-account (if access-token (github-account access-token) {})
+        email (if access-token (github-email access-token) nil)
         logged-in (if access-token true false)
-        session (user/logged-in! session logged-in)]
+        session (user/logged-in! session logged-in)
+        session (assoc session :email email)]
+    (println "Github Account" github-account)
+    (println "Email Is" email)
     (println "Session is" session)
     (println "Github Code is" code)
     (println "Access Token is" access-token)
