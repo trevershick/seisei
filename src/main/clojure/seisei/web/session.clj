@@ -1,14 +1,13 @@
 (ns seisei.web.session
   (:require [taoensso.faraday :as far]
-            [ring.middleware.session.store :refer [SessionStore]])
+            [ring.middleware.session.store :refer [SessionStore]]
+            [seisei.web.db :as db])
   (:gen-class))
 
 
-
-(def client-opts {:access-key "localkey"
-                  :endpoint "http://localhost:5000"
-                  :secret-key "<>"})
 (def sessions-table :sessions)
+(def client-opts db/aws-dynamodb-client-opts)
+
 (defn generate-new-random-key [] (str (java.util.UUID/randomUUID)))
 
 (defn read-data [key]

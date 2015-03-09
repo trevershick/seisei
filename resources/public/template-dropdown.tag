@@ -1,5 +1,9 @@
 <template-dropdown>
-	<li each={items}><a href="#">{name}</a></li>
+      <a if={items.length > 0} href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Templates <span class="caret"></span></a>
+      <ul if={items.length > 0} class="dropdown-menu" role="menu" >
+		<li each={items}><a href="#">{title}</a></li>
+		</ul>
+
 
 	var self = this;
 

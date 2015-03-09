@@ -49,12 +49,10 @@ function EditorStore() {
 }
 
 EditorStore.prototype.init = function() {
-	// start loading data.
-	this.templates = [
-		{id :"ZIFJ35", name: "Template 1"},
-		{id :"KDLI3J", name: "Template 3"},
-		{id :"ADKIEJ", name: "Template 5"}
-	];
+	this.refresh();
+}
+
+EditorStore.prototype.refresh = function() {
 	var me = this;
 	console.log("triggering 'templates'", this.templates);
 	$.ajax({
@@ -68,6 +66,7 @@ EditorStore.prototype.init = function() {
 }
 
 EditorStore.prototype.onReceivedTemplatesError = function(err) {
+	if (403 == err.status) return;
 	console.error("onReceivedTemplatesError", err);
 	this.errors.push(err);
 	this.trigger('received-error', err);
