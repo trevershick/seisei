@@ -100,13 +100,16 @@ div.row {
       x: "{{city}}"
     };
 
+    var accountStore = new MyAccountStore();
     var editorStore = new EditorStore();
+    accountStore.init();
     editorStore.init();
+
     $(function() {
       riot.mount('template-editor', { state: editorStore });
       riot.mount('template-ro', { state: editorStore });
       riot.mount(document.getElementById('template-dd-menu'), 'template-dropdown', {state:editorStore});
-      riot.mount('login-with-github', {state:editorStore});
+      riot.mount('login-with-github', {state:accountStore});
     });
 
   </script>
