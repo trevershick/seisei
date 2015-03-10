@@ -23,7 +23,10 @@
             [lein-marginalia "0.8.0"]
             [lein-resource "14.10.1"]
             [lein-ring "0.8.13"]
-            [lein-bower "0.5.1"]]
+            [lein-bower "0.5.1"]
+            [lein-riot "0.0.1"]]
+
+  :riot {:tags [["resources/public/" "resources/public/seisei-tags.js"]]}
   :ring {:handler seisei.web.handler/app
          :port 8888
          :auto-refresh? true
