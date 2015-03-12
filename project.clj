@@ -13,19 +13,26 @@
                  [ring/ring-core "1.3.2"]
                  [ring/ring-json "0.3.1"]
                  [clj-http "1.0.1"]
-                 [com.taoensso/faraday "1.5.0" :exclusions [org.clojure/clojure]]]
+                 [com.taoensso/faraday "1.5.0" :exclusions [org.clojure/clojure]]
+                 [org.clojure/tools.logging "0.2.4"]
+                 [org.slf4j/slf4j-log4j12 "1.7.1"]
+                 [log4j/log4j "1.2.17" :exclusions [javax.mail/mail
+                                                    javax.jms/jms
+                                                    com.sun.jmdk/jmxtools
+                                                    com.sun.jmx/jmxri]]
+                 [environ "1.0.0"]]
   :bower-dependencies [[bootstrap "3.3.2"]
                        [ace-builds "1.1.8"]
                        [riotjs "2.0.12"]
                        [bootstrap-social "4.8.0"]]
-
+  
   :plugins [[lein-midje "3.1.3"]
             [lein-marginalia "0.8.0"]
             [lein-resource "14.10.1"]
             [lein-ring "0.8.13"]
             [lein-bower "0.5.1"]
             [lein-riot "0.0.1"]]
-
+  
   :riot {:tags [["resources/public/" "resources/public/seisei-tags.js"]]}
   :ring {:handler seisei.web.handler/app
          :port 8888
@@ -51,6 +58,7 @@
              :skip-stencil [ #".*" ]
              }
   :source-paths ["src/main/clojure" "src/tools/clojure" "src/generated/clojure"]
+  :resource-paths ["src/main/resources" "resources"]
   :target-path "target/%s"
   :clean-targets [:target-path [:bower :directory]]
   :main ^:skip-aot seisei.core

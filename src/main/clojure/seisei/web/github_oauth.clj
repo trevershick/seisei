@@ -3,18 +3,19 @@
             [ring.util.response :refer [resource-response response]]
             [ring.middleware.defaults :refer [wrap-defaults site-defaults]]
             [clj-http.client :as client]
-            [seisei.web.user :as user]))
+            [clojure.tools.logging :as log]
+            [seisei.web.user :as user]
+            [environ.core :refer [env]]))
 
 
-(def env (System/getenv))
-(def github-oauth-client-id (get env "GITHUB_OAUTH_CLIENT_ID"))
-(def github-oauth-secret    (get env "GITHUB_OAUTH_SECRET"))
+(def github-oauth-client-id (env :github-oauth-client-id))
+(def github-oauth-secret    (env :github-oauth-secret))
 
 (defn startupcheck []
   (if (nil? github-oauth-client-id)
-    (println "ERROR - GITHUB_OAUTH_CLIENT_ID" "is not set"))
+    (log/error "GITHUB_OAUTH_CLIENT_ID is not set"))
   (if (nil? github-oauth-secret)
-    (println "ERROR - GITHUB_OAUTH_SECRET" "is not set")))
+    (log/error "GITHUB_OAUTH_SECRET is not set")))
 
 (def github-login-url (str "https://github.com/login/oauth/authorize"
                            "?"
@@ -26,7 +27,7 @@
 
 (defn auth-github
   [{session :session}]
-  (println "session is" session)
+  (log/debugf "session is %s" session)
   (cond
     (user/logged-in? session)
       (ring.util.response/redirect "/") ;; ur already logged in
@@ -36,13 +37,10 @@
 
 (defn github-account [access-token]
   (let [u           "https://api.github.com/user"
-        _           (println "u" u)
         getargs     {:accept :json 
                      :headers {"Authorization" (str "token " access-token)}
                      :as :json}
-        _           (println "getargs" getargs)
-        response    (client/get u getargs)
-        _           (println "response" response)]
+        response    (client/get u getargs)]
     (:body response)
   ))
 (defn github-email [access-token]
@@ -60,7 +58,7 @@
   (let [form-params {:client_id github-oauth-client-id
                      :client_secret github-oauth-secret
                      :code github-session-code}]
-    (println "form-params is" form-params)
+    (log/debugf "form-params is %s" form-params)
     (client/post
       "https://github.com/login/oauth/access_token"
       {:form-params form-params
@@ -81,11 +79,11 @@
         logged-in (if access-token true false)
         session (user/logged-in! session logged-in)
         session (assoc session :email email)]
-    (println "Github Account" github-account)
-    (println "Email Is" email)
-    (println "Session is" session)
-    (println "Github Code is" code)
-    (println "Access Token is" access-token)
+    (log/debugf "Github Account %s" github-account)
+    (log/debugf "Email Is %s" email)
+    (log/debugf "Session is %s" session)
+    (log/debugf "Github Code is %s" code)
+    (log/debugf "Access Token is %s" access-token)
     (-> (ring.util.response/redirect "/")
         (assoc :session session))
     ))

@@ -1,8 +1,8 @@
 (ns seisei.web.session
   (:require [taoensso.faraday :as far]
             [ring.middleware.session.store :refer [SessionStore]]
-            [seisei.web.db :as db])
-  (:gen-class))
+            [clojure.tools.logging :as log]
+            [seisei.web.db :as db]))
 
 
 (def sessions-table :sessions)
@@ -16,7 +16,7 @@
     {}))
 
 (defn save-data [key data]
-  (println "save-data " key data)
+  (log/debug "save-data " key data)
   (far/put-item client-opts sessions-table { :id key :data (far/freeze data) })
   )
 
