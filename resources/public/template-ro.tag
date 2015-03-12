@@ -14,10 +14,8 @@
 	var self = this;
 
 	this.on('update', function() {
-		this.editor && this.editor.setValue(opts.state.template);
+		this.editor && this.editor.setValue(opts.editor.template);
 	}.bind(this));
-
-	opts.state.on('change', this.update);
 
 	this.on('unmount', function() {
 		this.editor.destroy();

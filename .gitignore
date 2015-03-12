@@ -1,4 +1,6 @@
 resources/public/seisei-tags.js
+env.my
+node_modules/
 resources/public/fonts/
 .nrepl-port
 env.sh

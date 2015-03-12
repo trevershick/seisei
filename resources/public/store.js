@@ -11,6 +11,10 @@ MyAccountStore.prototype.login = function() {
 	window.location.assign("/auth/github");
 }
 
+MyAccountStore.prototype.logout = function() {
+	window.location.assign("/auth/logout");
+}
+
 MyAccountStore.prototype.init = function() {
 	this.refresh();
 }
@@ -54,7 +58,7 @@ EditorStore.prototype.init = function() {
 
 EditorStore.prototype.refresh = function() {
 	var me = this;
-	console.log("triggering 'templates'", this.templates);
+	console.debug("triggering 'templates'", this.templates);
 	$.ajax({
 		url: "/my/templates",
 		accepts: "application/json",
@@ -75,7 +79,7 @@ EditorStore.prototype.onReceivedTemplatesError = function(err) {
 EditorStore.prototype.onReceivedTemplates = function(templatesData) {
 	console.debug("onReceivedTemplates", templatesData);
 	this.templates = templatesData;
-	this.trigger('templates', templatesData);
+	this.emitChange();
 }
 
 EditorStore.prototype.setTemplate = function(text) {

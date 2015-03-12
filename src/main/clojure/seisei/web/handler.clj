@@ -9,6 +9,7 @@
             [seisei.web.session]
             [seisei.web.user]
             [seisei.web.db :as db]
+            [seisei.web.logout]
             ))
 
 (defn startupcheck []
@@ -37,6 +38,7 @@
 
 
 (defroutes app-routes
+  (ANY "*" [] seisei.web.logout/logout-routes)
   (ANY "*" [] seisei.web.github-oauth/github-oauth-routes)
   (GET "/my/templates" r (my-templates r))
   (GET "/my/account" r (my-account r))

@@ -1,0 +1,24 @@
+a { cursor: pointer;}
+body {
+	position:absolute;
+	top:0;
+	bottom:0;
+	left:0;
+	right:0;
+}
+div.row {
+	margin-left:0px;
+	margin-right:0px;
+}
+
+
+
+/* Logout Button Fix */
+.navbar-default .navbar-nav>li a {
+	color: #ebebeb;
+}
+
+.navbar-default .navbar-nav>li a.btn {
+	padding:6px 8px 6px 40px;
+}
+

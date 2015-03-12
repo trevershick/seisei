@@ -1,24 +1,20 @@
 <login-with-github>
-	<a onclick={onLogin} class="btn btn-block btn-social btn-github" if={ !loggedIn }>
+	<a onclick={onLogin} class="btn btn-block btn-social btn-github" if={ ! opts.accounts.loggedIn }>
 		<i class="fa fa-github"></i>
 		Sign in with Github
 	</a>
+	<a onclick={ onLogout } class="btn btn-block" if={ opts.accounts.loggedIn }>
+		Logout
+	</a>
 
-	this.on('update', function(){
-		this.loggedIn = this.opts.state.loggedIn;
-		console.log("login-with-github on update", this.loggedIn);
-	}.bind(this));
-
-
-	this.opts.state.on('received-account received-error', function(eventName) {
-		console.log("login-with-github on " + eventName);
-		this.update();
-	}.bind(this));
-
-
+	onLogout() {
+		console.debug("onLogout Clicked");
+		opts.accounts.logout();
+		return false;
+	}
 	onLogin() {
-		console.log("onLogin Clicked");
-		this.opts.state.login();
+		console.debug("onLogin Clicked");
+		opts.accounts.login();
 		return false;
 	}
 </login-with-github>
