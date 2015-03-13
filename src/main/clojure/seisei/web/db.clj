@@ -4,6 +4,9 @@
             [environ.core :refer [env]]))
 
 
+(def table-users :users)
+(def table-sessions :sessions)
+(def table-templates :templates)
 
 (def aws-dynamodb-access-key (env :aws-dynamodb-access-key))
 (def aws-dynamodb-secret-key (env :aws-dynamodb-secret-key))
@@ -69,21 +72,21 @@
   (log/info "Ensuring database is setup...")
   (far/ensure-table 
     aws-dynamodb-client-opts
-    :sessions ;; table name
+    table-sessions ;; table name
     [:id :s] ;; key structure
     {:throughput (:sessions capacities)
      :block? true })
   
   (far/ensure-table 
     aws-dynamodb-client-opts
-    :users ;; table name
+    table-users ;; table name
     [:id :s] ;; key structure (username)
     {:throughput (:users capacities)
      :block? true })
   
   (far/ensure-table 
     aws-dynamodb-client-opts
-    :templates ;; table name
+    table-templates ;; table name
     [:user :s] ;; key structure (username)
     {:range-keydef [ :id :s ]
      :throughput (:templates capacities)

@@ -5,23 +5,22 @@
             [seisei.web.db :as db]))
 
 
-(def sessions-table :sessions)
 (def client-opts db/aws-dynamodb-client-opts)
 
 (defn generate-new-random-key [] (str (java.util.UUID/randomUUID)))
 
 (defn read-data [key]
   (if key 
-    (:data (far/get-item client-opts sessions-table { :id key }))
+    (:data (far/get-item client-opts db/table-sessions { :id key }))
     {}))
 
 (defn save-data [key data]
   (log/debug "save-data " key data)
-  (far/put-item client-opts sessions-table { :id key :data (far/freeze data) })
+  (far/put-item client-opts db/table-sessions { :id key :data (far/freeze data) })
   )
 
 (defn delete-data [key]
-  (far/delete-item client-opts sessions-table { :id key })
+  (far/delete-item client-opts db/table-sessions { :id key })
   )
 
 (deftype DynamoDbStore []

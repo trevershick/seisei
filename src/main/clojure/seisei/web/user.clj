@@ -1,7 +1,42 @@
-(ns seisei.web.user)
+(ns seisei.web.user
+  (:require [seisei.web.db :as db]
+            [taoensso.faraday :as far]))
 
 
 (defn logged-in? [session] (:logged-in session))
 (defn logged-in!
   [session b]
   (assoc session :logged-in b))
+
+
+
+;; User
+;;  username (string) -> id? (:id)
+;;  admin (boolean)
+;;  access_key :access-key
+;;  email
+;;  company
+;;  name
+;;  last-login
+; (defrecord User [ id admin access-key email company name last-login])
+
+(defn lookup-user 
+  [user-id]
+  (far/get-item db/aws-dynamodb-client-opts 
+                db/table-users 
+                { :id user-id }))
+
+(defn create-user
+  [user-id attr-map]
+  (let [ clean-attr (into {} (remove (comp nil? val) attr-map))]
+    (far/put-item db/aws-dynamodb-client-opts 
+                  db/table-users 
+                  (merge { :id user-id } clean-attr))))
+
+(defn user-logged-in
+  [user-id]
+  (far/update-item db/aws-dynamodb-client-opts
+                   db/table-users
+                   { :id user-id }
+                   { :last-login [ :put (.getTime (java.util.Date.)) ] }))
+

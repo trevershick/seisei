@@ -30,63 +30,80 @@
   (log/debugf "session is %s" session)
   (cond
     (user/logged-in? session)
-      (ring.util.response/redirect "/") ;; ur already logged in
+    (ring.util.response/redirect "/") ;; ur already logged in
     :else
-      (ring.util.response/redirect github-login-url)
+    (ring.util.response/redirect github-login-url)
     ))
 
-(defn github-account [access-token]
+(defn get-github-account [access-token]
+  "Returns the raw json response from github for the 'current' authed user"
   (let [u           "https://api.github.com/user"
         getargs     {:accept :json 
                      :headers {"Authorization" (str "token " access-token)}
                      :as :json}
         response    (client/get u getargs)]
     (:body response)
-  ))
-(defn github-email [access-token]
+    ))
+
+(defn get-github-email [access-token]
   (let [u           "https://api.github.com/user/emails"
         getargs     {:accept :json 
                      :headers {"Authorization" (str "token " access-token)}
                      :as :json}
         response    (client/get u getargs)]
     (:email (first (:body response)))
-  ))
+    ))
 
 
-(defn github-access-token
+(defn get-github-access-token
   [github-session-code]
   (let [form-params {:client_id github-oauth-client-id
                      :client_secret github-oauth-secret
                      :code github-session-code}]
     (log/debugf "form-params is %s" form-params)
-    (client/post
-      "https://github.com/login/oauth/access_token"
-      {:form-params form-params
-       :socket-timeout 1000  ;; in milliseconds
-       :conn-timeout 1000    ;; in milliseconds
-       :accept :json
-       :as :json })
-    ))
+    ( -> 
+     (client/post
+       "https://github.com/login/oauth/access_token"
+       {:form-params form-params
+        :socket-timeout 1000  ;; in milliseconds
+        :conn-timeout 1000    ;; in milliseconds
+        :accept :json
+        :as :json })
+     :body 
+     :access_token
+     )))
+
+
+(defn user-from-github-account
+  [ access-token github-account ]
+  { :access-token access-token 
+   :id (:login github-account)
+   :email (:email github-account)
+   :company (:company github-account)
+   :name (:name github-account)
+   :last-login (.getTime (java.util.Date.)) })
+
 
 (defn auth-github-callback
-  [{session :session
-    {code :code} :params}]
-  (let [github-response (github-access-token code)
-        body (:body github-response :body)
-        access-token (:access_token body)
-        github-account (if access-token (github-account access-token) {})
-        email (if access-token (github-email access-token) nil)
+  [{ session :session 
+    { code :code } :params }]
+  (let [ access-token (get-github-access-token code)
+        github-account (if access-token (get-github-account access-token) {})
+        login (:login github-account)
+        email (if access-token (get-github-email access-token) nil)
         logged-in (if access-token true false)
         session (user/logged-in! session logged-in)
-        session (assoc session :email email)]
-    (log/debugf "Github Account %s" github-account)
-    (log/debugf "Email Is %s" email)
-    (log/debugf "Session is %s" session)
-    (log/debugf "Github Code is %s" code)
+        _ (if logged-in (user/user-logged-in login))
+        user-record (if logged-in (user/lookup-user login))
+        user-record (if (and logged-in (not user-record))
+                      (user/create-user login (user-from-github-account access-token github-account)))
+        session (if logged-in (assoc session :user user-record)) ]
     (log/debugf "Access Token is %s" access-token)
-    (-> (ring.util.response/redirect "/")
-        (assoc :session session))
-    ))
+    
+    (-> (ring.util.response/redirect "/") 
+        (assoc :session session))))
+
+
 
 
 (defroutes github-oauth-routes
