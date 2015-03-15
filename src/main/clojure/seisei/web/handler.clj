@@ -1,7 +1,7 @@
 (ns seisei.web.handler
   (:require [compojure.handler :as handler]
             [compojure.route :as route]
-            [compojure.core :refer [GET ANY defroutes routes]]
+            [compojure.core :refer [POST GET ANY defroutes routes]]
             [ring.util.response :refer [resource-response response]]
             [ring.middleware.defaults :refer [wrap-defaults site-defaults]]
             [ring.middleware.json :as json-middle]
@@ -10,6 +10,8 @@
             [seisei.web.user]
             [seisei.web.db :as db]
             [seisei.web.logout]
+            [seisei.engine]
+            [seisei.json]
             ))
 
 (defn startupcheck []
@@ -24,6 +26,23 @@
           {:body (or (db/user-templates "trevershick") []) }
           {:status 403})
            )))
+
+(defn run-template 
+  [request]
+  (let [session (:session request)
+        logged-in (seisei.web.user/logged-in? session)
+        template (-> request :body :template)
+        parsed-json (seisei.json/parse-with-error template)
+        processed (seisei.engine/process (:output parsed-json))]
+      (println "request" request)
+      (println "template" (:template request))
+      (println "parsed-json" parsed-json)
+      (println "processed" {:processed processed})
+      {:body {:processed processed 
+              :errors (:errors parsed-json) 
+              :input (:input parsed-json)}}
+    ))
+
 
 (defn my-account 
   [{session :session}]
@@ -40,6 +59,7 @@
 (defroutes app-routes
   (ANY "*" [] seisei.web.logout/logout-routes)
   (ANY "*" [] seisei.web.github-oauth/github-oauth-routes)
+  (POST "/template/process" r (run-template r))
   (GET "/my/templates" r (my-templates r))
   (GET "/my/account" r (my-account r))
   (GET "/" [] (resource-response "index.html" {:root "public"}))

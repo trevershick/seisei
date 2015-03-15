@@ -15,8 +15,10 @@
 
 	this.on('update', function() {
 		console.debug("update template-editor");
-		this.template = opts.editor.template
-		this.editor && this.editor.setValue(this.template);
+		if (this.text !== opts.editor.template) {
+			this.text = opts.editor.template;
+			this.editor && this.editor.setValue(this.text,-1);
+		}
 	}.bind(this));
 
 	this.on('unmount', function() {
@@ -34,7 +36,7 @@
 		this.editor.getSession().setMode("ace/mode/javascript");
 		this.editor.setHighlightActiveLine(false);
 		this.editor.setValue(this.template);
-
+		
 		this.editor.commands.addCommand({
     		name: 'myCommand',
     		bindKey: {win: 'Ctrl-M',  mac: 'Command-M'},

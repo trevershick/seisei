@@ -51,7 +51,8 @@
                               ["bower_components/ace-builds/src-min" { :includes [#".*/ace.js"
                                                                                   #".*/mode-javascript.js"
                                                                                   #".*/theme-twilight.js"
-                                                                                  #".*/worker-javascript.js"] }]
+                                                                                  #".*/worker-javascript.js"
+                                                                                  #".*/ext-searchbox.js"] }]
                               ]
              :target-path "resources/public/vendor"
              :verbose false

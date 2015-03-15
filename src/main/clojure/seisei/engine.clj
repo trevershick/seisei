@@ -109,11 +109,17 @@
    :abbrev))
 
 (defmethod execute "repeat" [operation]
-  (let [ n (first (:params operation))
+  (let [n (first (:params operation))
         a (:arg operation) ]
     (if-not (nil? a)
-      (for [i (range 0 n)]
-        (process a :i i))
+      (let [ans (for [i (range 0 n)] (process a :i i))]
+        (println "a->" a)
+        (println "operation->" operation)
+        (println "ans->" ans)
+        (println "a.class->" (.getClass a))
+        (println "Processed->" (process a))
+        ans
+      )
       "You must follow a repeat statement with an element"
       )
     )
@@ -142,7 +148,7 @@
     (= "today" (str in-str)) (now)
     (= "yesterday" (str in-str)) (yesterday)
     :else (.toDate (f/parse default-date-formatter (str in-str)))
-  ))
+    ))
 (defn local-date [from-date]
   (org.joda.time.DateTime. from-date))
 
@@ -155,7 +161,7 @@
         rangems (- maxms minms)
         randms  (.longValue (* (rand) rangems))]
     (java.util.Date. (+ minms randms))
-  ))
+    ))
 
 (defmethod execute "date"
   [op]
@@ -168,8 +174,8 @@
         from      (if (nil? pfrom) (start-of-time) (date-val pfrom (now)))
         til       (if (nil? ptil) (now) (date-val ptil (now)))
         formatter (f/formatter fmt)]
-        (f/unparse formatter (local-date (rand-date from til)))
-      ))
+    (f/unparse formatter (local-date (rand-date from til)))
+    ))
 
 (defmethod execute "integer"
   [op]
@@ -179,7 +185,7 @@
         end (first (rest ps))]
     (cond
       (and (= 2 psz) (every? #(instance? Number %) ps))
-        (let [n (- end start)] (+ start (rand-int n)))
+      (let [n (- end start)] (+ start (rand-int n)))
       :else (rand-int Integer/MAX_VALUE)
       )))
 
@@ -203,15 +209,18 @@
         texts (clojure.string/split s tag-regex)
         processed-tags (map #(execute ( parse-operation (tag-contents %) arg i)) tags)
         zipped (clojure.string/join (interleave texts processed-tags))]
-      (cond (= 0 (count tags)) s
-            (and (= 0 (count texts)) (= 1 (count tags))) (first processed-tags)
-            :else zipped)))
+    (cond (= 0 (count tags)) s
+          (and (= 0 (count texts)) (= 1 (count tags))) (first processed-tags)
+          :else zipped)))
 
 
 
 (defmethod process Long [s & {:keys [arg i]}] s)
 
 (comment (defmethod process :default [s & {:keys [arg i]}] s))
+
+(defmethod process clojure.lang.PersistentHashMap [m & {:keys [arg i]}]
+  (into {} (for [[k v] m] [k (process v :arg arg :i i)])))
 
 (defmethod process clojure.lang.PersistentArrayMap [m & {:keys [arg i]}]
   (into {} (for [[k v] m] [k (process v :arg arg :i i)])))
@@ -229,8 +238,10 @@
       (and
         (instance? String head)
         (is-tag head)
-        (= "repeat" (:name (parse-operation head)))
-        ) (concat (process head :arg arg :i i) (process tail2 :arg arg :i i))
+        (= "repeat" (:name (parse-operation head))))
+      (do
+        (concat (process head :arg arg :i i) (process tail2 :arg arg :i i))
+      ) 
       :else (cons head (process tail :arg arg :i i))
       )
     )

@@ -14,18 +14,23 @@
 	var self = this;
 
 	this.on('update', function() {
-		this.editor && this.editor.setValue(opts.editor.template);
+		if (!this.aceEditor) { return; }
+		if (opts.editor.templateOutput) {
+			this.aceEditor.setValue(JSON.stringify(opts.editor.templateOutput, null,4), -1);
+		} else {
+			this.aceEditor.setValue("", -1);
+		}
 	}.bind(this));
 
 	this.on('unmount', function() {
-		this.editor.destroy();
+		this.aceEditor.destroy();
 	}.bind(this));
 
 	this.on('mount', function(eventName) {
-		this.editor = ace.edit(this.editorElement);
-		this.editor.setTheme("ace/theme/twilight");
-		this.editor.getSession().setMode("ace/mode/javascript");
-		this.editor.setReadOnly(true);
+		this.aceEditor = ace.edit(this.editorElement);
+		this.aceEditor.setTheme("ace/theme/twilight");
+		this.aceEditor.getSession().setMode("ace/mode/javascript");
+		this.aceEditor.setReadOnly(true);
 		this.update();
   	}.bind(this));
 

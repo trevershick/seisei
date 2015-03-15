@@ -40,7 +40,8 @@
                (:id processed) => h/uuid-regex
                )))
 
-(def js3 (h/jsonfixture { :x "{{(random('blue','brown','green')}}" }))
+
+(def js3 (h/jsonfixture { :x "{{random('blue', 'brown', 'green')}}" }))
 (facts "about random()"
        (let [ processed ( process js3 ) ]
          (fact "it should return a random value from a supplied list"
