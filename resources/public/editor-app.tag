@@ -44,12 +44,12 @@
         }
     }
     onLogout() {
-        console.debug("onLogout Clicked");
+        // console.debug("onLogout Clicked");
         opts.accounts.logout();
     }
 
     onLogin() {
-        console.debug("onLogin Clicked");
+        // console.debug("onLogin Clicked");
         opts.accounts.login();
     }
 

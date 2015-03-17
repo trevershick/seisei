@@ -42,7 +42,7 @@
     }
 
 	this.on('update', function(eventName) {
-		console.debug("dropdown update");
+		// console.debug("dropdown update");
 		this.items = this.opts.templates;
 	}.bind(this));
 

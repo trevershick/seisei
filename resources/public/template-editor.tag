@@ -17,7 +17,7 @@
 		// console.debug("update template-editor");
 		var currentTemplateContent = opts.editor.getCurrentTemplate().content;
 		if (this.text !== currentTemplateContent) {
-			console.log("template-editor, onUpdate", currentTemplateContent);
+			// console.log("template-editor, onUpdate", currentTemplateContent);
 			this.text = currentTemplateContent;
 			this.editor && this.editor.setValue(this.text,-1);
 		}

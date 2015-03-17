@@ -36,11 +36,11 @@
 
   <script>
     var router = function(collection, id, action) {
-      console.log("route", {collection:collection, id:id, action:action});
+      // console.log("route", {collection:collection, id:id, action:action});
       if ("login" === collection && accountStore.loggedIn === false) {
         accountStore.login();
       } else if ("logout" === collection) {
-        console.log("routing to logout");
+        // console.log("routing to logout");
         accountStore.logout();
       } else if ("template" === collection && id) {
         editorStore.loadTemplate(id);
