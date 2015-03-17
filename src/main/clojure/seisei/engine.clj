@@ -217,7 +217,7 @@
 
 (defmethod process Long [s & {:keys [arg i]}] s)
 
-(comment (defmethod process :default [s & {:keys [arg i]}] s))
+(defmethod process :default [s & {:keys [arg i]}] s)
 
 (defmethod process clojure.lang.PersistentHashMap [m & {:keys [arg i]}]
   (into {} (for [[k v] m] [k (process v :arg arg :i i)])))

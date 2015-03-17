@@ -1,5 +1,6 @@
 (ns seisei.web.user
   (:require [seisei.web.db :as db]
+            [clojure.tools.logging :as log]
             [taoensso.faraday :as far]))
 
 
@@ -22,9 +23,11 @@
 
 (defn lookup-user 
   [user-id]
-  (far/get-item db/aws-dynamodb-client-opts 
-                db/table-users 
-                { :id user-id }))
+  (let [user (far/get-item db/aws-dynamodb-client-opts 
+                           db/table-users 
+                           { :id user-id })]
+    (log/debugf "lookup-user, user =%s" user)
+    user))
 
 (defn create-user
   [user-id attr-map]

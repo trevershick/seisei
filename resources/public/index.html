@@ -8,6 +8,7 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.2/html5shiv.min.js"></script>
   <script>html5.addElements('todo')</script>
   <![endif]-->
+  <script src="vendor/lodash.min.js"></script>
   <script src="vendor/riot.min.js"></script>
   <script src="seisei-tags.js" ></script>
 
@@ -26,39 +27,58 @@
   <link rel="stylesheet" href="https://bootswatch.com/superhero/bootstrap.min.css"></head>
   <link rel="stylesheet" href="vendor/bootstrap-social.css">
   <link rel="stylesheet" href="css/main.css">
+  <title>生成 - JSON Generation</title>
 <body>
-<editor-app></editor-app>
-
-
-
-
-
-
-
-
-
+  <messages></messages>
+  <editor-app></editor-app>
 
   <script>
-    var test_template = {
-      x: "{{city}}"
+    var router = function(collection, id, action) {
+      console.log("route", {collection:collection, id:id, action:action});
+      if ("login" === collection && accountStore.loggedIn === false) {
+        accountStore.login();
+      } else if ("logout" === collection) {
+        console.log("routing to logout");
+        accountStore.logout();
+      } else if ("template" === collection && id) {
+        editorStore.loadTemplate(id);
+      }
     };
+    riot.route(router);
 
     var accountStore = new MyAccountStore();
     var editorStore = new EditorStore();
+    var messageStore = new MessageStore();
+    var templateListStore = new TemplateListStore();
+
     accountStore.init();
     editorStore.init();
 
-    accountStore.on('change', function(eventName) {
+    var updateriot= function(eventName) {
       riot.update();
-    });
-    editorStore.on('change', function(eventName) {
-      riot.update();
+    };
+
+    accountStore.on('change', updateriot);
+    editorStore.on('change', updateriot);
+    messageStore.on('change', updateriot);
+    templateListStore.on('change', updateriot);
+
+    editorStore.on('on-slug', function(newSlug) {
+      riot.route("template/" + newSlug);
     });
 
-    accountStore.on("received-account", editorStore.refresh.bind(editorStore));
+    messageStore.listen(editorStore);
+    messageStore.listen(accountStore);
+
+
+    accountStore.on("received-account", templateListStore.refresh.bind(templateListStore));
 
     $(function() {
-      riot.mount('editor-app', { accounts: accountStore, editor: editorStore });
+      riot.mount('editor-app', { accounts: accountStore, editor: editorStore, templates: templateListStore });
+      riot.mount('messages', {messages: messageStore.messages.bind(messageStore), close:messageStore.removeMessage.bind(messageStore)});
+      riot.route.exec(router);
+
+
     });
 
   </script>

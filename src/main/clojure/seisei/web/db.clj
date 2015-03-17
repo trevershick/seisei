@@ -7,6 +7,7 @@
 (def table-users :users)
 (def table-sessions :sessions)
 (def table-templates :templates)
+(def table-slugs :slugs)
 
 (def aws-dynamodb-access-key (env :aws-dynamodb-access-key))
 (def aws-dynamodb-secret-key (env :aws-dynamodb-secret-key))
@@ -23,8 +24,12 @@
   (.toUpperCase (Integer/toString (+ 62193781 (* (- 2176782335 62193781) (rand))) 36)))
 
 
+(defn random-id [] (str (java.util.UUID/randomUUID)))
 
 
+(defn now
+  []
+  (java.util.Date.))
 
 ;; User
 ;;  username (string) -> id?
@@ -50,22 +55,63 @@
 ;;  id (slug)
 ;;  Template
 
-(def capacities {:sessions      { :read 5 :write 5 }
-                 :users         { :read 5 :write 5 }
-                 :templates     { :read 5 :write 5 } })
+(defn insert-template
+  [user-id template]
+  (let [template-id (random-slug)
+        new-template {:user user-id 
+                      :slug template-id
+                      :title (str "Template " template-id)
+                      :content template }]
+    (log/infof "New Template %s" (str new-template) )
+    (far/put-item aws-dynamodb-client-opts 
+                  table-templates
+                  new-template)
+    new-template))
 
+
+
+(defn update-user-template
+  [user-id slug content title]
+  (log/debugf "Save template for user/slug %s/%s" user-id slug)
+  (let [updated (far/update-item aws-dynamodb-client-opts
+                table-templates
+                {:user user-id :slug slug}
+                {:content [:put content]
+                 :title [:put title]
+                 :updated [:put (.getTime (now))]} 
+                {:return :all-new } )]
+    (println "Updated template is %s" updated)
+    updated))
+
+(defn user-template
+  [user-id slug]
+  (log/debugf "Load template for user/slug %s/%s" user-id slug)
+  (far/get-item aws-dynamodb-client-opts
+                table-templates
+                {:user user-id :slug slug}))
+  
 (defn user-templates 
   [user-id]
   (let [order-by        :title
         pk-cond         {:user [:eq user-id]} 
-        opts            {:return ["title" "id"] 
-                         :order :asc }
+        opts            {:return ["title" "slug" "updated"]}
         table           :templates
         results         (far/query aws-dynamodb-client-opts table pk-cond opts)]
-    (sort-by :title results)
-    ))
+    ;; if updated is missing add it as '0', then sort descending
+    (sort-by 
+      #(* -1 (:updated %)) 
+      (map 
+        #(merge {:updated 0} %) 
+        results))))
 
 
+
+
+
+(def capacities {:sessions      { :read 5 :write 5 }
+                 :users         { :read 5 :write 5 }
+                 :templates     { :read 5 :write 5 }
+                 :slugs         { :read 5 :write 5 } })
 
 (defn startup-database
   []
@@ -88,10 +134,18 @@
     aws-dynamodb-client-opts
     table-templates ;; table name
     [:user :s] ;; key structure (username)
-    {:range-keydef [ :id :s ]
+    {:range-keydef [ :slug :s ]
      :throughput (:templates capacities)
      :block? true })
-  (log/info "Done."))
+
+  (far/ensure-table  ;; this is the public slugs table that will piont to a user/slug combo (maybe)
+    aws-dynamodb-client-opts
+    table-slugs ;; table name
+    [:slug :s] ;; key structure (username)
+    { :throughput (:templates capacities)
+     :block? true })
+  
+    (log/info "Done."))
 
 
 (defn startupcheck []

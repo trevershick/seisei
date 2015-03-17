@@ -24,6 +24,7 @@
   :bower-dependencies [[bootstrap "3.3.2"]
                        [ace-builds "1.1.8"]
                        [riotjs "2.0.12"]
+                       [lodash "3.5.0"]
                        [bootstrap-social "4.8.0"]]
   
   :plugins [[lein-midje "3.1.3"]
@@ -42,6 +43,7 @@
   :resource {
              :resource-paths [
                               ["bower_components/riotjs" { :includes [#".*/riot.min.js"] }]
+                              ["bower_components/lodash" { :includes [#".*/lodash.min.js"] }]
                               ["bower_components/bootstrap/dist/js" { :includes [#".*/bootstrap.min.js"] }]
                               ["bower_components/bootstrap/dist/css" { :includes [#".*/bootstrap.min.css"] }]
                               ["bower_components/jquery/dist" { :includes [#".*/jquery.min.js"] }]

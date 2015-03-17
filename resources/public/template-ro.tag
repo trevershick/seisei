@@ -4,14 +4,18 @@
 
 	</div>
 	<style scoped>
-    .editor {
-      width:100%;
-      height:100%;
-    }
-  </style>
+	    .editor {
+		      width:100%;
+	    	  height:100%;
+	    }
+	    .processing {
+	    	opacity: 0.2;
+	    }
+  	</style>
 
 	</style>
 	var self = this;
+
 
 	this.on('update', function() {
 		if (!this.aceEditor) { return; }

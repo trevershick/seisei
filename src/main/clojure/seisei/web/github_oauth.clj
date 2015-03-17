@@ -96,9 +96,12 @@
         _ (if logged-in (user/user-logged-in login))
         user-record (if logged-in (user/lookup-user login))
         user-record (if (and logged-in (not user-record))
-                      (user/create-user login (user-from-github-account access-token github-account)))
+                      (user/create-user login (user-from-github-account access-token github-account))
+                      user-record)
         session (if logged-in (assoc session :user user-record)) ]
+    (log/debugf "User Record is %s" user-record)
     (log/debugf "Access Token is %s" access-token)
+    (log/debugf "Session is %s" session)
     
     (-> (ring.util.response/redirect "/") 
         (assoc :session session))))

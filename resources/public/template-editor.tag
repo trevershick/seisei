@@ -15,8 +15,10 @@
 
 	this.on('update', function() {
 		console.debug("update template-editor");
-		if (this.text !== opts.editor.template) {
-			this.text = opts.editor.template;
+		var currentTemplateContent = opts.editor.getCurrentTemplate().content;
+		if (this.text !== currentTemplateContent) {
+			console.log("template-editor, onUpdate", currentTemplateContent);
+			this.text = currentTemplateContent;
 			this.editor && this.editor.setValue(this.text,-1);
 		}
 	}.bind(this));
@@ -28,15 +30,15 @@
 	this.on('mount', function(eventName) {
 		console.debug("mounting the editor");
 		this.editor = ace.edit(this.editorElement);
-		this.editor.on("change", function() {
-			self.text = self.editor.getValue();
-			opts.editor.setTemplate(self.text);
-		});
 		this.editor.setTheme("ace/theme/twilight");
 		this.editor.getSession().setMode("ace/mode/javascript");
 		this.editor.setHighlightActiveLine(false);
-		this.editor.setValue(this.template);
-		
+		this.editor.setValue(this.text);
+		this.editor.on("change", function() {
+			self.text = self.editor.getValue();
+			opts.editor.setTemplateContent(self.text);
+		});
+
 		this.editor.commands.addCommand({
     		name: 'myCommand',
     		bindKey: {win: 'Ctrl-M',  mac: 'Command-M'},
