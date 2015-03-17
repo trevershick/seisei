@@ -69,6 +69,14 @@
       riot.route("template/" + newSlug);
     });
 
+    editorStore.on('on-new', function(newSlug) {
+      riot.route("#");
+    });
+    editorStore.on('template-deleted', function() {
+      riot.route("#");
+      templateListStore.refresh();
+    });
+
     messageStore.listen(editorStore);
     messageStore.listen(accountStore);
 

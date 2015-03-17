@@ -28,7 +28,12 @@
         title={opts.editor.getCurrentTemplate().title}></rename-modal>
 
     <div class="row">
-        <editor-menu save={onSave} run={onRun} tidy={onTidy} 
+        <editor-menu save={ onSave } run={ onRun } tidy={ onTidy } 
+            showDelete={ this.hasSavedTemplate }
+            delete={ onDelete }
+            new={ onNew }
+            showNew={ this.hasSavedTemplate }
+            feedback={ onFeedback }
             login={onLogin}
             logout={onLogout}
             loggedin={opts.accounts.loggedIn} 
@@ -65,6 +70,7 @@
             return opts.editor.getCurrentTemplate().title
         }
     }
+
     onLogout() {
         // console.debug("onLogout Clicked");
         opts.accounts.logout();
@@ -78,9 +84,23 @@
     onSave() {
         this.opts.editor.saveTemplate();
     }
+
+    onDelete() {
+        this.opts.editor.deleteTemplate();
+    }
+
+    onNew() {
+        this.opts.editor.newTemplate();
+    }
+
+    onFeedback() {
+        window.open("https://github.com/trevershick/seisei/issues","_blank");
+    }
+
     onRun() {
         this.opts.editor.process();
     }
+
     onTidy() {
         this.opts.editor.tidy();
     }
@@ -88,12 +108,14 @@
     onRenameClose() {
         this.showRename = false;
     }
+
     onRenameSave(newName) {
         // do rename here
         this.showRename = false;
         this.opts.editor.getCurrentTemplate().title = newName;
         this.opts.editor.saveTemplate();
     }
+
     onRenameClick() {
         this.showRename = true;
     }
@@ -109,6 +131,7 @@
 
     this.on('update', function(eventName) {
         // console.debug("editor-app update");
+        this.hasSavedTemplate = this.opts.editor.isTemplateSaved();
     }.bind(this));
 
     this.on('mount', function(eventName) {

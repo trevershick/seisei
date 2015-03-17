@@ -69,6 +69,12 @@
     new-template))
 
 
+(defn delete-user-template 
+  [ user-id slug ]
+  (log/debugf "Delete template for user/slug %s/%s" user-id slug)
+  (far/delete-item aws-dynamodb-client-opts
+                   table-templates
+                   {:user user-id :slug slug}))
 
 (defn update-user-template
   [user-id slug content title]

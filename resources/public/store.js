@@ -49,18 +49,23 @@ MessageStore.prototype.removeMessage = function(message) {
 };
 
 MessageStore.prototype.addMessage = function(type,message) {
-	message = _.isString(message) ? message : message.message ? message.message : message.toString();
+	var m = message;
+	m = _.isString(m) ? m : m;
+	m = _.isString(m.message) ? m.message : m;
+	m = _.isString(m.responseText) ? m.status + " - " + m.responseText : m;
+	m = m.toString();
+	
 	var m = {
 		id: this.messageNumber++,
 		when: new Date(),
 		type: type,
-		text: message
+		text: m
 	};
 	this._messages.push(m);
 	setTimeout(function() {
 		this.removeMessage(m);
 	}.bind(this), 2000);
-
+	this.trigger("change");
 	return m;
 };
 
@@ -84,7 +89,7 @@ TemplateListStore.prototype.refresh = function() {
 		error: this.basicErrorHandler.bind(this),
 		success: this.onReceivedTemplates.bind(this)
 	});
-}
+};
 
 TemplateListStore.prototype.basicErrorHandler = function(err) {
 	this.trigger("on-message-error", err);
@@ -94,7 +99,7 @@ TemplateListStore.prototype.onReceivedTemplates = function(templatesData) {
 	// console.debug("onReceivedTemplates", templatesData);
 	this.templates = templatesData;
 	this.trigger('change');
-}
+};
 
 
 
@@ -149,18 +154,24 @@ var test_template = {
 
 function EditorStore() {
 	riot.observable(this);
-	this.currentTemplate = {
-		id: null,
-		title: "Untitled",
-		content: JSON.stringify(test_template,null,4)
-	};
+	this.init();
+	
 	//console.log("EditorStore, ctor", test_template);
 	//console.log("EditorStore, ctor", this.currentTemplate);
 	this.templateOutput = null;
-	this.templates = [];
-	this.messages = [];
 	return this;
+};
+
+EditorStore.prototype.isTemplateSaved = function() {
+	return typeof(this.getCurrentTemplate().slug) === 'string';
 }
+
+
+EditorStore.prototype.newTemplate = function() {
+	this.init();
+	this.trigger("on-new");
+	this.emitChange();
+};
 
 EditorStore.prototype.onReceivedTemplateProcessed = function(data) {
 	this.templateOutput = data.processed;
@@ -174,25 +185,30 @@ EditorStore.prototype.onReceivedTemplateProcessed = function(data) {
 
 EditorStore.prototype.basicErrorHandler = function(err) {
 	if (403 == err.status) return;
-	console.error("onReceivedTemplatesError", err);
+	console.error("basicErrorHandler", err);
 	this.trigger('on-message-error', err);
-}
+};
 
 EditorStore.prototype.init = function() {
-
-}
+	this.currentTemplate = {
+		id: null,
+		title: "Untitled",
+		content: JSON.stringify(test_template,null,4)
+	};
+	this.templateOutput = null;
+};
 
 
 
 EditorStore.prototype.getCurrentTemplate = function() {
 		//console.log("EditorStore, getCurrentTemplate", this.currentTemplate);
 	return this.currentTemplate;
-}
+};
 
 EditorStore.prototype.setTemplateContent = function(text) {
 	this.currentTemplate.content = text;
 	this.emitChange();
-}
+};
 
 EditorStore.prototype.tidy = function() {
 	try {
@@ -224,6 +240,15 @@ EditorStore.prototype.loadTemplate = function(slug) {
 };
 
 
+EditorStore.prototype.onTemplateDeleted = function(data) {
+	//console.log("onTemplateSaved");
+	this.trigger('on-message-ok', "Deleted.");
+	// update the template attributes
+	this.init();
+
+	this.trigger('template-deleted');
+	this.emitChange(); // notify everyone that stuff has changed
+};
 EditorStore.prototype.onTemplateSaved = function(data) {
 	//console.log("onTemplateSaved");
 	this.trigger('on-message-ok', "Saved.");
@@ -255,6 +280,18 @@ EditorStore.prototype.saveTemplate = function() {
 	});
 };
 
+EditorStore.prototype.deleteTemplate = function() {
+	$.ajax({
+		url: "/my/templates/" + this.getCurrentTemplate().slug,
+		method: "DELETE",
+		dataType: "json",
+		contentType: "application/json",
+		cache: false,
+		error: this.basicErrorHandler.bind(this),
+		success: this.onTemplateDeleted.bind(this)
+	});
+};
+
 EditorStore.prototype.process = function() {ing = true;
 	var body = {
 		template : this.getCurrentTemplate()
@@ -276,4 +313,4 @@ EditorStore.prototype.onProcessError = function(err) {
 
 EditorStore.prototype.emitChange = function(text) {
 	this.trigger('change');
-}
+};
