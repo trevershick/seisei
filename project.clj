@@ -25,7 +25,8 @@
                        [ace-builds "1.1.8"]
                        [riotjs "2.0.12"]
                        [lodash "3.5.0"]
-                       [bootstrap-social "4.8.0"]]
+                       [bootstrap-social "4.8.0"]
+                       [mousetrap "1.4.6"]]
   
   :plugins [[lein-midje "3.1.3"]
             [lein-marginalia "0.8.0"]
@@ -42,6 +43,8 @@
   :bower {:directory "bower_components"}
   :resource {
              :resource-paths [
+                              ["bower_components/mousetrap/plugins/global-bind/" { :includes [#".*/.*.min.js"] }]
+                              ["bower_components/mousetrap" { :includes [#".*/mousetrap.min.js"] }]
                               ["bower_components/riotjs" { :includes [#".*/riot.min.js"] }]
                               ["bower_components/lodash" { :includes [#".*/lodash.min.js"] }]
                               ["bower_components/bootstrap/dist/js" { :includes [#".*/bootstrap.min.js"] }]

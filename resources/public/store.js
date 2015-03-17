@@ -237,7 +237,6 @@ EditorStore.prototype.onTemplateSaved = function(data) {
 	if (existingSlug !== data.template.slug) {
 		this.trigger('on-slug', data.template.slug); 
 	}
-	this.refresh(); // reload the template list
 };
 
 EditorStore.prototype.saveTemplate = function() {

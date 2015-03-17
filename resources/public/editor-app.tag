@@ -19,7 +19,7 @@
     <div class="row" style="height:75%">
         <div class="row" style="height:100%;">
             <div class="col-sm-6" style="height:100%;padding:0px;">
-                <template-editor editor={opts.editor}></template-editor>
+                <template-editor editor={opts.editor} run={ onRun } save={ onSave } tidy={ onTidy }></template-editor>
                 <div style='text-align:right'>
                 <b class="floater"><span class="glyphicon glyphicon-console"></span></b>
                 </div>
@@ -32,6 +32,10 @@
             </div>
         </div>
     </div>
+
+    <hotkey-prompt>
+        <kbd>esc</kbd> to show hotkeys
+    </hotkey-prompt>
 
 
     currentTemplateTitle() {
@@ -82,11 +86,11 @@
     }
 
     this.on('update', function(eventName) {
-        console.debug("editor-app update");
+        // console.debug("editor-app update");
     }.bind(this));
 
     this.on('mount', function(eventName) {
-        console.debug("editor-app mount");
+        // console.debug("editor-app mount");
         this.open = false;
         this.showRename = false;
     }.bind(this));
