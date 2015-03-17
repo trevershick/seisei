@@ -36,9 +36,3 @@ div.row {
 .navbar {
 	margin-bottom:5px;
 }
-b.floater {
-	z-index: 99;
-  position: absolute;
-  bottom: 10px;
-  right: 10px;
-}

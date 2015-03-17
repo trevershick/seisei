@@ -1,5 +1,27 @@
 <editor-app>
 
+    <style scoped>
+    b.floater {
+        z-index: 99;
+        position: absolute;
+        bottom: 10px;
+        right: 10px;
+    }   
+    .glyphicon-remove {
+        color:red;
+    }
+    .glyphicon-ok {
+        color: green;
+    }
+    .editor-row {
+        position: absolute;
+        left:2px;
+        right:2px;
+        top:43px;
+        bottom:35px;
+    }
+    </style>
+
     <rename-modal save={onRenameSave} 
         close={onRenameClose} 
         x={ this.showRename }
@@ -16,7 +38,7 @@
             title={currentTemplateTitle()} ></editor-menu>
     </div>
 
-    <div class="row" style="height:75%">
+    <div class="row editor-row">
         <div class="row" style="height:100%;">
             <div class="col-sm-6" style="height:100%;padding:0px;">
                 <template-editor editor={opts.editor} run={ onRun } save={ onSave } tidy={ onTidy }></template-editor>

@@ -1,4 +1,10 @@
 <editor-menu>
+    <style scoped>
+    .dropdown-menu {
+        max-height:350px;
+        overflow-y:scroll;
+    }
+    </style>
     <hotkeys show={ this.showhk }></hotkeys>
 
 	<nav class="navbar navbar-default">
@@ -15,7 +21,7 @@
                 <li><a href="#" onClick={opts.tidy} if={opts.tidy}><span class="glyphicon glyphicon-indent-left"></span> T<u>i</u>dy</a></li>
                 <li>
 				 	<a if={items.length > 0} href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Templates <span class="caret"></span></a>
-				    <ul if={items.length > 0} class="dropdown-menu" role="menu" >
+				    <ul if={items.length > 0} class="dropdown-menu" role="menu">
 						<li each={items}><a href="#template/{slug}">{title}</a></li>
 					</ul>
                 </li>
