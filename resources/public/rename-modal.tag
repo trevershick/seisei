@@ -9,12 +9,16 @@
         <h4 class="modal-title">Rename Template</h4>
       </div>
       <div class="modal-body">
-	  	Rename the template to : <input type="text" name="newName" id="newName" value={opts.title}/>
+      	<div class="form-group">
+      		<label for="newName">Rename the template to : </label>
+      		<input type="text" name="newName" id="newName" value={opts.title} class="form-control" />
+      	</div>
+	  	
 	  </div>
 	  <div class="modal-footer">
 
 		  	<button class="btn btn-primary" onclick={onSave}>Save</button>
-		  	<button class="btn btn-default" onclick={opts.close}>Close</button>
+		  	<button class="btn btn-default" onclick={opts.close}>Cancel</button>
 
 	  </div>
     </div>
