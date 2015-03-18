@@ -32,9 +32,11 @@
 (defn create-user
   [user-id attr-map]
   (let [ clean-attr (into {} (remove (comp nil? val) attr-map))]
+    (log/infof "Creating user %s with %s" user-id attr-map)
     (far/put-item db/aws-dynamodb-client-opts 
                   db/table-users 
-                  (merge { :id user-id } clean-attr))))
+                  (merge { :id user-id } clean-attr))
+    (assoc clean-attr :id user-id)))
 
 (defn user-logged-in
   [user-id]

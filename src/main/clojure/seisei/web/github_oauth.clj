@@ -93,11 +93,11 @@
         email (if access-token (get-github-email access-token) nil)
         logged-in (if access-token true false)
         session (user/logged-in! session logged-in)
-        _ (if logged-in (user/user-logged-in login))
         user-record (if logged-in (user/lookup-user login))
-        user-record (if (and logged-in (not user-record))
+        user-record (if (and logged-in (nil? user-record))
                       (user/create-user login (user-from-github-account access-token github-account))
                       user-record)
+        _ (if logged-in (user/user-logged-in login))
         session (if logged-in (assoc session :user user-record)) ]
     (log/debugf "User Record is %s" user-record)
     (log/debugf "Access Token is %s" access-token)
