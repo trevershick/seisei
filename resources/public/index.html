@@ -76,6 +76,9 @@
       riot.route("#");
       templateListStore.refresh();
     });
+    editorStore.on('template-saved', function() {
+      templateListStore.refresh();
+    });
 
     messageStore.listen(editorStore);
     messageStore.listen(accountStore);

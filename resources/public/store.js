@@ -256,6 +256,8 @@ EditorStore.prototype.onTemplateSaved = function(data) {
 	var existingSlug = this.currentTemplate.slug;
 
 	this.currentTemplate = data.template;
+	this.templateOutput = data.processed;
+
 	this.trigger('template-saved', data.template);
 	this.emitChange(); // notify everyone that stuff has changed
 

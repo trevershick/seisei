@@ -1,14 +1,23 @@
 <messages>
+	<style scope>
+	.messages-overlay {
+		position: absolute;
+		width: 100%;
+		z-index: 2000;
+		bottom: 0;
+	}
+	.alert {
+		margin-left:auto;
+		margin-right:auto;
+		width:50%;
+	}
+	</style>
 	<div class="messages-overlay">
 		<div each={this._messages}>
-
 		<div class={parent.messageClasses(type)}>
 			<button type="button" class="close" onclick={parent.remove} aria-label="Close"><span aria-hidden="true">&times;</span></button>
 			&nbsp;{text}
 		</div>
-	
-
-
 		</div>
 	</div>
 	
@@ -22,7 +31,6 @@
 		} else {
 			this._messages = this.opts.messages;
 		}
-		
 	});
 
 	remove(e) {

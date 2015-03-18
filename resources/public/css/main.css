@@ -20,19 +20,6 @@ div.row {
 .navbar-default .navbar-nav>li a.btn {
 	padding:8px 8px 6px 40px;
 }
-.messages-overlay {
-	position: absolute;
-	width: 100%;
-	z-index: 10;
-	margin-top: 50px;
-	padding-left: 30px;
-	padding-right: 30px;
-}
-.alert {
-	margin-left:auto;
-	margin-right:auto;
-	width:50%;
-}
 .navbar {
 	margin-bottom:5px;
 }

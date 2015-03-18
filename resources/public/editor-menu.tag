@@ -30,7 +30,7 @@
             </ul>
 
             <ul class="nav navbar-nav navbar-right">
-                <li><a href="#" onClick={ opts.feedback } if={ _.isFunction(opts.feedback) }><span class="glyphicon glyphicon-feedback"></span> <u>F</u>eedback</a></li>
+                <li><a href="#" onClick={ opts.feedback } if={ _.isFunction(opts.feedback) }><span class="glyphicon glyphicon-feedback"></span> Feedback</a></li>
                 <li><login-with-github login={opts.login} loggedin={opts.loggedin} logout={opts.logout}></login-with-github></li>
             </ul>
             <ul class="nav navbar-nav navbar-right">

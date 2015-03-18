@@ -21,6 +21,11 @@
         bottom:35px;
     }
     </style>
+    <confirm-dialog 
+        showConfirm={ this.showConfirm } 
+        callback={ onConfirm } 
+        title={ confirmTitle }
+        message={ confirmMessage} ></confirm-dialog>
 
     <rename-modal save={onRenameSave} 
         close={onRenameClose} 
@@ -72,12 +77,10 @@
     }
 
     onLogout() {
-        // console.debug("onLogout Clicked");
         opts.accounts.logout();
     }
 
     onLogin() {
-        // console.debug("onLogin Clicked");
         opts.accounts.login();
     }
 
@@ -86,7 +89,12 @@
     }
 
     onDelete() {
-        this.opts.editor.deleteTemplate();
+        this.confirm(function(yesOrNo) {
+            if (yesOrNo) {
+                this.opts.editor.deleteTemplate();
+            }
+        }.bind(this), "Are you sure you want to delete " + this.currentTemplateTitle() + " ?", "Delete your template?");
+        riot.update(this);
     }
 
     onNew() {
@@ -119,6 +127,7 @@
     onRenameClick() {
         this.showRename = true;
     }
+
     getProcessedClasses() {
         var cx = ['glyphicon'];
         if (this.opts.editor.templateOutput) {
@@ -129,15 +138,27 @@
         return cx.join(' ');
     }
 
+    confirm(callback, msg, title) {
+        this.confirmTitle = title;
+        this.confirmMessage = msg;
+        this.confirmcallback = callback;
+        this.showConfirm = true;
+    }
+
+    onConfirm(trueOrFalse) {
+        this.showConfirm = false;
+        this.confirmcallback(trueOrFalse);
+    }
+
     this.on('update', function(eventName) {
-        // console.debug("editor-app update");
         this.hasSavedTemplate = this.opts.editor.isTemplateSaved();
+
     }.bind(this));
 
     this.on('mount', function(eventName) {
-        // console.debug("editor-app mount");
         this.open = false;
         this.showRename = false;
+        this.showConfirm = false;
     }.bind(this));
 
 </editor-app>
