@@ -2,7 +2,7 @@
   (:require [compojure.handler :as handler]
             [compojure.route :as route]
             [compojure.core :refer [POST GET ANY defroutes routes]]
-            [ring.util.response :refer [resource-response response]]
+            [ring.util.response :refer [resource-response response header]]
             [ring.middleware.defaults :refer [wrap-defaults site-defaults]]
             [ring.middleware.json :as json-middle]
             [clojure.tools.logging :as log]
@@ -38,14 +38,23 @@
   (ANY "*" [] seisei.web.github-oauth/github-oauth-routes)
   (ANY "*" [] seisei.web.template-handlers/template-routes)
   (GET "/my/account" r (my-account r))
-  (GET "/" [] (resource-response "index.html" {:root "public"}))
+  (GET "/" [] ( -> 
+               (resource-response "index.html" {:root "public"})
+               (header "Content-Type" "text/html; charset=utf-8")))
   (route/resources "/")
   (route/not-found "Page not found"))
 
 (def session-store (seisei.web.session.DynamoDbStore.))
 
-(def app
-  (-> (handler/site app-routes {:session {:store session-store
-                                          :cookie-attrs {:max-age 3600} }})
+(def my-defaults (let [opts site-defaults
+                       opts (assoc-in opts [:session :store] session-store)
+                       opts (assoc-in opts [:session :cookie-attrs :max-age] 3600)
+                       opts (assoc-in opts [:security :anti-forgery] false) ]
+                   opts ))
+
+(def app  
+  (-> app-routes
       (json-middle/wrap-json-body {:keywords? true})
-      (json-middle/wrap-json-response)))
+      (json-middle/wrap-json-response)
+      (wrap-defaults my-defaults)
+  ))

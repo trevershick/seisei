@@ -95,7 +95,7 @@
         session (user/logged-in! session logged-in)
         user-record (if logged-in (user/lookup-user login))
         user-record (if (and logged-in (nil? user-record))
-                      (user/create-user login (user-from-github-account access-token github-account))
+                      (user/create-user login (assoc (user-from-github-account access-token github-account) :email email))
                       user-record)
         _ (if logged-in (user/user-logged-in login))
         session (if logged-in (assoc session :user user-record)) ]
