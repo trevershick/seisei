@@ -53,9 +53,10 @@
 
 (defn my-templates
   [{session :session}]
-  (let [logged-in (seisei.web.user/logged-in? session)]
+  (let [logged-in (seisei.web.user/logged-in? session)
+        user-id   (seisei.web.user/user-id session)]
     (-> (if logged-in 
-          {:body (or (db/user-templates "trevershick") []) }
+          {:body (or (db/user-templates user-id) []) }
           {:status 403})
         )))
 

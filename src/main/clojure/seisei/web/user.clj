@@ -9,6 +9,9 @@
   [session b]
   (assoc session :logged-in b))
 
+(defn user-id
+  [session s]
+  (-> session :user :id))
 
 
 ;; User
