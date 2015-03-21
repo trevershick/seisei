@@ -113,11 +113,6 @@
         a (:arg operation) ]
     (if-not (nil? a)
       (let [ans (for [i (range 0 n)] (process a :i i))]
-        (println "a->" a)
-        (println "operation->" operation)
-        (println "ans->" ans)
-        (println "a.class->" (.getClass a))
-        (println "Processed->" (process a))
         ans
       )
       "You must follow a repeat statement with an element"
@@ -241,7 +236,7 @@
         (= "repeat" (:name (parse-operation head))))
       (do
         (concat (process head :arg arg :i i) (process tail2 :arg arg :i i))
-      ) 
+      )
       :else (cons head (process tail :arg arg :i i))
       )
     )

@@ -1,6 +1,7 @@
 (defproject seisei "0.1.0-SNAPSHOT"
   :description "FIXME: write description"
   :url "http://example.com/FIXME"
+  :debug true
   :license {:name "Eclipse Public License"
             :url "http://www.eclipse.org/legal/epl-v10.html"}
   :dependencies [[org.clojure/clojure "1.6.0"]
@@ -27,20 +28,22 @@
                        [lodash "3.5.0"]
                        [bootstrap-social "4.8.0"]
                        [mousetrap "1.4.6"]]
-  
+
   :plugins [[lein-midje "3.1.3"]
             [lein-marginalia "0.8.0"]
             [lein-resource "14.10.1"]
             [lein-ring "0.8.13"]
             [lein-bower "0.5.1"]
             [lein-riot "0.0.1"]]
-  
-  :riot {:tags [["resources/public/" "resources/public/seisei-tags.js"]]}
+
   :ring {:handler seisei.web.handler/app
          :port 8888
          :auto-refresh? true
          :init seisei.web.handler/startupcheck }
   :bower {:directory "bower_components"}
+  :riot {
+         :compact true
+         :tags [["resources/public/" "resources/public/seisei-tags.js"]]}
   :resource {
              :resource-paths [
                               ["bower_components/mousetrap/plugins/global-bind/" { :includes [#".*/.*.min.js"] }]
@@ -71,7 +74,7 @@
   :profiles {:uberjar {:aot :all}
              :dev     {:dependencies [[javax.servlet/servlet-api "2.5"]
                                       [ring-mock "0.1.5"]]}}
-  :aliases {"full" ["do" ["bower" "install"] "resource" "compile"]
+  :aliases {"ci" ["do" ["clean"] ["bower" "install"] ["riot"] ["resource"] ["midje"]]
             "data" ["run" "-m" "seisei.tools.all"]
             "cities" ["run" "-m" "seisei.tools.cities"]
             "states" ["run" "-m" "seisei.tools.states"]

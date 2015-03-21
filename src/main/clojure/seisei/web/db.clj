@@ -58,18 +58,18 @@
 (defn insert-template
   [user-id template]
   (let [template-id (random-slug)
-        new-template {:user user-id 
+        new-template {:user user-id
                       :slug template-id
                       :title (str "Template " template-id)
                       :content template }]
     (log/infof "New Template %s" (str new-template) )
-    (far/put-item aws-dynamodb-client-opts 
+    (far/put-item aws-dynamodb-client-opts
                   table-templates
                   new-template)
     new-template))
 
 
-(defn delete-user-template 
+(defn delete-user-template
   [ user-id slug ]
   (log/debugf "Delete template for user/slug %s/%s" user-id slug)
   (far/delete-item aws-dynamodb-client-opts
@@ -85,7 +85,6 @@
                 {:user user-id :slug slug}
                 updates
                 {:return :all-new } )]
-    (println "Updated template is %s" updated)
     updated))
 
 (defn update-user-template
@@ -104,19 +103,19 @@
   (far/get-item aws-dynamodb-client-opts
                 table-templates
                 {:user user-id :slug slug}))
-  
-(defn user-templates 
+
+(defn user-templates
   [user-id]
   (let [order-by        :title
-        pk-cond         {:user [:eq user-id]} 
+        pk-cond         {:user [:eq user-id]}
         opts            {:return ["title" "slug" "updated" "static-url"]}
         table           :templates
         results         (far/query aws-dynamodb-client-opts table pk-cond opts)]
     ;; if updated is missing add it as '0', then sort descending
-    (sort-by 
-      #(* -1 (:updated %)) 
-      (map 
-        #(merge {:updated 0} %) 
+    (sort-by
+      #(* -1 (:updated %))
+      (map
+        #(merge {:updated 0} %)
         results))))
 
 
@@ -131,21 +130,21 @@
 (defn startup-database
   []
   (log/info "Ensuring database is setup...")
-  (far/ensure-table 
+  (far/ensure-table
     aws-dynamodb-client-opts
     table-sessions ;; table name
     [:id :s] ;; key structure
     {:throughput (:sessions capacities)
      :block? true })
-  
-  (far/ensure-table 
+
+  (far/ensure-table
     aws-dynamodb-client-opts
     table-users ;; table name
     [:id :s] ;; key structure (username)
     {:throughput (:users capacities)
      :block? true })
-  
-  (far/ensure-table 
+
+  (far/ensure-table
     aws-dynamodb-client-opts
     table-templates ;; table name
     [:user :s] ;; key structure (username)
@@ -159,7 +158,7 @@
     [:slug :s] ;; key structure (username)
     { :throughput (:templates capacities)
      :block? true })
-  
+
     (log/info "Done."))
 
 
@@ -170,6 +169,6 @@
     (log/error "AWS_DYNAMODB_SECRET_KEY is not set"))
   (if (nil? aws-dynamodb-endpoint)
     (log/error "AWS_DYNAMODB_ENDPOINT is not set"))
-  (try 
+  (try
     (startup-database)
     (catch Exception e (log/error e))))
