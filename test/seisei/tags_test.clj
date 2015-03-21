@@ -11,7 +11,7 @@
             [seisei.generated.surnames]
             [seisei.generated.streets]))
 
-(def repeat-factor 100)
+(def repeat-factor 1)
 
 (def streets
   (->> seisei.generated.streets/streets

@@ -1,3 +1,6 @@
+(def aws-s3-access-key  (-> (System/getenv) (get "AWS_S3_ACCESS_KEY")))
+(def aws-s3-secret-key  (-> (System/getenv) (get "AWS_S3_SECRET_KEY")))
+
 (defproject seisei "0.1.0-SNAPSHOT"
   :description "Seisei - JSON Generation Web App"
   :url "http://github.com/trevershick/seisei"
@@ -34,12 +37,17 @@
             [lein-resource "14.10.1"]
             [lein-ring "0.8.13"]
             [lein-bower "0.5.1"]
+            [lein-beanstalk "0.2.7"]
             [lein-riot "0.0.1"]]
 
   :ring {:handler seisei.web.handler/app
          :port 8888
          :auto-refresh? true
          :init seisei.web.handler/startupcheck }
+  :aws {  :access-key ~aws-s3-access-key
+          :secret-key ~aws-s3-secret-key
+          :beanstalk  {:environments ["seisei-prod"]
+                       :s3-bucket "trevershick-seisei" }}
   :bower {:directory "bower_components"}
   :riot {
          :compact true
@@ -74,7 +82,7 @@
   :profiles {:uberjar {:aot :all}
              :dev     {:dependencies [[javax.servlet/servlet-api "2.5"]
                                       [ring-mock "0.1.5"]]}}
-  :aliases {"ci" ["do" ["clean"] ["bower" "install"] ["riot"] ["resource"] ["midje"]]
+  :aliases {"ci" ["do" ["clean"] ["bower" "install"] ["riot"] ["resource"] ["midje"] ["beanstalk" "deploy" "seisei-prod"]]
             "data" ["run" "-m" "seisei.tools.all"]
             "cities" ["run" "-m" "seisei.tools.cities"]
             "states" ["run" "-m" "seisei.tools.states"]
