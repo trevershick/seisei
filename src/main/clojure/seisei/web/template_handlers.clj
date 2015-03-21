@@ -6,6 +6,7 @@
             [seisei.json]
             [seisei.engine]
             [seisei.web.db :as db]
+            [seisei.web.s3 :as s3]
             [clojure.tools.logging :as log]))
 
 (defn load-my-template
@@ -55,10 +56,10 @@
   [{session :session}]
   (let [logged-in (seisei.web.user/logged-in? session)
         user-id   (seisei.web.user/user-id session)]
-    (-> (if logged-in 
+    (if logged-in 
           {:body (or (db/user-templates user-id) []) }
           {:status 403})
-        )))
+        ))
 
 (defn run-template 
   [request]
@@ -87,8 +88,27 @@
       {:body {:messages [{:id "T0001" :text "Saved."}] :template new-template }})      
     ))
 
+(defn publish-to-s3
+  [request]
+  (let [session             (:session request)
+        logged-in           (seisei.web.user/logged-in? session)
+        user-id             (seisei.web.user/user-id session)
+        template            (-> request :body :template)
+        content-to-publish  (:processed template)
+        slug                (:slug template)
+        url                 (s3/publish-to-s3 slug content-to-publish)]
+    (if logged-in 
+      (do 
+        (db/update-user-template-attrs user-id slug {:static-url url})
+        (load-my-template slug request)
+      )
+      {:status 403})
+    ))
+
+
 (defroutes template-routes
   (POST "/my/templates" r (save-new-template r))
+  (POST "/my/templates/:slug/publish" r (publish-to-s3 r))
   (DELETE "/my/templates/:slug" [slug :as r] (delete-my-template slug r))
   (POST "/my/templates/:slug" [slug :as r] (save-my-template slug r))
   (GET "/my/templates/:slug" [slug :as r] (load-my-template slug r))

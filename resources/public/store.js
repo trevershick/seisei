@@ -3,6 +3,7 @@ function MessageStore() {
 	this.messageNumber = 0;
 	this._messages = [];
 	this.defaultType = "info";
+	this.alertMessage = null;
 }
 
 MessageStore.prototype.listen = function(to) {
@@ -24,6 +25,14 @@ MessageStore.prototype.listen = function(to) {
 MessageStore.prototype.messages = function() {
 	return this._messages;
 };
+
+MessageStore.prototype.alert = function(message, opts) {
+	this.alertMessage = message;
+};
+
+MessageStore.prototype.clearAlert = function() {
+	this.alertMessage = null;
+}
 
 MessageStore.prototype.error = function(message, opts) {
 	return this.addMessage('danger', message);
@@ -265,6 +274,33 @@ EditorStore.prototype.onTemplateSaved = function(data) {
 		this.trigger('on-slug', data.template.slug); 
 	}
 };
+
+EditorStore.prototype.onTemplatePublished = function(data) {
+	this.trigger('on-message-ok', "Published.");
+	// update the template attributes
+	this.trigger('template-published', data.template);
+	this.emitChange(); // notify everyone that stuff has changed
+};
+
+
+EditorStore.prototype.publishTemplate = function() {
+	var body = {
+		template : this.getCurrentTemplate()
+	};
+	body.template.processed = this.templateOutput;
+
+	$.ajax({
+		url: "/my/templates/" + (this.getCurrentTemplate().slug ) + "/publish",
+		method: "POST",
+		dataType: "json",
+		contentType: "application/json",
+		cache: false,
+		data : JSON.stringify(body),
+		error: this.basicErrorHandler.bind(this),
+		success: this.onTemplatePublished.bind(this)
+	});
+};
+
 
 EditorStore.prototype.saveTemplate = function() {
 	var body = {

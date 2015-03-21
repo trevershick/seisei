@@ -30,6 +30,7 @@
   <link rel="stylesheet" href="css/keys.css">
   <title>生成 - JSON Generation</title>
 <body>
+  <alert-dialog></alert-dialog>
   <messages></messages>
   <editor-app></editor-app>
 
@@ -78,6 +79,10 @@
     editorStore.on('template-saved', function() {
       templateListStore.refresh();
     });
+    editorStore.on('template-published', function() {
+      var message = "Template " + editorStore.getCurrentTemplate().slug + " has been published to " + editorStore.getCurrentTemplate()['static-url'];
+      messageStore.alert(message);
+    });
 
     messageStore.listen(editorStore);
     messageStore.listen(accountStore);
@@ -87,7 +92,8 @@
 
     $(function() {
       riot.mount('editor-app', { accounts: accountStore, editor: editorStore, templates: templateListStore });
-      riot.mount('messages', {messages: messageStore.messages.bind(messageStore), close:messageStore.removeMessage.bind(messageStore)});
+      riot.mount('alert-dialog', {messages:messageStore});
+      riot.mount('messages', { messages: messageStore.messages.bind(messageStore), close:messageStore.removeMessage.bind(messageStore)});
       riot.route.exec(router);
 
     });

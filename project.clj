@@ -8,6 +8,7 @@
                  [midje "1.6.3" :exclusions [org.clojure/clojure]]
                  [clj-time "0.9.0"]
                  [compojure "1.3.1"]
+                 [clj-aws-s3 "0.3.10" :exclusions [joda-time]]
                  [ring/ring-defaults "0.1.2"]
                  [ring/ring-core "1.3.2"]
                  [ring/ring-json "0.3.1"]

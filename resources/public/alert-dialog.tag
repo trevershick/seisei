@@ -1,4 +1,4 @@
-<confirm-dialog>
+<alert-dialog>
 
 <style scoped>
 .modal {
@@ -13,34 +13,29 @@
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <button type="button" class="close" onclick={onOk} aria-label="Close"><span aria-hidden="true">&times;</span></button>
         <h4 class="modal-title">{ dialogTitle() }</h4>
       </div>
       <div class="modal-body">
 	  	{ dialogContent() }
 	  </div>
 	  <div class="modal-footer">
-		  	<button class="btn btn-primary" onclick={ this.onYes }>Yes</button>
-		  	<button class="btn btn-default" onclick={ this.onNo }>No</button>
+		  	<button class="btn btn-primary" onclick={ this.onOk }>OK</button>
 	  </div>
     </div>
   </div>
 </div>
 
 	dialogTitle() {
-		return this.opts.title || "Confirm";
+		return this.opts.messages.alertTitle || "alert";
 	}
 
 	dialogContent() {
-		return this.opts.message || "Are you sure?";
+		return this.opts.messages.alertMessage || "Are you sure?";
 	}
 
-	onYes() {
-		opts.callback(true);
-	}
-
-	onNo() {
-		opts.callback(false);
+	onOk() {
+		opts.messages.clearAlert();
 	}
 
 	modalClasses() {
@@ -48,9 +43,11 @@
 	}
 
 	modalStyle() {
-		return opts.showconfirm ? "display:block;":"";
+		return this.showalert ? "display:block;":"";
 	}
+	this.on('update', function() {
+		this.showalert = !!opts.messages.alertMessage;
+	});
 
 
-
-</confirm-dialog>
+</alert-dialog>

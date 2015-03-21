@@ -10,6 +10,7 @@
             [seisei.web.session]
             [seisei.web.user]
             [seisei.web.db :as db]
+            [seisei.web.s3]
             [seisei.web.template-handlers]
             [seisei.web.logout]
             [seisei.engine]
@@ -18,6 +19,7 @@
 
 (defn startupcheck []
   (seisei.web.github-oauth/startupcheck)
+  (seisei.web.s3/startupcheck)
   (seisei.web.db/startupcheck))
 
 

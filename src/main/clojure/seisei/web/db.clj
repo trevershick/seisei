@@ -76,18 +76,27 @@
                    table-templates
                    {:user user-id :slug slug}))
 
-(defn update-user-template
-  [user-id slug content title]
-  (log/debugf "Save template for user/slug %s/%s" user-id slug)
-  (let [updated (far/update-item aws-dynamodb-client-opts
+(defn update-user-template-attrs
+  [user-id slug updated-attrs]
+  (log/debugf "Update template attrs for user/slug %s/%s with %s" user-id slug updated-attrs)
+  (let [updates (into {} (map #(hash-map (key %) (conj [] :put (val %))) updated-attrs))
+        updated (far/update-item aws-dynamodb-client-opts
                 table-templates
                 {:user user-id :slug slug}
-                {:content [:put content]
-                 :title [:put title]
-                 :updated [:put (.getTime (now))]} 
+                updates
                 {:return :all-new } )]
     (println "Updated template is %s" updated)
     updated))
+
+(defn update-user-template
+  [user-id slug content title]
+  (log/debugf "Save template for user/slug %s/%s" user-id slug)
+  (update-user-template-attrs user-id
+                              slug
+                              {:content content
+                               :title title
+                               :updated (.getTime (now))}))
+
 
 (defn user-template
   [user-id slug]
@@ -100,7 +109,7 @@
   [user-id]
   (let [order-by        :title
         pk-cond         {:user [:eq user-id]} 
-        opts            {:return ["title" "slug" "updated"]}
+        opts            {:return ["title" "slug" "updated" "static-url"]}
         table           :templates
         results         (far/query aws-dynamodb-client-opts table pk-cond opts)]
     ;; if updated is missing add it as '0', then sort descending

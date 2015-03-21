@@ -20,7 +20,15 @@
         top:43px;
         bottom:35px;
     }
+    .static-url {
+      position: absolute;
+      bottom: 0px;
+      left: 0px;        
+      margin-left:20px;
+      margin-bottom:10px;
+    }
     </style>
+
     <confirm-dialog 
         showConfirm={ this.showConfirm } 
         callback={ onConfirm } 
@@ -37,6 +45,7 @@
             showDelete={ this.hasSavedTemplate }
             delete={ onDelete }
             new={ onNew }
+            publish={ onPublish }
             showNew={ this.hasSavedTemplate }
             feedback={ onFeedback }
             login={onLogin}
@@ -86,6 +95,10 @@
 
     onSave() {
         this.opts.editor.saveTemplate();
+    }
+
+    onPublish() {
+        this.opts.editor.publishTemplate();
     }
 
     onDelete() {
@@ -152,7 +165,6 @@
 
     this.on('update', function(eventName) {
         this.hasSavedTemplate = this.opts.editor.isTemplateSaved();
-
     }.bind(this));
 
     this.on('mount', function(eventName) {

@@ -10,7 +10,7 @@
   (assoc session :logged-in b))
 
 (defn user-id
-  [session s]
+  [session]
   (-> session :user :id))
 
 
