@@ -46,7 +46,8 @@
 (defn delete-my-template
   [slug r]
   (let [user-id             (-> r :session :user :id)
-        deleted             (db/delete-user-template user-id slug)]
+        deleted             (db/delete-user-template user-id slug)
+        _                   (s3/unpublish-from-s3 slug)]
     {:status 200
      :body { :messages [ (str "Template " slug " deleted.") ] }
     }))

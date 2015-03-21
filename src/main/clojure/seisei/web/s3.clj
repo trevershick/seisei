@@ -12,6 +12,15 @@
 (def aws-s3-client-opts {:access-key aws-s3-access-key
                          :secret-key aws-s3-secret-key })
 
+(defn unpublish-from-s3
+  "Returns a URL"
+  [slug]
+  (let [filename (str slug ".json")]
+    (log/infof "Removing %s from s3 %s" slug aws-s3-bucket)
+    (s3/delete-object aws-s3-client-opts 
+                      aws-s3-bucket
+                      filename)))
+
 (defn publish-to-s3
   "Returns a URL"
   [slug content]
