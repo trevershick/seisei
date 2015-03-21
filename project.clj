@@ -1,5 +1,5 @@
 (defproject seisei "0.1.0-SNAPSHOT"
-  :description "FIXME: write description"
+  :description "Seisei - JSON Generation Web App"
   :url "http://github.com/trevershick/seisei"
   :debug true
   :license {:name "Eclipse Public License"
