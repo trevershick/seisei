@@ -15,17 +15,16 @@
     }
     .editor-row {
         position: absolute;
-        left:2px;
-        right:2px;
-        top:43px;
+        left:0px;
+        right:0px;
+        top:40px;
         bottom:35px;
     }
-    .static-url {
-      position: absolute;
-      bottom: 0px;
-      left: 0px;        
-      margin-left:20px;
-      margin-bottom:10px;
+    .left-side {
+        border: 1px solid rgb(78, 93, 108);
+    }
+    .right-side {
+        border: 1px solid rgb(78, 93, 108); 
     }
     </style>
 
@@ -54,26 +53,27 @@
             templates={opts.templates.templates}
             editor={opts.editor}
             titleclick={onRenameClick}
+            help={onHelp}
             title={currentTemplateTitle()} ></editor-menu>
     </div>
 
     <div class="row editor-row">
         <div class="row" style="height:100%;">
-            <div class="col-sm-6" style="height:100%;padding:0px;">
+            <div class="col-sm-6 left-side" style="height:100%;padding:0px;">
                 <template-editor editor={opts.editor} run={ onRun } save={ onSave } tidy={ onTidy }></template-editor>
-                <div style='text-align:right'>
-                <b class="floater"><span class="glyphicon glyphicon-console"></span></b>
-                </div>
-            </div>
-            <div class="col-sm-6" style="height:100%;padding:0px;">
-                <template-ro editor={opts.editor}></template-ro>
                 <div style='text-align:right'>
                 <b class="floater"><span class={this.getProcessedClasses()}></span></b>
                 </div>
             </div>
+            <div class="col-sm-6 right-side" style="height:100%;padding:0px;">
+                <template-ro editor={opts.editor}></template-ro>
+                <editor-help onsampleclick={onSampleClick}></editor-help>
+            </div>
         </div>
     </div>
-
+    <div style="position:absolute;bottom:0;left:0;right:0;margin-left:20px;">
+        <tweet></tweet>
+    </div>
     <hotkey-prompt>
         <kbd>esc</kbd> to show hotkeys
     </hotkey-prompt>
@@ -83,6 +83,10 @@
         if (opts.editor.getCurrentTemplate().slug) {
             return opts.editor.getCurrentTemplate().title
         }
+    }
+
+    onSampleClick(obj) {
+        opts.editor.setTemplateContent(JSON.stringify(obj.input, null, 2));
     }
 
     onLogout() {
@@ -108,6 +112,12 @@
             }
         }.bind(this), "Are you sure you want to delete " + this.currentTemplateTitle() + " ?", "Delete your template?");
         riot.update(this);
+    }
+
+    onHelp() {
+        this.showHelp = !this.showHelp;
+        riot.update(this);
+
     }
 
     onNew() {
@@ -171,6 +181,7 @@
         this.open = false;
         this.showRename = false;
         this.showConfirm = false;
+        this.showHelp = false;
     }.bind(this));
 
 </editor-app>

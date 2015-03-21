@@ -6,7 +6,7 @@
 	<style scoped>
 	    .editor {
 		      width:100%;
-	    	  height:100%;
+	    	  height:50%;
 	    }
 	    .processing {
 	    	opacity: 0.2;

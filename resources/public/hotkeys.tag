@@ -35,6 +35,10 @@
     font-weight: bold;
     display: inline-block;
   }
+  li p {
+    display: inline-block;
+    position: absolute;
+  }
   dd {
     display: inline-block;
     max-wilih: 30%;
@@ -50,15 +54,15 @@
 	<div class="backdrop">
 		<div class="hotkeys">	
 			<ul>
-				<li><span class="kk"><kbd class="light cmd">&#8984;</kbd> + <kbd class="light">i</kbd></span>Tidy up your JSON</li>
+				<li><span class="kk"><kbd class="light cmd">&#8984;</kbd> + <kbd class="light">i</kbd></span><p>Tidy up your JSON</p></li>
 				
-				<li><span class="kk"><kbd class="light cmd">&#8984;</kbd> + <kbd class="light">r</kbd></span>Run your template on the Server</li>
+				<li><span class="kk"><kbd class="light cmd">&#8984;</kbd> + <kbd class="light">r</kbd></span><p>Run your template on the Server</p></li>
 				
-				<li><span class="kk"><kbd class="light cmd">&#8984;</kbd> + <kbd class="light">s</kbd></span>Save your template on the server</li>
+				<li><span class="kk"><kbd class="light cmd">&#8984;</kbd> + <kbd class="light">s</kbd></span><p>Save your template on the server</p></li>
 
-        <li><span class="kk"><kbd class="light cmd">&#8984;</kbd> + <kbd class="light">e</kbd></span>Create a new template</li>
+        <li><span class="kk"><kbd class="light cmd">&#8984;</kbd> + <kbd class="light">e</kbd></span><p>Create a new template</p></li>
 				
-        <li><span class="kk"><kbd class="light cmd">&#8984;</kbd> + <kbd class="light">s</kbd></span>Delete the current template</li>
+        <li><span class="kk"><kbd class="light cmd">&#8984;</kbd> + <kbd class="light">s</kbd></span><p>Delete the current template</p></li>
 
 			</ul>
 		</div>

@@ -29,7 +29,7 @@ MessageStore.prototype.messages = function() {
 MessageStore.prototype.alert = function(message, opts) {
 	this.alertMessage = message;
 };
-
+	
 MessageStore.prototype.clearAlert = function() {
 	this.alertMessage = null;
 }
@@ -278,6 +278,7 @@ EditorStore.prototype.onTemplateSaved = function(data) {
 EditorStore.prototype.onTemplatePublished = function(data) {
 	this.trigger('on-message-ok', "Published.");
 	// update the template attributes
+	this.currentTemplate = data.template;
 	this.trigger('template-published', data.template);
 	this.emitChange(); // notify everyone that stuff has changed
 };

@@ -27,8 +27,8 @@
                 <li onClick={opts.save} if={ _.isFunction(opts.save) && opts.loggedin }><a href="#"><span class="glyphicon glyphicon-pencil"></span> <u>S</u>ave</a></li>
                 <li><a href="#" onClick={opts.run} if={ _.isFunction(opts.run) }><span class="glyphicon glyphicon-play"></span> <u>R</u>un</a></li>
                 <li><a href="#" onClick={ opts.tidy } if={ _.isFunction(opts.tidy) }><span class="glyphicon glyphicon-indent-left"></span> T<u>i</u>dy</a></li>
-                <li><a href="#" onClick={ opts.delete } if={ opts.showdelete &&  _.isFunction(opts.delete) }><span class="glyphicon glyphicon-delete"></span> <u>D</u>elete</a></li>
-                <li><a href="#" onClick={ opts.publish } if={ opts.showdelete &&  _.isFunction(opts.publish) }><span class="glyphicon glyphicon-publish"></span> <u>P</u>ublish</a></li>
+                <li><a href="#" onClick={ opts.delete } if={ opts.showdelete &&  _.isFunction(opts.delete) }><span class="glyphicon glyphicon-trash"></span> <u>D</u>elete</a></li>
+                <li><a href="#" onClick={ opts.publish } if={ opts.showdelete &&  _.isFunction(opts.publish) }><span class="glyphicon glyphicon-cloud-upload"></span> <u>P</u>ublish</a></li>
                     
                 <li class="templates-menu" >
                     <a if={items.length > 0} href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Templates <span class="caret"></span></a>
@@ -39,6 +39,8 @@
                         </li>
                     </ul>
                 </li>
+                <li if={_.isFunction(opts.help)} ><a onclick={ opts.help }>Help</a></li>
+
             </ul>
 
             <ul class="nav navbar-nav navbar-right">
@@ -46,7 +48,7 @@
                 <li><login-with-github login={opts.login} loggedin={opts.loggedin} logout={opts.logout}></login-with-github></li>
             </ul>
             <ul class="nav navbar-nav navbar-right">
-                <li if={opts.title}><a onclick={ onTitleClick }>{opts.title}</a></li>
+                <li if={opts.title} id="rename-menu-item"><a onclick={ onTitleClick }>{opts.title}</a></li>
             </ul>
         </div>
     </nav>
@@ -77,6 +79,7 @@
         Mousetrap.bindGlobal('mod+r', function() { !this.showhk && this.opts.run();return false; }.bind(this));
         Mousetrap.bindGlobal('mod+i', function() { !this.showhk && this.opts.tidy();return false; }.bind(this));
         Mousetrap.bindGlobal('esc', function() { this.showHotkeys();return false; }.bind(this));
+        Mousetrap.bindGlobal('mod+h', function() { this.opts.help();return false; }.bind(this));
     });
 
 </editor-menu>
