@@ -3,6 +3,6 @@
             [seisei.web.handler])
   (:gen-class))
 
-(defn -main []
-  (jetty/run-jetty seisei.web.handler/app {:port 8888}))
+; (defn -main []
+;   (jetty/run-jetty seisei.web.handler/app {:port 8888}))
 
