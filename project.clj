@@ -82,7 +82,7 @@
   :profiles {:uberjar {:aot :all}
              :dev     {:dependencies [[javax.servlet/servlet-api "2.5"]
                                       [ring-mock "0.1.5"]]}}
-  :aliases {"ci" ["do" ["clean"] ["bower" "install"] ["riot"] ["resource"] ["midje"] ["beanstalk" "deploy" "seisei-prod"]]
+  :aliases {"ci-deploy" ["do" ["clean"] ["bower" "install"] ["riot"] ["resource"] ["beanstalk" "deploy" "seisei-prod"]]
             "data" ["run" "-m" "seisei.tools.all"]
             "cities" ["run" "-m" "seisei.tools.cities"]
             "states" ["run" "-m" "seisei.tools.states"]
