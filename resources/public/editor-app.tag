@@ -54,6 +54,8 @@
             editor={opts.editor}
             titleclick={onRenameClick}
             help={onHelp}
+            staticallypublished={ isStaticallyPublished() }
+            dynamicallypublished={ isDynamicallyPublished() }
             title={currentTemplateTitle()} ></editor-menu>
     </div>
 
@@ -78,6 +80,15 @@
         <kbd>esc</kbd> to show hotkeys
     </hotkey-prompt>
 
+
+
+    isDynamicallyPublished() {
+        return !!opts.editor.getCurrentTemplate()['dynamic-url'];
+    }
+
+    isStaticallyPublished() {
+        return !!opts.editor.getCurrentTemplate()['static-url'];
+    }
 
     currentTemplateTitle() {
         if (opts.editor.getCurrentTemplate().slug) {
