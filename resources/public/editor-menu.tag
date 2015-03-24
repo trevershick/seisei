@@ -4,12 +4,43 @@
         max-height:350px;
         overflow-y:auto;
     }
+
+    .templates-menu ul {
+        max-width:250px;
+        min-width:100px;
+    }
+    .templates-menu a {
+    }
+    .templates-menu .main-link {
+        margin-right:60px;
+        overflow-x: hidden;
+        text-overflow: ellipsis;
+    }
+
     .templates-menu .static-link {
         position: absolute;
         right: 0;
         padding-left: 10px;
         padding-right: 10px;
         display:inline-block;
+    }
+    .templates-menu .dynamic-link {
+        position: absolute;
+        right: 30px;
+        padding-left: 10px;
+        padding-right: 10px;
+        display:inline-block;
+    }
+
+    .sharing-menu .static-link {
+        position: absolute;
+        right: 0;
+        padding-left: 10px;
+        padding-right: 10px;
+        display:inline-block;
+    }
+    .sharing-menu .main-link {
+        margin-right:30px;
     }
     </style>
     <hotkeys show={ this.showhk }></hotkeys>
@@ -29,16 +60,16 @@
                 <li><a href="#" onClick={ opts.tidy } if={ _.isFunction(opts.tidy) }><span class="glyphicon glyphicon-indent-left"></span> T<u>i</u>dy</a></li>
                 <li><a href="#" onClick={ opts.delete } if={ opts.showdelete &&  _.isFunction(opts.delete) }><span class="glyphicon glyphicon-trash"></span> <u>D</u>elete</a></li>
 
-                <li if={ opts.showdelete } class="templates-menu" >
+                <li if={ opts.showdelete } class="sharing-menu" >
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Sharing <span class="caret"></span></a>
                     <ul class="dropdown-menu" role="menu">
                         <li>
                             <a target="_new" onclick={ toggleStaticPublishing } class="static-link"><span class={ staticallyPublishedClasses() }></span></a>
-                            <a href="#" onClick={ opts.publish } if={ opts.showdelete &&  _.isFunction(opts.publish) }>Static Version</a>
+                            <a class="main-link" href="#" onClick={ opts.publish } if={ opts.showdelete &&  _.isFunction(opts.publish) }>Static Version</a>
                         </li>
                         <li>
-                            <a class="static-link" onclick={ toggleDynamicPublishing }><span class={ dynamicallyPublishedClasses() }></span></a>
-                            <a href="#" onclick={ opts.publishdynamic }>Dynamic Version</a>
+                            <a alt="View Dynamic Version" class="static-link" onclick={ toggleDynamicPublishing }><span class={ dynamicallyPublishedClasses() }></span></a>
+                            <a alt="(Re)Publish the dynamic version of this template." class="main-link" onClick={ opts.publishdynamically }>Dynamic Version</a>
                         </li>
                     </ul>
                 </li>
@@ -48,7 +79,8 @@
                     <ul if={items.length > 0} class="dropdown-menu" role="menu">
                         <li each={items}>
                             <a target="_new" class="static-link" if={this['static-url']} href={this['static-url']}><span class="glyphicon glyphicon-link"></span></a>
-                            <a href="#template/{slug}">{title}</a>
+                            <a target="_new" class="dynamic-link" if={this['dynamic-url']} href={this['dynamic-url']}><span class="glyphicon glyphicon-flash"></span></a>
+                            <a href="#template/{slug}" class="main-link">{title}</a>
                         </li>
                     </ul>
                 </li>

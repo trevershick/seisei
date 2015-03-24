@@ -175,7 +175,7 @@
   [user-id]
   (let [order-by        :title
         pk-cond         {:user [:eq user-id]}
-        opts            {:return ["title" "slug" "updated" "static-url"]}
+        opts            {:return ["title" "slug" "updated" "static-url" "dynamic-url"]}
         table           :templates
         results         (far/query aws-dynamodb-client-opts table pk-cond opts)]
     ;; if updated is missing add it as '0', then sort descending

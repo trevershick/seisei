@@ -93,10 +93,12 @@
     });
     editorStore.on('template-published', function() {
       var message = "Template " + editorStore.getCurrentTemplate().slug + " has been published to " + editorStore.getCurrentTemplate()['static-url'];
+      templateListStore.refresh();
       messageStore.alert(message);
     });
     editorStore.on('template-published-dynamic', function() {
       var message = "Template " + editorStore.getCurrentTemplate().slug + " has been published to " + editorStore.getCurrentTemplate()['dynamic-url'];
+      templateListStore.refresh();
       messageStore.alert(message);
     });
 
