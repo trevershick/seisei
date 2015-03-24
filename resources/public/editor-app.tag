@@ -45,6 +45,9 @@
             delete={ onDelete }
             new={ onNew }
             publish={ onPublish }
+            staticallyunpublish={ onUnpublish }
+            dynamicallyunpublish={ onUnpublishDynamic }
+            publishdynamically={ onPublishDynamic }
             showNew={ this.hasSavedTemplate }
             feedback={ onFeedback }
             login={onLogin}
@@ -54,6 +57,8 @@
             editor={opts.editor}
             titleclick={onRenameClick}
             help={onHelp}
+            staticallypublished={ isStaticallyPublished() }
+            dynamicallypublished={ isDynamicallyPublished() }
             title={currentTemplateTitle()} ></editor-menu>
     </div>
 
@@ -79,6 +84,15 @@
     </hotkey-prompt>
 
 
+
+    isDynamicallyPublished() {
+        return !!opts.editor.getCurrentTemplate()['dynamic-url'];
+    }
+
+    isStaticallyPublished() {
+        return !!opts.editor.getCurrentTemplate()['static-url'];
+    }
+
     currentTemplateTitle() {
         if (opts.editor.getCurrentTemplate().slug) {
             return opts.editor.getCurrentTemplate().title
@@ -99,6 +113,18 @@
 
     onSave() {
         this.opts.editor.saveTemplate();
+    }
+
+    onUnpublish() {
+        this.opts.editor.unpublishTemplate()
+    }
+
+    onUnpublishDynamic() {
+        this.opts.editor.unpublishTemplateDynamic();
+    }
+
+    onPublishDynamic() {
+        this.opts.editor.publishTemplateDynamic();
     }
 
     onPublish() {

@@ -18,6 +18,7 @@
                                :secret-key aws-dynamodb-secret-key
                                :endpoint aws-dynamodb-endpoint})
 
+(def not-nil? (comp not nil?))
 
 (defn random-slug
   []
@@ -27,9 +28,34 @@
 (defn random-id [] (str (java.util.UUID/randomUUID)))
 
 
-(defn now
+(defn- now
   []
   (java.util.Date.))
+
+
+
+(defn dynamo-update-removals
+  [arg-map]
+  (->> arg-map
+    (filter (fn [[k v]] (nil? v)))
+    (map (fn [[k v]] (hash-map k [:delete])))
+    (into {})))
+
+(defn dynamo-update-puts
+  [arg-map]
+  (->> arg-map
+    (filter (fn [[k v]] (not-nil? v)))
+    (map (fn [[k v]] (hash-map k (conj [:put] v))))
+    (into {})))
+
+    
+(defn dynamo-updates
+  [arg-map]
+  (let [x       {}
+        x       (into x (dynamo-update-removals arg-map))
+        x       (into x (dynamo-update-puts arg-map))]
+    x))
+  
 
 ;; User
 ;;  username (string) -> id?
@@ -79,13 +105,54 @@
 (defn update-user-template-attrs
   [user-id slug updated-attrs]
   (log/debugf "Update template attrs for user/slug %s/%s with %s" user-id slug updated-attrs)
-  (let [updates (into {} (map #(hash-map (key %) (conj [] :put (val %))) updated-attrs))
+  (let [updates (dynamo-updates updated-attrs)
+        updates (assoc updates :updated [:put (.getTime (now))])
         updated (far/update-item aws-dynamodb-client-opts
-                table-templates
-                {:user user-id :slug slug}
-                updates
-                {:return :all-new } )]
+                                 table-templates
+                                 {:user user-id :slug slug}
+                                 updates
+                                 {:return :all-new } )]
     updated))
+
+(defn find-dynamic-template
+  [slug]
+    (far/get-item aws-dynamodb-client-opts
+                table-slugs
+                {:slug slug}))
+
+(defn update-dynamic
+  [slug updated-attrs]
+  (log/debugf "Update dynamic template attrs for slug %s with %s" slug updated-attrs)
+  (let [updates (dynamo-updates updated-attrs)
+        updates (assoc updates :updated [:put (.getTime (now))])
+        updated (far/update-item aws-dynamodb-client-opts
+                                 table-slugs
+                                 {:slug slug}
+                                 updates
+                                 {:return :all-new } )]
+    updated))
+
+(defn insert-dynamic
+  [slug updated-attrs]
+  (log/debugf "Insert dynamic template for slug %s with %s" slug updated-attrs)
+  (let [updates updated-attrs
+        updates (assoc updates :slug slug)
+        updates (assoc updates :updated (.getTime (now)))
+        updated (far/put-item aws-dynamodb-client-opts 
+                              table-slugs
+                              updates)]
+    updated))
+
+
+(defn delete-dynamic
+  [ slug ]
+  (log/debugf "Delete template for user/slug %s" slug)
+  (far/delete-item aws-dynamodb-client-opts
+                   table-slugs
+                   {:slug slug}))
+
+
+
 
 (defn update-user-template
   [user-id slug content title]
@@ -120,8 +187,6 @@
 
 
 
-
-
 (def capacities {:sessions      { :read 5 :write 5 }
                  :users         { :read 5 :write 5 }
                  :templates     { :read 5 :write 5 }
@@ -136,14 +201,14 @@
     [:id :s] ;; key structure
     {:throughput (:sessions capacities)
      :block? true })
-
+  
   (far/ensure-table
     aws-dynamodb-client-opts
     table-users ;; table name
     [:id :s] ;; key structure (username)
     {:throughput (:users capacities)
      :block? true })
-
+  
   (far/ensure-table
     aws-dynamodb-client-opts
     table-templates ;; table name
@@ -151,15 +216,15 @@
     {:range-keydef [ :slug :s ]
      :throughput (:templates capacities)
      :block? true })
-
+  
   (far/ensure-table  ;; this is the public slugs table that will piont to a user/slug combo (maybe)
-    aws-dynamodb-client-opts
-    table-slugs ;; table name
-    [:slug :s] ;; key structure (username)
-    { :throughput (:templates capacities)
-     :block? true })
-
-    (log/info "Done."))
+                    aws-dynamodb-client-opts
+                    table-slugs ;; table name
+                    [:slug :s] ;; key structure (username)
+                    { :throughput (:templates capacities)
+                     :block? true })
+  
+  (log/info "Done."))
 
 
 (defn startupcheck []

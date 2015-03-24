@@ -275,13 +275,18 @@ EditorStore.prototype.onTemplateSaved = function(data) {
 	}
 };
 
-EditorStore.prototype.onTemplatePublished = function(data) {
-	this.trigger('on-message-ok', "Published.");
-	// update the template attributes
-	this.currentTemplate = data.template;
-	this.trigger('template-published', data.template);
-	this.emitChange(); // notify everyone that stuff has changed
-};
+
+
+EditorStore.prototype.onOkWithTemplate = function(message,event) {
+	return function(data) {
+		this.currentTemplate = data.template;
+		this.trigger('on-message-ok', message);
+		if (event) {
+			this.trigger(event, data.template);
+		}
+		this.emitChange(); // notify everyone that stuff has changed
+	}.bind(this);
+}
 
 
 EditorStore.prototype.publishTemplate = function() {
@@ -298,10 +303,53 @@ EditorStore.prototype.publishTemplate = function() {
 		cache: false,
 		data : JSON.stringify(body),
 		error: this.basicErrorHandler.bind(this),
-		success: this.onTemplatePublished.bind(this)
+		success: this.onOkWithTemplate("Published.",'template-published').bind(this)
 	});
 };
 
+
+EditorStore.prototype.publishTemplateDynamic = function() {
+	var body = {
+		template : this.getCurrentTemplate()
+	};
+	body.template.processed = this.templateOutput;
+
+	$.ajax({
+		url: "/my/templates/" + (this.getCurrentTemplate().slug ) + "/publishdynamic",
+		method: "POST",
+		dataType: "json",
+		contentType: "application/json",
+		cache: false,
+		data : JSON.stringify(body),
+		error: this.basicErrorHandler.bind(this),
+		success: this.onOkWithTemplate("Published.",'template-published-dynamic').bind(this)
+	});
+};
+
+
+EditorStore.prototype.unpublishTemplateDynamic = function() {
+	$.ajax({
+		url: "/my/templates/" + (this.getCurrentTemplate().slug ) + "/publishdynamic",
+		method: "DELETE",
+		dataType: "json",
+		contentType: "application/json",
+		cache: false,
+		error: this.basicErrorHandler.bind(this),
+		success: this.onOkWithTemplate("Dynamic endpoint unpublished.").bind(this)
+	});
+};
+
+EditorStore.prototype.unpublishTemplate = function() {
+	$.ajax({
+		url: "/my/templates/" + (this.getCurrentTemplate().slug ) + "/publish",
+		method: "DELETE",
+		dataType: "json",
+		contentType: "application/json",
+		cache: false,
+		error: this.basicErrorHandler.bind(this),
+		success: this.onOkWithTemplate("Static endpoint unpublished.").bind(this)
+	});
+};
 
 EditorStore.prototype.saveTemplate = function() {
 	var body = {

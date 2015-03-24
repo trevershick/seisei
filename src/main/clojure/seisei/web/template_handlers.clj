@@ -9,6 +9,15 @@
             [seisei.web.s3 :as s3]
             [clojure.tools.logging :as log]))
 
+(def not-nil? (comp not nil?))
+
+(defn load-dynamic-template
+  [slug r]
+  (let [template    (db/find-dynamic-template slug)
+        parsed-json (seisei.json/parse-with-error ( -> template :content ))
+        processed   (seisei.engine/process (:output parsed-json))]
+        {:body processed}))
+
 (defn load-my-template
   [slug r]
   (let [session     (:session r)
@@ -89,6 +98,32 @@
       {:body {:messages [{:id "T0001" :text "Saved."}] :template new-template }})      
     ))
 
+(defn dynamic-url-for-slug
+  [request slug]
+  (str "http://seisei.elasticbeanstalk.com/templates/" slug))
+
+
+(defn publish-dynamic
+  [request]
+  (let [session             (:session request)
+        logged-in           (seisei.web.user/logged-in? session)
+        user-id             (seisei.web.user/user-id session)
+        template            (-> request :body :template)
+        template-content    (:content template)
+        slug                (:slug template)
+        exists              (not-nil? (db/find-dynamic-template slug))]
+    ;; create the slug record
+    ;; fill in the content
+    (if logged-in 
+      (do 
+        (if exists
+          (db/update-dynamic slug {:user user-id :content template-content})
+          (db/insert-dynamic slug {:user user-id :content template-content}))
+        (db/update-user-template-attrs user-id slug {:dynamic-url  (dynamic-url-for-slug request slug)})
+        (load-my-template slug request))
+      {:status 403})
+    ))
+
 (defn publish-to-s3
   [request]
   (let [session             (:session request)
@@ -106,10 +141,42 @@
       {:status 403})
     ))
 
+(defn unpublish-from-s3
+  [slug request]
+  (let [session             (:session request)
+        user-id             (seisei.web.user/user-id session)
+        template            (db/user-template user-id slug)]
+    (if (and (not-nil? user-id) (not-nil? template))
+      (do 
+        (s3/unpublish-from-s3 slug)
+        (db/update-user-template-attrs user-id slug {:static-url nil})
+        (load-my-template slug request)
+      )
+      {:status 403})
+    ))
+
+(defn unpublish-dynamic
+  [slug request]
+  (let [session             (:session request)
+        user-id             (seisei.web.user/user-id session)
+        template            (db/user-template user-id slug)]
+    (if (and (not-nil? user-id) (not-nil? template))
+      (do 
+        (db/delete-dynamic slug)
+        (db/update-user-template-attrs user-id slug {:dynamic-url nil})
+        (load-my-template slug request)
+      )
+      {:status 403})
+    ))
+
 
 (defroutes template-routes
+  (GET "/templates/:slug" [slug :as r] (load-dynamic-template slug r))
   (POST "/my/templates" r (save-new-template r))
+  (POST "/my/templates/:slug/publishdynamic" r (publish-dynamic r))
   (POST "/my/templates/:slug/publish" r (publish-to-s3 r))
+  (DELETE "/my/templates/:slug/publishdynamic" [slug :as r] (unpublish-dynamic slug r))
+  (DELETE "/my/templates/:slug/publish" [slug :as r] (unpublish-from-s3 slug r))
   (DELETE "/my/templates/:slug" [slug :as r] (delete-my-template slug r))
   (POST "/my/templates/:slug" [slug :as r] (save-my-template slug r))
   (GET "/my/templates/:slug" [slug :as r] (load-my-template slug r))
