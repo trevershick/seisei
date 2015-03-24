@@ -45,6 +45,9 @@
             delete={ onDelete }
             new={ onNew }
             publish={ onPublish }
+            staticallyunpublish={ onUnpublish }
+            dynamicallyunpublish={ onUnpublishDynamic }
+            publishdynamically={ onPublishDynamic }
             showNew={ this.hasSavedTemplate }
             feedback={ onFeedback }
             login={onLogin}
@@ -110,6 +113,18 @@
 
     onSave() {
         this.opts.editor.saveTemplate();
+    }
+
+    onUnpublish() {
+        this.opts.editor.unpublishTemplate()
+    }
+
+    onUnpublishDynamic() {
+        this.opts.editor.unpublishTemplateDynamic();
+    }
+
+    onPublishDynamic() {
+        this.opts.editor.publishTemplateDynamic();
     }
 
     onPublish() {
