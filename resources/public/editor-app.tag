@@ -6,7 +6,7 @@
         position: absolute;
         bottom: 10px;
         right: 10px;
-    }   
+    }
     .glyphicon-remove {
         color:red;
     }
@@ -24,23 +24,23 @@
         border: 1px solid rgb(78, 93, 108);
     }
     .right-side {
-        border: 1px solid rgb(78, 93, 108); 
+        border: 1px solid rgb(78, 93, 108);
     }
     </style>
 
-    <confirm-dialog 
-        showConfirm={ this.showConfirm } 
-        callback={ onConfirm } 
+    <confirm-dialog
+        showConfirm={ this.showConfirm }
+        callback={ onConfirm }
         title={ confirmTitle }
         message={ confirmMessage} ></confirm-dialog>
 
-    <rename-modal save={onRenameSave} 
-        close={onRenameClose} 
+    <rename-modal save={onRenameSave}
+        close={onRenameClose}
         x={ this.showRename }
         title={opts.editor.getCurrentTemplate().title}></rename-modal>
 
     <div class="row">
-        <editor-menu save={ onSave } run={ onRun } tidy={ onTidy } 
+        <editor-menu save={ onSave } run={ onRun } tidy={ onTidy }
             showDelete={ this.hasSavedTemplate }
             delete={ onDelete }
             new={ onNew }
@@ -52,7 +52,7 @@
             feedback={ onFeedback }
             login={onLogin}
             logout={onLogout}
-            loggedin={opts.accounts.loggedIn} 
+            loggedin={opts.accounts.loggedIn}
             templates={opts.templates.templates}
             editor={opts.editor}
             titleclick={onRenameClick}
@@ -76,9 +76,10 @@
             </div>
         </div>
     </div>
-    <div style="position:absolute;bottom:0;left:0;right:0;margin-left:20px;">
-        <tweet></tweet>
-    </div>
+    <div style="position:absolute;bottom:5px;left:10px;right:0;">
+            <a href="https://github.com/trevershick">Check me out on
+        <img class="emoji" title=":octocat:" alt=":octocat:" src="https://assets.github.com/images/icons/emoji/octocat.png" height="20" width="20" align="absmiddle"></a>
+        or <a href="http://trevershick.github.io">my blog</a> or even <div style="display: inline-block;margin: 0px;padding: 0px;vertical-align: middle;"><tweet></tweet></div>
     <hotkey-prompt>
         <kbd>esc</kbd> to show hotkeys
     </hotkey-prompt>
