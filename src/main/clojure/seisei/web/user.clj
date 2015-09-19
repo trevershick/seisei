@@ -4,7 +4,7 @@
             [taoensso.faraday :as far]))
 
 
-(defn logged-in? [session] (:logged-in session))
+(defn logged-in? [session] (or (:logged-in session) false))
 (defn logged-in!
   [session b]
   (assoc session :logged-in b))
@@ -24,10 +24,10 @@
 ;;  last-login
 ; (defrecord User [ id admin access-key email company name last-login])
 
-(defn lookup-user 
+(defn lookup-user
   [user-id]
-  (let [user (far/get-item db/aws-dynamodb-client-opts 
-                           db/table-users 
+  (let [user (far/get-item db/aws-dynamodb-client-opts
+                           db/table-users
                            { :id user-id })]
     (log/debugf "lookup-user, user =%s" user)
     user))
@@ -36,8 +36,8 @@
   [user-id attr-map]
   (let [ clean-attr (into {} (remove (comp nil? val) attr-map))]
     (log/infof "Creating user %s with %s" user-id attr-map)
-    (far/put-item db/aws-dynamodb-client-opts 
-                  db/table-users 
+    (far/put-item db/aws-dynamodb-client-opts
+                  db/table-users
                   (merge { :id user-id } clean-attr))
     (assoc clean-attr :id user-id)))
 
@@ -47,4 +47,3 @@
                    db/table-users
                    { :id user-id }
                    { :last-login [ :put (.getTime (java.util.Date.)) ] }))
-
