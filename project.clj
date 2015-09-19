@@ -25,12 +25,7 @@
                                                     com.sun.jmdk/jmxtools
                                                     com.sun.jmx/jmxri]]
                  [environ "1.0.0"]]
-  :bower-dependencies [[bootstrap "3.3.2"]
-                       [ace-builds "1.1.8"]
-                       [riotjs "2.0.12"]
-                       [lodash "3.5.0"]
-                       [bootstrap-social "4.8.0"]
-                       [mousetrap "1.4.6"]]
+  :bower-dependencies [[mousetrap "1.5.3"]]
 
   :plugins [[lein-midje "3.1.3"]
             [lein-marginalia "0.8.0"]
@@ -53,24 +48,8 @@
          :compact true
          :tags [["resources/public/" "resources/public/seisei-tags.js"]]}
   :resource {
-             :resource-paths [
-                              ["bower_components/mousetrap/plugins/global-bind/" { :includes [#".*/.*.min.js"] }]
-                              ["bower_components/mousetrap" { :includes [#".*/mousetrap.min.js"] }]
-                              ["bower_components/riotjs" { :includes [#".*/riot.min.js"] }]
-                              ["bower_components/lodash" { :includes [#".*/lodash.min.js"] }]
-                              ["bower_components/bootstrap/dist/js" { :includes [#".*/bootstrap.min.js"] }]
-                              ["bower_components/bootstrap/dist/css" { :includes [#".*/bootstrap.min.css"] }]
-                              ["bower_components/jquery/dist" { :includes [#".*/jquery.min.js"] }]
-                              ["bower_components/bootstrap-social" { :includes [#".*/bootstrap-social.css"] }]
-                              ["bower_components/font-awesome/css" { :includes [#".*/font-awesome.min.css"] }]
-                              ["bower_components/font-awesome/fonts" { :includes [#".*"] :target-path "resources/public/fonts" }]
-                              ["bower_components/ace-builds/src-min" { :includes [#".*/ace.js"
-                                                                                  #".*/mode-javascript.js"
-                                                                                  #".*/theme-twilight.js"
-                                                                                  #".*/worker-javascript.js"
-                                                                                  #".*/ext-searchbox.js"] }]
-                              ]
-             :target-path "resources/public/vendor"
+             :resource-paths ["bower_components/mousetrap/plugins/global-bind/"]
+             :target-path "resources/public/vendor/"
              :verbose false
              :skip-stencil [ #".*" ]
              }
