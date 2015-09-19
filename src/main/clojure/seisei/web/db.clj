@@ -22,11 +22,9 @@
 
 (defn random-slug
   []
-  (.toUpperCase (Integer/toString (+ 62193781 (* (- 2176782335 62193781) (rand))) 36)))
-
+  (.toUpperCase (Integer/toString (* Integer/MAX_VALUE (rand)) 36)))
 
 (defn random-id [] (str (java.util.UUID/randomUUID)))
-
 
 (defn- now
   []
@@ -48,14 +46,14 @@
     (map (fn [[k v]] (hash-map k (conj [:put] v))))
     (into {})))
 
-    
+
 (defn dynamo-updates
   [arg-map]
   (let [x       {}
         x       (into x (dynamo-update-removals arg-map))
         x       (into x (dynamo-update-puts arg-map))]
     x))
-  
+
 
 ;; User
 ;;  username (string) -> id?
@@ -138,7 +136,7 @@
   (let [updates updated-attrs
         updates (assoc updates :slug slug)
         updates (assoc updates :updated (.getTime (now)))
-        updated (far/put-item aws-dynamodb-client-opts 
+        updated (far/put-item aws-dynamodb-client-opts
                               table-slugs
                               updates)]
     updated))
@@ -201,14 +199,14 @@
     [:id :s] ;; key structure
     {:throughput (:sessions capacities)
      :block? true })
-  
+
   (far/ensure-table
     aws-dynamodb-client-opts
     table-users ;; table name
     [:id :s] ;; key structure (username)
     {:throughput (:users capacities)
      :block? true })
-  
+
   (far/ensure-table
     aws-dynamodb-client-opts
     table-templates ;; table name
@@ -216,14 +214,14 @@
     {:range-keydef [ :slug :s ]
      :throughput (:templates capacities)
      :block? true })
-  
+
   (far/ensure-table  ;; this is the public slugs table that will piont to a user/slug combo (maybe)
                     aws-dynamodb-client-opts
                     table-slugs ;; table name
                     [:slug :s] ;; key structure (username)
                     { :throughput (:templates capacities)
                      :block? true })
-  
+
   (log/info "Done."))
 
 
