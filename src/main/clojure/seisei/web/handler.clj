@@ -7,6 +7,7 @@
             [ring.middleware.json :as json-middle]
             [clojure.tools.logging :as log]
             [seisei.web.github-oauth]
+            [seisei.web.healthcheck :refer [healthcheck-routes]]
             [seisei.web.session]
             [seisei.web.user]
             [seisei.web.db :as db]
@@ -23,7 +24,7 @@
   (seisei.web.db/startupcheck))
 
 
-(defn my-account 
+(defn my-account
   [{session :session}]
   (let [logged-in (seisei.web.user/logged-in? session)]
     (-> (if logged-in {:logged-in logged-in
@@ -40,7 +41,7 @@
   (ANY "*" [] seisei.web.github-oauth/github-oauth-routes)
   (ANY "*" [] seisei.web.template-handlers/template-routes)
   (GET "/my/account" r (my-account r))
-  (GET "/" [] ( -> 
+  (GET "/" [] ( ->
                (resource-response "index.html" {:root "public"})
                (header "Content-Type" "text/html; charset=utf-8")))
   (route/resources "/")
@@ -54,9 +55,12 @@
                        opts (assoc-in opts [:security :anti-forgery] false) ]
                    opts ))
 
-(def app  
-  (-> app-routes
-      (json-middle/wrap-json-body {:keywords? true})
-      (json-middle/wrap-json-response)
-      (wrap-defaults my-defaults)
-  ))
+
+(def app
+  (routes
+    healthcheck-routes ; healthcheck-routes doesn't need all the wrappers
+    (-> app-routes
+        (json-middle/wrap-json-body {:keywords? true})
+        (json-middle/wrap-json-response)
+        (wrap-defaults my-defaults)
+    )))
