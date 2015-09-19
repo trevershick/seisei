@@ -10,7 +10,7 @@
                 background-color: #222;
                 border-top: 1px solid rgb(78, 93, 108);
                 border-left:none;
-                
+
         }
         h1 {
             font-size:16px;
@@ -43,7 +43,7 @@
             color:yellow;
         }
         .output {
-            float: right;   
+            float: right;
             padding-right:10px;
             color:lime;
         }
@@ -77,7 +77,7 @@
                     </div>
                     <div class="output">{JSON.stringify(output)}</div>
                 </div>
-            </div>            
+            </div>
         </li>
         </ul>
         <h1>Other Examples</h1>
@@ -93,11 +93,11 @@
                     </a></div>
                     <div class="output">{JSON.stringify(output,null,2)}</div>
                 </div>
-            </div>            
+            </div>
         </li>
         </ul>
     </div>
-
+      this.examples = [];
         onSampleClick(e) {
             this.opts.onsampleclick(e.item);
         }
@@ -212,9 +212,9 @@
                     { input: { c:'{{bool}}'}, output: {c:true} }
                 ]
             },
-
-        ];        
-    });
+        ];
+        this.update();
+    }.bind(this));
 
 
 
