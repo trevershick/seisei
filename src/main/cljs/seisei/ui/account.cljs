@@ -1,11 +1,11 @@
 (ns seisei.ui.account
-  (:require-macros [cljs.core.async.macros :refer [go]])
+  (:require-macros [cljs.core.async.macros :refer [go-loop]])
   (:require [om.core :as om :include-macros true]
     [om.dom :as dom :include-macros true]
     [seisei.ui.state :as state]
-    [seisei.ui.dispatcher :refer [dispatcher]]
+    [seisei.ui.dispatcher :as d]
     [ajax.core :refer [GET POST]]
-    [cljs.core.async :refer [put!]]))
+    [cljs.core.async :refer [<! put!]]))
 
 (enable-console-print!)
 (println "Initializing State for Account")
@@ -21,11 +21,19 @@
   ; (println "My Account Response is " (str response))
   (let [data (om/root-cursor state/app-state)]
     (om/update! data :account response)
-    (put! dispatcher {:action :my-account :data response})))
+    (d/action :my-account response)))
 
 ;; event Handlers
 (defn on-click-logout [e] (.assign (aget js/window "location") "/auth/logout"))
 (defn on-click-login-github [e] (.assign (aget js/window "location") "/auth/github"))
+
+
+
+
+
+
+
+
 
 ;; Components
 (defn view-not-logged-in [data owner]
@@ -55,10 +63,3 @@
       (if (data :logged-in)
         (om/build view-logged-in data)
         (om/build view-not-logged-in data)))))
-
-;; Startup Code
-(defn init []
-  (GET "/my/account" {  :keywords? true
-                      :response-format :json
-                      :handler handler-my-account
-                      :error-handler handler-my-account}))

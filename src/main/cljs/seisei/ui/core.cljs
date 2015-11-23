@@ -6,6 +6,7 @@
 		        [seisei.ui.state :as state]
             [seisei.ui.comp.menu :as menu]
             [seisei.ui.account :as acct]
+            [seisei.ui.store :as store]
             [seisei.ui.templates :as tmpl]
             [cljs.core.async :refer [put! chan <!]]))
 
@@ -73,4 +74,4 @@
 
 (def app-element (. js/document (getElementById "app")))
 (om/root app state/app-state {:target app-element})
-(acct/init)
+(store/init)
