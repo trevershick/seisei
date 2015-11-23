@@ -4,6 +4,7 @@
             [om.dom :as dom :include-macros true]
             [ajax.core :refer [GET POST]]
 		        [seisei.ui.state :as state]
+            [seisei.ui.comp.menu :as menu]
             [seisei.ui.account :as acct]
             [seisei.ui.templates :as tmpl]
             [cljs.core.async :refer [put! chan <!]]))
@@ -62,6 +63,7 @@
   (println "App, data is " data)
   (om/component
     (dom/div nil
+      (om/build menu/editor-menu data)
       (om/build list-component (data :list))
       (om/build acct/view-logged-inornot (acct/cursor-from-root data))
       (om/build tmpl/view-my-templates (tmpl/cursor-from-root data))

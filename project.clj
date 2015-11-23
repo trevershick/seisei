@@ -8,12 +8,12 @@
   :license {:name "Eclipse Public License"
             :url "http://www.eclipse.org/legal/epl-v10.html"}
             :dependencies [[org.clojure/core.async "0.2.374"]
-                           [sablono "0.3.6"]
+                           [sablono "0.4.0"]
                            [org.omcljs/om "0.9.0"]
+                           [racehub/om-bootstrap "0.5.3"]
                            [cljs-ajax "0.5.1"]
                            [org.clojure/clojure "1.7.0"]
                            [org.clojure/clojurescript "1.7.170"]
-                           [figwheel-sidecar "0.5.0-SNAPSHOT" :scope "test"]
                            [org.clojure/data.json "0.2.5"]
                            [midje "1.6.3" :exclusions [org.clojure/clojure]]
                            [clj-time "0.9.0"]
