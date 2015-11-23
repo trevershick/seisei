@@ -23,3 +23,49 @@ div.row {
 .navbar {
 	margin-bottom:5px;
 }
+
+
+/* menu */
+.dropdown-menu {
+		max-height:350px;
+		overflow-y:auto;
+}
+
+.templates-menu ul {
+		max-width:250px;
+		min-width:100px;
+}
+.templates-menu a {
+}
+.templates-menu .main-link {
+		margin-right:60px;
+		overflow-x: hidden;
+		text-overflow: ellipsis;
+}
+
+.templates-menu .static-link {
+		position: absolute;
+		right: 0;
+		padding-left: 10px;
+		padding-right: 10px;
+		display:inline-block;
+}
+.templates-menu .dynamic-link {
+		position: absolute;
+		right: 30px;
+		padding-left: 10px;
+		padding-right: 10px;
+		display:inline-block;
+}
+
+.sharing-menu .static-link {
+		position: absolute;
+		right: 0;
+		padding-left: 10px;
+		padding-right: 10px;
+		display:inline-block;
+}
+.sharing-menu .main-link {
+		margin-right:30px;
+}
+/* end menu */

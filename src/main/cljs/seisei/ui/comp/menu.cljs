@@ -4,19 +4,34 @@
             [sablono.core :as html :refer-macros [html]]))
 
 
+(defn template-submenu [data owner]
+  (println "template-submenu data is " data)
+  (om/component
+    (let [dyn-url   (data :dynamic-url false)
+          sta-url   (data :static-url false)
+          title     (data :title false)
+          slug      (data :slug false)]
+          (html
+            [:li
+              (if sta-url [:a { :target "_new" :className "static-link" :href sta-url} [:span {:className "glyphicon glyphicon-link"}]])
+              (if dyn-url [:a { :target "_new" :class "dynamic-link" :href dyn-url } [:span {:className "glyphicon glyphicon-flash"}]])
+                [:a {:href (str "#template/" slug) :className "main-link"} title]]))))
+
 (defn templates-submenu [data owner]
+  (println "templates-submenu data is " data)
 	(om/component
-		(html
-			[:li {:className "templates-menu"}
-					[:a {:href "#" :className "dropdown-toggle" :data-toggle "dropdown" :role "button" :aria-expanded "false"}
-						"Templates"
-						[:span {:className "caret"}]]
-					[:ul {:className "dropdown-menu" :role "menu"}
-							[:li
-									[:a { :target "_new" :className "static-link" :href "static-url"} [:span {:className "glyphicon glyphicon-link"}]]
-									[:a { :target "_new" :class "dynamic-link" :href "deynamic-url" } [:span {:className "glyphicon glyphicon-flash"}]]
-									[:a {:href "#template/{slug}" :className "main-link"} "Template Title"]]]]
-	)))
+    (if (contains? data :templates)
+  		(html
+  			[:li {:className "templates-menu"}
+  					[:a {:href "#" :className "dropdown-toggle" :data-toggle "dropdown" :role "button" :aria-expanded "false"}
+  						"Templates"
+  						[:span {:className "caret"}]]
+  					[:ul {:className "dropdown-menu" :role "menu"}
+                (om/build-all template-submenu (data :templates) {:key :slug})
+                ]])
+      (html [:li]))))
+
+
 (defn editor-menu [data owner]
   (om/component
     (html
@@ -62,16 +77,7 @@
 	                                [:span {:className "glyphicon glyphicon-check"}]]
 	                              [:a {:alt "(Re)Publish the dynamic version of this template." :className "main-link"} "Dynamic Version"]]]
 
-                  (om/build templates-submenu (tmpl/cursor-from-root data))
-                  [:li {:className "templates-menu"}
-                      [:a {:href "#" :className "dropdown-toggle" :data-toggle "dropdown" :role "button" :aria-expanded "false"}
-                        "Templates"
-                        [:span {:className "caret"}]]
-                      [:ul {:className "dropdown-menu" :role "menu"}
-                          [:li
-                              [:a { :target "_new" :className "static-link" :href "static-url"} [:span {:className "glyphicon glyphicon-link"}]]
-                              [:a { :target "_new" :class "dynamic-link" :href "deynamic-url" } [:span {:className "glyphicon glyphicon-flash"}]]
-                              [:a {:href "#template/{slug}" :className "main-link"} "Template Title"]]]]
+                  (om/build templates-submenu data)
                   [:li [:a "Help"]]
 
               [:ul {:className "nav navbar-nav navbar-right"}
@@ -84,5 +90,5 @@
                   [:li {:id "rename-menu-item"}
                     [:a] "Template Title Here" ]]
 
-										]]]]]
+                    ]]]]]
                     )))

@@ -63,7 +63,7 @@
   (println "App, data is " data)
   (om/component
     (dom/div nil
-      (om/build menu/editor-menu data)
+      (om/build menu/editor-menu (data :menu))
       (om/build list-component (data :list))
       (om/build acct/view-logged-inornot (acct/cursor-from-root data))
       (om/build tmpl/view-my-templates (tmpl/cursor-from-root data))
