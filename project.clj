@@ -7,34 +7,53 @@
   :debug true
   :license {:name "Eclipse Public License"
             :url "http://www.eclipse.org/legal/epl-v10.html"}
-  :dependencies [[org.clojure/clojure "1.6.0"]
-                 [org.clojure/data.json "0.2.5"]
-                 [midje "1.6.3" :exclusions [org.clojure/clojure]]
-                 [clj-time "0.9.0"]
-                 [compojure "1.3.1"]
-                 [clj-aws-s3 "0.3.10" :exclusions [joda-time]]
-                 [ring/ring-defaults "0.1.2"]
-                 [ring/ring-core "1.3.2"]
-                 [ring/ring-json "0.3.1"]
-                 [clj-http "1.0.1"]
-                 [com.taoensso/faraday "1.5.0" :exclusions [org.clojure/clojure]]
-                 [org.clojure/tools.logging "0.2.4"]
-                 [org.slf4j/slf4j-log4j12 "1.7.1"]
-                 [log4j/log4j "1.2.17" :exclusions [javax.mail/mail
-                                                    javax.jms/jms
-                                                    com.sun.jmdk/jmxtools
-                                                    com.sun.jmx/jmxri]]
-                 [environ "1.0.0"]]
+            :dependencies [[org.clojure/core.async "0.2.374"]
+                           [sablono "0.3.6"]
+                           [org.omcljs/om "0.9.0"]
+                           [cljs-ajax "0.5.1"]
+                           [org.clojure/clojure "1.7.0"]
+                           [org.clojure/clojurescript "1.7.170"]
+                           [figwheel-sidecar "0.5.0-SNAPSHOT" :scope "test"]
+                           [org.clojure/data.json "0.2.5"]
+                           [midje "1.6.3" :exclusions [org.clojure/clojure]]
+                           [clj-time "0.9.0"]
+                           [compojure "1.4.0"]
+                           [clj-aws-s3 "0.3.10" :exclusions [joda-time]]
+                           [ring/ring-defaults "0.1.2"]
+                           [ring/ring-core "1.3.2"]
+                           [ring/ring-json "0.3.1"]
+                           [clj-http "1.0.1"]
+                           [com.taoensso/faraday "1.5.0" :exclusions [org.clojure/clojure]]
+                           [org.clojure/tools.logging "0.2.4"]
+                           [org.slf4j/slf4j-log4j12 "1.7.1"]
+                           [environ "1.0.0"]
+                           [log4j/log4j "1.2.17" :exclusions [javax.mail/mail
+                                                              javax.jms/jms
+                                                              com.sun.jmdk/jmxtools
+                                                              com.sun.jmx/jmxri]]]
   :bower-dependencies [[mousetrap "1.5.3"]]
-
   :plugins [[lein-midje "3.1.3"]
             [lein-marginalia "0.8.0"]
             [lein-resource "14.10.1"]
             [lein-ring "0.8.13"]
             [lein-bower "0.5.1"]
             [lein-beanstalk "0.2.7"]
-            [lein-riot "0.0.1"]]
-
+            [lein-riot "0.0.1"]
+            [lein-figwheel "0.5.0-1"]
+            [org.clojure/clojurescript "1.7.170"]]
+  :cljsbuild {
+    :builds [ { :id "dev"
+              :source-paths ["src/main/cljs"]
+              :figwheel true
+              :compiler { :main seisei.ui.core
+                          :asset-path "js"
+                          :output-to "resources/public/js/main.js"
+                          :output-dir "resources/public/js"
+                          :verbose true }}]}
+  :figwheel {
+    :server-port 8888
+    :ring-handler seisei.web.handler/app
+  }
   :ring {:handler seisei.web.handler/app
          :port 8888
          :auto-refresh? true
