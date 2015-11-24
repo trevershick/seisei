@@ -23,6 +23,7 @@
 (defmethod handle-action :login [msg]
   (println "handle-action :login")
   (api/login))
+
 (defmethod handle-action :logout [msg]
   (api/logout))
 
