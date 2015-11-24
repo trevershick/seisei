@@ -10,12 +10,13 @@
 	(reify
 		om/IRender
 		(render [_]
-			(println "editor render")
 			(if @*ace*
 				(let [new-val          (data :content)
 							cur-val    (.getValue @*ace*) ]
 							(if (not= new-val cur-val)
-								(.setValue @*ace* new-val -1))))
+								(do
+									(println "Updating editor with new content")
+									(.setValue @*ace* new-val -1)))))
 			(html [:div { :name "editorElement" :className "editor" }]))
 		om/IWillUnmount
 		(will-unmount [_]
@@ -42,12 +43,13 @@
 	(reify
 		om/IRender
 		(render [_]
-			(println "editor render")
 			(if @*ace-ro*
 				(let [new-val          (data :output)
 							cur-val          (.getValue @*ace-ro*) ]
 							(if (not= new-val cur-val)
-								(.setValue @*ace-ro* new-val -1))))
+								(do
+									(println "Updating editor with new content")
+									(.setValue @*ace-ro* new-val -1)))))
 			(html [:div { :name "editorElement" :className "editor editor-ro" }]))
 		om/IWillUnmount
 		(will-unmount [_]
