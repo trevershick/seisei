@@ -6,19 +6,11 @@
 		        [seisei.ui.state :as state]
             [seisei.ui.comp.menu :refer [editor-menu]]
             [seisei.ui.comp.editor :refer [editor editor-ro editor-help]]
-            [seisei.ui.account :as acct]
             [seisei.ui.store :as store]
-            [seisei.ui.templates :as tmpl]
             [sablono.core :as html :refer-macros [html]]
             [cljs.core.async :refer [put! chan <!]]))
 
 (enable-console-print!)
-
-
-(defn handle-delete [d]
-  (let [data (om/root-cursor state/app-state)]
-    (om/transact! data :list
-      (fn [animals] (subvec animals 1)))))
 
 (defn tweet [data owner]
   (dom/a #js { :href "https://twitter.com/intent/tweet?button_hashtag=seisei&text=%23seisei%20is%20great!"
@@ -30,7 +22,7 @@
   (om/component
   (dom/div #js {:style #js {:position "absolute" :bottom 5 :left 10 :right 0}}
     (dom/a #js { :href "https://github.com/trevershick" }
-      (dom/span nil "Check me out on")
+      (dom/span nil "Check me out on ")
       (dom/img #js { :class "emoji"
         :title ":octocat:"
         :alt ":octocat:"
@@ -38,9 +30,9 @@
         :height "20"
         :width "20"
         :align "absmiddle"})
-      (dom/span nil "or")
+      (dom/span nil " or ")
       (dom/a { :href "http://trevershick.github.io" } "my blog")
-      (dom/span nil "or even")
+      (dom/span nil " or even ")
       (dom/div #js { :style  #js { :display "inline-block" :margin 0 :padding 0 :verticalAlign "middle"}}
         (tweet data owner))
       ))))

@@ -5,7 +5,6 @@
     [ajax.core :refer [GET POST]]
     [seisei.ui.dispatcher :as d]
     [seisei.ui.state :as state]
-    [seisei.ui.account :as acct]
     [cljs.core.async :refer [put! mult tap chan sub <!]]))
 
 
@@ -26,7 +25,7 @@
   ; (println "Loading /my/account")
   (GET "/my/account" {  :keywords? true
                       :response-format :json
-                      :handler (fn [acct] (println "/my/account" acct) (d/action :my-account acct)) }))
+                      :handler (fn [acct] (println "/my/account" acct) (d/action :my-account-received acct)) }))
 (defn process-template [template]
   (println "api/process-template " template)
   (POST "/template/process" { :format :json
@@ -37,22 +36,18 @@
                               :with-credentials true
                               :handler (fn [response] (println "/template/process repsonse:" response) (d/action :processed-template response))
                               :error-handler (fn [response] (js/alert response)) }))
-;
-;     })
-;   var body = {
-;     template : this.getCurrentTemplate()
-;   };
-;   $.ajax({
-;     url: "/template/process",
-;     method: "POST",
-;     dataType: "json",
-;     contentType: "application/json",
-;     cache: false,
-;     data : JSON.stringify(body),
-;     error: this.onProcessError.bind(this),
-;     success: this.onReceivedTemplateProcessed.bind(this)
-;   });
-; )
+
+
+(defn load-template [slug]
+  (GET
+    (str "/my/templates/" slug)
+    { :keywords? true
+      :response-format :json
+      :handler (fn [response] (println "/my/templates/" slug " : " response) (d/action :loaded-template response))
+      :error-handler (fn [response] (js/alert response))
+    }))
+
+
 
 (defn login []
   (.assign (aget js/window "location") "/auth/github"))

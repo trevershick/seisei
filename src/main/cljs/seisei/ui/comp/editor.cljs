@@ -1,7 +1,6 @@
 (ns seisei.ui.comp.editor
 	(:require-macros [cljs.core.async.macros :refer [go]])
   (:require [om.core :as om :include-macros true]
-            [seisei.ui.templates :as tmpl]
             [seisei.ui.dispatcher :as d]
             [sablono.core :as html :refer-macros [html]]))
 

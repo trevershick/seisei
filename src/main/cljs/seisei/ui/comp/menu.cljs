@@ -1,12 +1,16 @@
 (ns seisei.ui.comp.menu
   (:require [om.core :as om :include-macros true]
-            [seisei.ui.templates :as tmpl]
             [seisei.ui.dispatcher :as d]
             [sablono.core :as html :refer-macros [html]]))
-(defn- simple-menu-item-handler [action & opts]
-  (fn [e]
-    (.stopPropagation e)
-    (d/action action opts)))
+
+; overloaded with multiple arities
+(defn- simple-menu-item-handler
+  ([action]
+    (simple-menu-item-handler action nil))
+  ([action opts]
+    (fn [e]
+      (.stopPropagation e)
+      (d/action action opts))))
 
 (defn- highlight-first [s mnemonic]
   (let [idx     (.indexOf s mnemonic)

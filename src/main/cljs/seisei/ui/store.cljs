@@ -39,6 +39,10 @@
 (defmethod handle-action :hotkey-run [_]
   (d/action :menu-run nil))
 
+(defmethod handle-action :menu-template [{{:keys [slug]} :data}]
+  (println "store/:menu-template slug:" slug)
+  (api/load-template slug))
+
 (defmethod handle-action :menu-tidy [msg]
   ; (println "handle-action :menu-tidy")
   (let [state        (om/root-cursor app-state)
@@ -65,7 +69,7 @@
         (om/update! state :templates data)
         (om/update! menu-state :templates data)))
 
-(defmethod handle-action :my-account [{:keys [data]}]
+(defmethod handle-action :my-account-received [{:keys [data]}]
     (let [state (om/root-cursor app-state)]
       (om/update! state :account data)
       (om/update! (state :menu) :logged-in (data :logged-in))
@@ -92,6 +96,23 @@
         output       (clj->json (data :processed))
         errors       (data :errors)]
         (om/update! editor-state :output output)))
+
+(defmethod handle-action :loaded-template [{{:keys [template]} :data}])
+
+  ; :template {
+  ;   :dynamic-url "http://seisei.elasticbeanstalk.com/templates/WMX64U",
+  ;   :static-url "http://trevershick-seisei-json.s3-website-us-east-1.amazonaws.com/WMX64U.json",
+  ;   :title "This is a long name for a template or an een really longer name",
+  ;   :updated 1427210586549,
+  ;   :user "trevershick",
+  ;   :slug "WMX64U",
+  ;   :content "{\n    \"x\": \"{{city}}\"\n}"},
+  ;   :processed {:x "Thoreau"},
+  ;   :errors [],
+  ;   :input "{\n    \"x\": \"{{city}}\"\n}"}}
+
+
+
 
 (defmethod handle-action :process-template [{:keys [data]}]
   (api/process-template data))
