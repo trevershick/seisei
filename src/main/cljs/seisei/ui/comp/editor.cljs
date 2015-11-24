@@ -2,6 +2,7 @@
 	(:require-macros [cljs.core.async.macros :refer [go]])
   (:require [om.core :as om :include-macros true]
             [seisei.ui.dispatcher :as d]
+						[seisei.ui.util :refer [clj->json]]
             [sablono.core :as html :refer-macros [html]]))
 
 (def *ace* (atom nil))
@@ -67,47 +68,26 @@
       	(reset! *ace-ro* ace-instance)))
 			)
 		)
-		;
-		; this.on('update', function() {
-		; 	if (!this.aceEditor) { return; }
-		; 	if (opts.editor.templateOutput) {
-		; 		this.aceEditor.setValue(JSON.stringify(opts.editor.templateOutput, null,4), -1);
-		; 	} else {
-		; 		this.aceEditor.setValue("", -1);
-		; 	}
-		; }.bind(this));
-		;
-		; this.on('unmount', function() {
-		; 	this.aceEditor.destroy();
-		; }.bind(this));
-		;
-		; this.on('mount', function(eventName) {
-		; 	this.aceEditor = ace.edit(this.editorElement);
-		; 	this.aceEditor.setTheme("ace/theme/twilight");
-		; 	this.aceEditor.getSession().setMode("ace/mode/javascript");
-		; 	this.aceEditor.setReadOnly(true);
-		; 	this.update();
-	  ; 	}.bind(this));
-		;
+
+(defn- sample-li-input-output [io]
+	(html
+		[:div {:className "sample"}
+			[:div {:className "input"} [:a (clj->json (io :input) 0)]] [:div {:className "output"} (clj->json (io :output) 0)]
+		]))
+
+(defn- sample-li [sample]
+	(html
+		[:li {:className "tag-samples"}
+			[:div {:className "tag"} (sample :name) ]
+			[:div {:className "samples"} (map sample-li-input-output (sample :samples)) ]
+		]))
 (defn editor-help [data owner]
 	(om/component
 		(html
 			[:div {:className "editor-help help"}
 			  [:h1 "Directives"]
-				[:ul
-			  	[:li {:className "tag-samples"}
-			      [:div {:className "tag"} "name" ]
-	          [:div {:className "samples"}
-	            [:div {:className "sample"}
-								[:div {:className "input"} [:a  "input"]] [:div {:className "output"} "output"]
-							]]]]
+				[:ul (map sample-li (data :samples)) ]
 			  [:h1 "Other Examples"]
-				[:ul
-					[:li {:className "other-samples"}
-						[:div {:className "tag"} "name"]
-						[:div {:className "samples"}
-							[:div {:className "sample"}
-								[:div {:className "input"} [:a "input" ]] [:div {:className "output"} "output" ]
-							]]]]]
+				[:ul (map sample-li (data :mixed)) ]]
 			)))
 ; )))

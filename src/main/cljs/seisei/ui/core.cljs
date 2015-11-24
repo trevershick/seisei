@@ -80,7 +80,7 @@
                   ]
                 [:div { :className "col-sm-6 right-side" :style { :height "100%" :padding 0} }
                     (om/build editor-ro (data :editor))
-                    (om/build editor-help data)
+                    (om/build editor-help (data :samples))
                   ]]]
         (om/build footer data)
       ]

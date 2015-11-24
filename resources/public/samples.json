@@ -1,0 +1,230 @@
+{
+  "mixed": [{
+    "name": "Mixed Tags",
+    "samples": [{
+      "input": {
+        "address": "{{integer(100, 999)}} {{street()}}, {{city()}}, {{state()}}, {{integer(100, 10000)}}"
+      },
+      "output": {
+        "address": "269 W Bishop Ford I57 Xr, Carlsbad, KS, 4301"
+      }
+    }]
+  }],
+  "samples": [{
+    "name": "repeat",
+    "samples": [{
+      "input": {
+        "c": ["{{repeat(3)}}", {
+          "x": 1
+        }]
+      },
+      "output": {
+        "c": [{
+          "x": 1
+        }, {
+          "x": 1
+        }, {
+          "x": 1
+        }]
+      }
+    }]
+  }, {
+    "name": "random",
+    "samples": [{
+      "input": {
+        "c": "{{random(blue, brown, green)}}"
+      },
+      "output": {
+        "c": 1
+      }
+    }]
+  }, {
+    "name": "index",
+    "samples": [{
+      "input": {
+        "c": ["{{repeat(3)}}", {
+          "x": "{{index}}"
+        }]
+      },
+      "output": {
+        "c": [{
+          "x": 0
+        }, {
+          "x": 1
+        }, {
+          "x": 2
+        }]
+      }
+    }]
+  }, {
+    "name": "integer",
+    "samples": [{
+      "input": {
+        "c": "{{integer}}"
+      },
+      "output": {
+        "c": 7
+      }
+    }, {
+      "input": {
+        "c": "{{integer(1,100)}}"
+      },
+      "output": {
+        "c": 7
+      }
+    }]
+  }, {
+    "name": "date",
+    "signature": "([from], [to], [format])",
+    "samples": [{
+      "input": {
+        "c": "{{date}}"
+      },
+      "output": {
+        "c": 7
+      }
+    }, {
+      "input": {
+        "c": "{{date(20140101)}}"
+      },
+      "output": {
+        "c": 7
+      }
+    }, {
+      "input": {
+        "c": "{{date(20140101,20991231)}}"
+      },
+      "output": {
+        "c": 7
+      }
+    }, {
+      "input": {
+        "c": "{{date('20150317','20150317','yyyy-MM-dd')}}"
+      },
+      "output": {
+        "c": 7
+      }
+    }, {
+      "input": {
+        "c": "{{date(20110317,'today','yyyy-MM-dd')}}"
+      },
+      "output": {
+        "c": 7
+      }
+    }]
+  }, {
+    "name": "company",
+    "samples": [{
+      "input": {
+        "c": "{{company}}"
+      },
+      "output": {
+        "c": "Intel"
+      }
+    }]
+  }, {
+    "name": "firstName",
+    "samples": [{
+      "input": {
+        "c": "{{firstName}}"
+      },
+      "output": {
+        "c": "Terry"
+      }
+    }, {
+      "input": {
+        "c": "{{firstName(male)}}"
+      },
+      "output": {
+        "c": "John"
+      }
+    }, {
+      "input": {
+        "c": "{{firstName(female)}}"
+      },
+      "output": {
+        "c": "Linda"
+      }
+    }]
+  }, {
+    "name": "surname",
+    "samples": [{
+      "input": {
+        "c": "{{surname}}"
+      },
+      "output": {
+        "c": "Johnson"
+      }
+    }]
+  }, {
+    "name": "guid",
+    "samples": [{
+      "input": {
+        "c": "{{guid}}"
+      },
+      "output": {
+        "c": "32b85f72-9388-4dab-a7bd-dfe7435f1727"
+      }
+    }]
+  }, {
+    "name": "objectId",
+    "samples": [{
+      "input": {
+        "c": "{{objectId}}"
+      },
+      "output": {
+        "c": "32b85f72-9388-4dab-a7bd-dfe7435f1727"
+      }
+    }]
+  }, {
+    "name": "street",
+    "samples": [{
+      "input": {
+        "c": "{{street}}"
+      },
+      "output": {
+        "c": "N Trumbull Ave"
+      }
+    }]
+  }, {
+    "name": "city",
+    "samples": [{
+      "input": {
+        "c": "{{city}}"
+      },
+      "output": {
+        "c": "Clearlake"
+      }
+    }]
+  }, {
+    "name": "state",
+    "samples": [{
+      "input": {
+        "c": "{{state}}"
+      },
+      "output": {
+        "c": "IL"
+      }
+    }]
+  }, {
+    "name": "zip",
+    "samples": [{
+      "input": {
+        "c": "{{zip}}"
+      },
+      "output": {
+        "c": "60560"
+      }
+    }]
+  }, {
+    "name": "bool",
+    "samples": [{
+      "input": {
+        "c": "{{bool}}"
+      },
+      "output": {
+        "c": true
+      }
+    }]
+  }]
+}

@@ -21,6 +21,11 @@
   ; (println "Clearing Templates...")
   (d/action :templates-received []))
 
+(defn load-samples []
+  (GET "/samples.json" {:keywords? true
+                        :response-format :json
+                        :handler (fn [r] (println "/samples.json" r) (d/action :samples-received r)) }))
+
 (defn load-my-account []
   ; (println "Loading /my/account")
   (GET "/my/account" {  :keywords? true

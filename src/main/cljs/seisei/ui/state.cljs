@@ -6,6 +6,10 @@
                                       :id       nil
                                       :title    "Untitled"
                                       :content  "{ \"Nothing here\" : true }" }
+                        :samples      {
+                          :samples  []
+                          :mixed    []
+                        }
                         :templates    []
                         :show-hotkeys false
                         :account      { :logged-in false }

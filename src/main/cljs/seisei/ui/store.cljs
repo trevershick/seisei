@@ -10,7 +10,8 @@
 
 ;; Startup Code
 (defn init []
-  (api/load-my-account))
+  (api/load-my-account)
+  (api/load-samples))
 
 ;; store methods -- actually update the state
 (defmulti handle-action (fn [x] (x :action)))
@@ -62,6 +63,11 @@
       ; (println "Updating app state with template data " data)
       (om/update! editor-state :content data)))
 
+(defmethod handle-action :samples-received [{:keys [data]}]
+  (println "store/:samples-received data:" data)
+  (let [state (om/root-cursor app-state)]
+        (om/update! state :samples data)))
+
 (defmethod handle-action :templates-received [{:keys [data]}]
   ; (println "handle action :my-account, data is " data)
   (let [state (om/root-cursor app-state)
@@ -110,9 +116,6 @@
   ;   :processed {:x "Thoreau"},
   ;   :errors [],
   ;   :input "{\n    \"x\": \"{{city}}\"\n}"}}
-
-
-
 
 (defmethod handle-action :process-template [{:keys [data]}]
   (api/process-template data))
