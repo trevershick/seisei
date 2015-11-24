@@ -14,6 +14,19 @@
   (.stopPropagation e)
   (d/action :logout nil))
 
+(defn- simple-menu-item-handler [action & opts]
+  (fn [e]
+    (.stopPropagation e)
+    (d/action action opts)))
+
+(defn- highlight-first [s mnemonic]
+  (let [idx     (.indexOf s mnemonic)
+        left    (subs s 0 idx)
+        right   (subs s (inc idx) (count s))]
+    (html
+      [:span left [:u mnemonic] right])))
+
+
 (defn logout-button [data owner]
   (om/component
     (html
@@ -37,7 +50,7 @@
             [:li
               (if sta-url [:a { :target "_new" :className "static-link" :href sta-url} [:span {:className "glyphicon glyphicon-link"}]])
               (if dyn-url [:a { :target "_new" :class "dynamic-link" :href dyn-url } [:span {:className "glyphicon glyphicon-flash"}]])
-                [:a {:href (str "#template/" slug) :className "main-link"} title]]))))
+                [:a { :onClick (simple-menu-item-handler :menu-template { :slug slug }) :className "main-link"} title]]))))
 
 (defn templates-submenu [data owner]
   ; (println "templates-submenu data is " data)
@@ -70,12 +83,20 @@
             ;; clicking the main menu portion will share the item
             ;; clicking the checkbox portion will toggle the published state
             [:li
-              [:a {:target "_new" :className "static-link"} [:span {:className (str "glyphicon " static-class-name)}]]
-              [:a {:className "main-link" :href "#"} "Static Version"]]
+              [:a {:onClick (simple-menu-item-handler :menu-toggle-static) :target "_new" :className "static-link"} [:span {:className (str "glyphicon " static-class-name)}]]
+              [:a {:onClick (simple-menu-item-handler :menu-publish-static) :className "main-link" :href "#"} "Static Version"]]
             [:li
-              [:a {:alt "View Dynamic Version" :className "static-link"} [:span {:className (str "glyphicon " dynamic-class-name)}]]
-              [:a {:className "main-link" :href "#"} "Dynamic Version"]]]]))))
+              [:a {:onClick (simple-menu-item-handler :menu-toggle-dynamic) :target "_new" :className "static-link"} [:span {:className (str "glyphicon " dynamic-class-name)}]]
+              [:a {:onClick (simple-menu-item-handler :menu-publish-dynamic) :className "main-link" :href "#"} "Dynamic Version"]]]]))))
 
+(defn menu-item [title & {:keys [mnemonic icon action opts]}]
+  (let [ menu-text (if mnemonic (highlight-first title mnemonic) title)
+         className (if icon (str "glyphicon glyphicon-" icon)) ]
+    (html
+      [:li
+        [:a {:href "#" :onClick (simple-menu-item-handler action opts) }
+          [:span {:className className}] menu-text
+    ]])))
 
 (defn editor-menu [data owner]
   (om/component
@@ -89,33 +110,24 @@
             [:div
               [:ul {:className "nav navbar-nav"}
                 (if (data :new-enabled)
-                  [:li
-                    [:a {:href "#"}
-                      [:span {:className "glyphicon glyphicon-plus"}] "N" [:u "e"] "w"]])
+                  (menu-item "New" :mnemonic "e" :icon "plus" :action :menu-new))
                 (if (data :save-enabled)
-                  [:li
-                    [:a {:href "#"}
-                      [:span {:className "glyphicon glyphicon-pencil"}] [:u "S"] "ave"]])
+                  (menu-item "Save" :mnemonic "S" :icon "pencil" :action :menu-save))
                 (if (data :run-enabled)
-                  [:li
-                    [:a {:href "#"}
-                      [:span {:className "glyphicon glyphicon-play"}] [:u "R"] "un" ]])
+                  (menu-item "Run" :mnemonic "R" :icon "play" :action :menu-run))
                 (if (data :tidy-enabled)
-                  [:li
-                    [:a {:href "#"}
-                      [:span {:className "glyphicon glyphicon-indent-left"}] "T" [:u "i"] "dy"]])
+                  (menu-item "Tidy" :mnemonic "i" :icon "indent-left" :action :menu-tidy))
                 (if (data :delete-enabled)
-                  [:li
-                    [:a {:href "#"}
-                      [:span {:className "glyphicon glyphicon-trash"}] [:u "D"] "elete"]])
+                  (menu-item "Delete" :mnemonic "D" :icon "trash" :action :menu-delete))
                 (if (data :sharing-enabled)
                   (om/build sharing-submenu data))
                 (om/build templates-submenu data)
                 (if (data :help-enabled)
-                  [:li [:a "Help"]])]
+                  (menu-item "Help" :action :menu-help)) ]
 
                 [:ul {:className "nav navbar-nav navbar-right"}
-                  (if (data :feedback-enabled) [:li [:a {:href "#"} [:span {:className "glyphicon glyphicon-feedback"}] " Feedback"]])
+                  (if (data :feedback-enabled)
+                  (menu-item "Feedback" :icon "feedback" :action :menu-feedback))
                   [:li
                     (if (not (data :logged-in))
                       (om/build login-with-github data)
@@ -124,6 +136,5 @@
               (if (data :template-title)
                 [:ul {:className "nav navbar-nav navbar-right"}
                   [:li {:id "rename-menu-item"}
-                    [:a (data :template-title) ]]])
-          ]]]]
-                    )))
+                    [:a { :onClick (simple-menu-item-handler :menu-rename )} (data :template-title) ]]])
+          ]]]])))
