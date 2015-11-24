@@ -24,18 +24,6 @@
       :data-related "trevermshick"
       :data-url "http://seisei.elasticbeanstalk.com" } "Tweet #seisei"))
 
-(defn list-component [data owner]
-  (reify
-    om/IRender
-    (render [_]
-      (println "animaals is " data)
-      (dom/div nil
-        (dom/div nil
-        (dom/button #js {:onClick #(handle-delete data) } "Delete")
-          (apply dom/ul nil
-            (map (fn [text] (dom/li nil text)) data)))))))
-
-
 (defn footer [data owner]
   (dom/div #js {:style #js {:position "absolute" :bottom 5 :left 10 :right 0}}
     (dom/a #js { :href "https://github.com/trevershick" }
@@ -65,9 +53,6 @@
   (om/component
     (dom/div nil
       (om/build menu/editor-menu (data :menu))
-      (om/build list-component (data :list))
-      (om/build acct/view-logged-inornot (acct/cursor-from-root data))
-      (om/build tmpl/view-my-templates (tmpl/cursor-from-root data))
     )))
 
 (println (str "app-state is " @state/app-state))

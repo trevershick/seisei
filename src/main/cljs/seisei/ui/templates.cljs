@@ -17,29 +17,3 @@
 
 (defn cursor-from-root [root-cursor]
   (root-cursor :templates))
-
-
-
-
-;; Components
-(defn view-template-temporary [data owner]
-  (reify
-    om/IDisplayName
-    (display-name [_] "view-template-temporary")
-    om/IRender
-    (render [_]
-      (dom/div nil (data :title)))))
-
-
-(defn view-my-templates [data owner]
-  (reify
-    om/IDisplayName
-    (display-name [_] "view-my-templates")
-    om/IRender
-    (render [_]
-      ; (println "view-my-templates, data = " data)
-      (dom/h1 nil "Templates")
-      (dom/div nil
-        (om/build-all view-template-temporary data {:key :slug})
-        (dom/button #js {:onClick refresh-templates } "Refresh Templates")
-      ))))

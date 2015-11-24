@@ -1,8 +1,7 @@
 (ns seisei.ui.state)
 (enable-console-print!)
 (println "Initializing State")
-(def app-state (atom { :list ["Lion" "Zebra" "Buffalo" "Antelope"]
-                       :menu {  :logged-in false
+(def app-state (atom { :menu {  :logged-in false
                                 :new-enabled true
                                 :save-enabled true
                                 :run-enabled true
