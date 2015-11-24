@@ -129,11 +129,11 @@
           ]]]])))
 (if js/Mousetrap
   (do
-    (.bindGlobal js/Mousetrap "esc" (fn [] (d/action :toggle-hotkeys nil)))
-    (.bindGlobal js/Mousetrap "mod+e" (fn [] (d/action :hotkey-new nil)))
-    (.bindGlobal js/Mousetrap "mod+d" (fn [] (d/action :hotkey-delete nil)))
-    (.bindGlobal js/Mousetrap "mod+s" (fn [] (d/action :hotkey-save nil)))
-    (.bindGlobal js/Mousetrap "mod+r" (fn [] (d/action :hotkey-run nil)))
-    (.bindGlobal js/Mousetrap "mod+i" (fn [] (d/action :hotkey-tidy nil)))
-    (.bindGlobal js/Mousetrap "mod+h" (fn [] (d/action :hotkey-help nil)))
+    (.bindGlobal js/Mousetrap "esc" (fn [] (d/action :toggle-hotkeys nil) false))
+    (.bindGlobal js/Mousetrap "mod+e" (fn [] (d/action :hotkey-new nil) false))
+    (.bindGlobal js/Mousetrap "mod+d" (fn [] (d/action :hotkey-delete nil) false))
+    (.bindGlobal js/Mousetrap "mod+s" (fn [] (d/action :hotkey-save nil) false))
+    (.bindGlobal js/Mousetrap "mod+r" (fn [] (d/action :hotkey-run nil) false))
+    (.bindGlobal js/Mousetrap "mod+i" (fn [] (d/action :hotkey-tidy nil) false))
+    (.bindGlobal js/Mousetrap "mod+h" (fn [] (d/action :hotkey-help nil) false))
   ))
