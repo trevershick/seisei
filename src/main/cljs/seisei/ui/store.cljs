@@ -33,8 +33,11 @@
 ; some of the hotkeys need additional logic to determine if
 ; they're enabled or not so I used specific :hotkey-XXX keywords
 ; to separate out the handlers
-(defmethod handle-action :hotkey-tidy [msg]
+(defmethod handle-action :hotkey-tidy [_]
   (d/action :menu-tidy nil))
+
+(defmethod handle-action :hotkey-run [_]
+  (d/action :menu-run nil))
 
 (defmethod handle-action :menu-tidy [msg]
   ; (println "handle-action :menu-tidy")
