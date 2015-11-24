@@ -8,7 +8,6 @@
     [cljs.core.async :refer [put! mult tap chan sub <!]]))
 
 
-
 ;; API Calls
 (defn refresh-templates []
   ; (println "Loading Templates...")
@@ -52,10 +51,43 @@
       :error-handler (fn [response] (js/alert response))
     }))
 
+(defn publish-template [template]
+  (println "api/publish-template template:" template)
+  (if (nil? (template :processed)) (throw "Processed not set"))
+  (POST
+    (str "/my/templates/" (template :slug) "/publish")
+    { :format :json
+      :response-format :json
+      :keywords? true
+      :cache false
+      :params {:template template}
+      :with-credentials true
+      :handler  (fn [response]
+                  (println (str "/my/templates/" (template :slug) "/publish") " response:" response)
+                  (d/action :published-template response))
+      :error-handler (fn [response] (js/alert response)) }))
 
+
+(defn publish-template-dynamic [template]
+  (println "api/publish-template-dynamic template:" template)
+  (POST
+    (str "/my/templates/" (template :slug) "/publish")
+    { :format :json
+      :response-format :json
+      :keywords? true
+      :cache false
+      :params {:template template}
+      :with-credentials true
+      :handler  (fn [response]
+                  (println (str "/my/templates/" (template :slug) "/publishdynamic") " response:" response)
+                  (d/action :published-template-dynamic response))
+      :error-handler (fn [response] (js/alert response)) }))
+
+(defn goto-github-issues []
+  (.open js/window "https://github.com/trevershick/seisei/issues" "_blank"))
 
 (defn login []
-  (.assign (aget js/window "location") "/auth/github"))
+  (.open js/window "/auth/github" "_self"))
 
 (defn logout []
-  (.assign (aget js/window "location") "/auth/logout"))
+  (.open js/window "/auth/logout" "_self"))

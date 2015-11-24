@@ -62,10 +62,10 @@
 
 ;; this should only be shown if we have a 'current template'
 (defn sharing-submenu [data owner]
-  (let [ dynamically-shared (contains? data :dynamic-url)
-         statically-shared (contains? data :static-url)
-         dynamic-class-name (if dynamically-shared "glyphicon-check" "glyphicon-unchecked")
-         static-class-name (if statically-shared "glyphicon-check" "glyphicon-unchecked")]
+  (let [ dynamically-shared   (data :template-shared-dynamically)
+         statically-shared    (data :template-shared-statically)
+         dynamic-class-name   (if dynamically-shared "glyphicon-check" "glyphicon-unchecked")
+         static-class-name    (if statically-shared "glyphicon-check" "glyphicon-unchecked")]
   (om/component
     (html
       [:li {:className "sharing-menu"}

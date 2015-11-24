@@ -52,6 +52,7 @@
   :figwheel {
     :server-port 8888
     :ring-handler seisei.web.handler/app
+    :nrepl-port 7888
   }
   :ring {:handler seisei.web.handler/app
          :port 8888
@@ -78,7 +79,9 @@
   :main ^:skip-aot seisei.core
   :profiles {:uberjar {:aot :all}
              :dev     {:dependencies [[javax.servlet/servlet-api "2.5"]
-                                      [ring-mock "0.1.5"]]}}
+                                      [ring-mock "0.1.5"]
+                                      [figwheel-sidecar "0.5.0-1"]]
+                       :source-paths ["src/main/cljs"]}}
   :aliases {"ci-deploy" ["do" ["clean"] ["bower" "install"] ["riot"] ["resource"] ["beanstalk" "deploy" "seisei-prod"]]
             "data" ["run" "-m" "seisei.tools.all"]
             "cities" ["run" "-m" "seisei.tools.cities"]

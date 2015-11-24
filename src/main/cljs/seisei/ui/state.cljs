@@ -2,9 +2,8 @@
 (enable-console-print!)
 (println "Initializing State")
 (def app-state (atom {  :editor     {
+                                      :dirty    false
                                       :output   "Test Output" ; always a string
-                                      :id       nil
-                                      :title    "Untitled"
                                       :content  "{ \"Nothing here\" : true }" }
                         :samples      {
                           :samples  []
@@ -22,4 +21,6 @@
                                 :sharing-enabled  false
                                 :help-enabled     true
                                 :template-title   "(new template)"
+                                :template-shared-statically false
+                                :template-shared-dynamically false
                                 :feedback-enabled true }}))

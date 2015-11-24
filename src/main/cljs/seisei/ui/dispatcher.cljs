@@ -3,7 +3,7 @@
   (:require [om.core :as om :include-macros true]
     [cljs.core.async :as async]))
 
-(def dispatcher (async/chan 1000))
+(defonce dispatcher (async/chan 1000))
 
 (def mult-c (async/mult dispatcher))
 

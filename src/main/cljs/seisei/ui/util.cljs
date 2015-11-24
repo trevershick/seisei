@@ -4,3 +4,5 @@
   ([edn] (clj->json edn 2))
   ([edn spaces]
       (.stringify js/JSON (clj->js edn) nil spaces)))
+
+(defn nnil? [v] (not (nil? v)))

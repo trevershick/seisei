@@ -4,7 +4,7 @@
     [seisei.ui.dispatcher :as d]
     [seisei.ui.state :refer [app-state]]
     [seisei.ui.api :as api]
-    [seisei.ui.util :refer [clj->json]]
+    [seisei.ui.util :refer [clj->json nnil?]]
     [cljs.core.async :refer [<!]]))
 
 
@@ -23,6 +23,7 @@
 (defmethod handle-action :logout [msg]
   (api/logout))
 
+(defmethod handle-action :menu-feedback [_] (api/goto-github-issues))
 (defmethod handle-action :menu-help [_]
   (om/update! (om/root-cursor app-state) :show-hotkeys true))
   ; (println app-state))
@@ -39,6 +40,23 @@
 
 (defmethod handle-action :hotkey-run [_]
   (d/action :menu-run nil))
+
+(defmethod handle-action :menu-publish-static [_]
+  (let [state            (om/root-cursor app-state)
+        current-template (state :template)
+        processed-text   (-> state :editor :output)
+        template         (assoc current-template :processed processed-text)]
+        (api/publish-template template)))
+
+(defmethod handle-action :menu-publish-dynamic [_]
+  (let [state            (om/root-cursor app-state)
+        template (state :template)]
+        (api/publish-template-dynamic template)))
+
+
+(defmethod handle-action :published-template [{:keys [data]}]
+  (println "store/:published-template data:" data)
+  )
 
 (defmethod handle-action :menu-template [{{:keys [slug]} :data}]
   (println "store/:menu-template slug:" slug)
@@ -61,7 +79,8 @@
   (let [state (om/root-cursor app-state)
         editor-state (state :editor) ]
       ; (println "Updating app state with template data " data)
-      (om/update! editor-state :content data)))
+      (om/update! editor-state :content data)
+      (om/update! editor-state :dirty true)))
 
 (defmethod handle-action :samples-received [{:keys [data]}]
   (println "store/:samples-received data:" data)
@@ -112,12 +131,15 @@
         (om/update! state :template template) ; store off the template.
         (om/update! editor-state :content (template :content))
         (om/update! editor-state :output output)
+        (om/update! editor-state :dirty false)
         ;; update the menu's state
         (om/transact! state :menu (fn [s]
           (let [s (assoc s :new-enabled true)
                 s (assoc s :save-enabled true)
                 s (assoc s :delete-enabled true)
                 s (assoc s :sharing-enabled true)
+                s (assoc s :template-shared-statically (nnil? (template :static-url)))
+                s (assoc s :template-shared-dynamically (nnil? (template :dynamic-url)))
                 s (assoc s :template-title (template :title))]
             s )))
         ))
@@ -141,7 +163,7 @@
   (js/alert (str "No handle-action method for " msg)))
 
 ;; store methods -- handle requests, call the API, update the store...
-(def channel (d/subscribe))
+(defonce channel (d/subscribe))
 (go-loop []
   (let [msg (<! channel)]
     ; (println "Got Dispatcher Message " msg)
