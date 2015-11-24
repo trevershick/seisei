@@ -60,11 +60,11 @@
         [:div {:className "backdrop" }
           [:div {:className "hotkeys"}
             [:ul
-              [:li [:span { :className "kk" } [:kbd { :className "light cmd"} "&#8984;"] "+" [:kbd { :className "light"} "i"]] [:p "Tidy up your JSON"]]
-      				[:li [:span { :className "kk" } [:kbd { :className "light cmd"} "&#8984;"] "+" [:kbd { :className "light"} "r"]] [:p "Run your template on the Server"]]
-      				[:li [:span { :className "kk" } [:kbd { :className "light cmd"} "&#8984;"] "+" [:kbd { :className "light"} "s"]] [:p "Save your template on the server"]]
-              [:li [:span { :className "kk" } [:kbd { :className "light cmd"} "&#8984;"] "+" [:kbd { :className "light"} "e"]] [:p "Create a new template"]]
-              [:li [:span { :className "kk" } [:kbd { :className "light cmd"} "&#8984;"] "+" [:kbd { :className "light"} "s"]] [:p "Delete the current template"]]
+              [:li [:span { :className "kk" } [:kbd { :className "light cmd"} "⌘"] "+" [:kbd { :className "light"} "i"]] [:p "Tidy up your JSON"]]
+      				[:li [:span { :className "kk" } [:kbd { :className "light cmd"} "⌘"] "+" [:kbd { :className "light"} "r"]] [:p "Run your template on the Server"]]
+      				[:li [:span { :className "kk" } [:kbd { :className "light cmd"} "⌘"] "+" [:kbd { :className "light"} "s"]] [:p "Save your template on the server"]]
+              [:li [:span { :className "kk" } [:kbd { :className "light cmd"} "⌘"] "+" [:kbd { :className "light"} "e"]] [:p "Create a new template"]]
+              [:li [:span { :className "kk" } [:kbd { :className "light cmd"} "⌘"] "+" [:kbd { :className "light"} "s"]] [:p "Delete the current template"]]
             ]]
           (om/build hotkey-prompt {:key "esc" :purpose "to dismiss"})
         ])
