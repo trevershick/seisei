@@ -2,7 +2,7 @@
 (enable-console-print!)
 (println "Initializing State")
 (def app-state (atom {  :editor {
-                          :output   "Test Output"
+                          :output   "Test Output" ; always a string
                           :id       nil
                           :title    "Untitled"
                           :content  "{ \"Nothing here\" : true }" }
