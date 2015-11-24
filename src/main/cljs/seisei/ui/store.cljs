@@ -103,7 +103,24 @@
         errors       (data :errors)]
         (om/update! editor-state :output output)))
 
-(defmethod handle-action :loaded-template [{{:keys [template]} :data}])
+(defmethod handle-action :loaded-template [{{:keys [processed template]} :data}]
+  (println "store/:loaded-template template:" template)
+  (let [state        (om/root-cursor app-state)
+        editor-state (state :editor)
+        menu-state   (state :menu)
+        output       (clj->json processed)]
+        (om/update! state :template template) ; store off the template.
+        (om/update! editor-state :content (template :content))
+        (om/update! editor-state :output output)
+        ;; update the menu's state
+        (om/transact! state :menu (fn [s]
+          (let [s (assoc s :new-enabled true)
+                s (assoc s :save-enabled true)
+                s (assoc s :delete-enabled true)
+                s (assoc s :sharing-enabled true)
+                s (assoc s :template-title (template :title))]
+            s )))
+        ))
 
   ; :template {
   ;   :dynamic-url "http://seisei.elasticbeanstalk.com/templates/WMX64U",
