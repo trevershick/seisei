@@ -6,6 +6,7 @@
                           :id       nil
                           :title    "Untitled"
                           :content  "{ \"Nothing here\" : true }" }
+                        :show-hotkeys false
                         :menu { :logged-in        false
                                 :new-enabled      false
                                 :save-enabled     false

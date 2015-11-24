@@ -138,3 +138,14 @@
                   [:li {:id "rename-menu-item"}
                     [:a { :onClick (simple-menu-item-handler :menu-rename )} (data :template-title) ]]])
           ]]]])))
+(if js/Mousetrap
+  (do
+    (.bindGlobal js/Mousetrap "esc" (fn [] (d/action :toggle-hotkeys nil)))
+  ))
+; Mousetrap.bindGlobal('mod+e', function() { (opts.showdelete &&  _.isFunction(opts.new)) && this.opts.new();return false; }.bind(this));
+; Mousetrap.bindGlobal('mod+d', function() { (opts.showdelete &&  _.isFunction(opts.delete)) && this.opts.delete();return false; }.bind(this));
+; Mousetrap.bindGlobal('mod+s', function() { !this.showhk && this.opts.save();return false; }.bind(this));
+; Mousetrap.bindGlobal('mod+r', function() { !this.showhk && this.opts.run();return false; }.bind(this));
+; Mousetrap.bindGlobal('mod+i', function() { !this.showhk && this.opts.tidy();return false; }.bind(this));
+; Mousetrap.bindGlobal('esc', function() { this.showHotkeys();return false; }.bind(this));
+; Mousetrap.bindGlobal('mod+h', function() { this.opts.help();return false; }.bind(this));

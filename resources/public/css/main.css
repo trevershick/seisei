@@ -99,7 +99,6 @@ editor-app .right-side {
 /* end menu */
 
 /* start hotkeys */
-/*
 .backdrop {
   background-color: black;
   opacity: 0.9;
@@ -120,33 +119,33 @@ kbd {
   margin-right:5px;
   margin-left:5px;
 }
-dl {
+.hotkeys dl {
   display: block;
   margin-top: 20%;
 }
-ul {
+.hotkeys ul {
   margin-top: 5%;
 }
-li {
+.hotkeys li {
   width: 30%;
   margin-left: 10%;
   margin-top: 20px;
   font-weight: bold;
   display: inline-block;
 }
-li p {
+.hotkeys li p {
   display: inline-block;
   position: absolute;
 }
-dd {
+.hotkeys dd {
   display: inline-block;
   max-wilih: 30%;
   border: 1px solid yellow;
   margin-left: 20px;
 }
-.kk {
+.hotkeys .kk {
   margin-right: 20px;
-}*/
+}
 /* end hotkeys */
 
 .ace_editor {

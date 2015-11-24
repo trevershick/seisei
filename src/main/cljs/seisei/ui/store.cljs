@@ -27,6 +27,14 @@
 (defmethod handle-action :logout [msg]
   (api/logout))
 
+(defmethod handle-action :menu-help [_]
+  (om/update! (om/root-cursor state/app-state) :show-hotkeys true)
+  (println state/app-state))
+
+(defmethod handle-action :toggle-hotkeys [_]
+  (om/transact! (om/root-cursor state/app-state) :show-hotkeys (fn [x] (not x))))
+
+
 (defmethod handle-action :menu-tidy [msg]
   (println "handle-action :menu-tidy")
   (let [state        (om/root-cursor state/app-state)
