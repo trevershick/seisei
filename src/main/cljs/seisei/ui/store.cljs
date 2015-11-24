@@ -14,36 +14,47 @@
 (defn init []
   (api/load-my-account))
 
-; (.assign (aget js/window "location") "/auth/logout"))
+;; store methods -- actually update the state
+; (def templates-received-channel (d/subscribe :templates-received))
+; (go-loop []
+(defmulti handle-action (fn [x] (println "retunrg " (x :action))(x :action)))
 
-(defmulti handle (fn [x] (contains? x))
+(defmethod handle-action :login [msg]
+  (println "handle-action :login")
+  (api/login))
+(defmethod handle-action :logout [msg]
+  (api/logout))
+
+
+(defmethod handle-action :templates-received [{:keys [data]}]
+  (println "handle action :my-account, data is " data)
+  (let [state (om/root-cursor state/app-state)
+        menu-state (state :menu)]
+        (om/update! state :templates data)
+        (om/update! menu-state :templates data)))
+;
+; (def my-account-channel (d/subscribe :my-account))
+; (go-loop []
+;   (let [msg (<! my-account-channel)]
+(defmethod handle-action :my-account [{:keys [data]}]
+    (println "on my-account-channel" data)
+    (let [state (om/root-cursor state/app-state)]
+      (om/update! state :account data)
+      (om/update! (state :menu) :logged-in (data :logged-in))
+      (println "type of account is " (type :data))
+      (println "app state is now " state))
+    (if (data :logged-in)
+      (api/refresh-templates)
+      (api/clear-templates)))
+
+(defmethod handle-action :default [msg]
+  (js/alert (str "No handle-action method for " msg)))
 
 ;; store methods -- handle requests, call the API, update the store...
 (def channel (d/subscribe))
 (go-loop []
   (let [msg (<! channel)]
-    (println "Got Dispatcher Message " msg)))
+    (println "Got Dispatcher Message " msg)
+    (handle-action msg))
+    (recur))
     ; (.assign (aget js/window "location") "/auth/github")))
-
-
-
-;; store methods -- actually update the state
-; (def templates-received-channel (d/subscribe :templates-received))
-; (go-loop []
-;   (let [msg (<! templates-received-channel)
-;         data (om/root-cursor state/app-state)
-;         menu-state (data :menu)]
-;         (om/update! data :templates (msg :data))
-;         (om/update! menu-state :templates (msg :data))))
-;
-; (def my-account-channel (d/subscribe :my-account))
-; (go-loop []
-;   (let [msg (<! my-account-channel)]
-;     (println "on my-account-channel" msg)
-;     (let [data (om/root-cursor state/app-state)]
-;       (om/update! data :account (msg :data))
-;       (println "type of account is " (type (msg :data)))
-;       (println "app state is now " state/app-state))
-;     (if (-> msg :data :logged-in)
-;       (api/refresh-templates)
-;       (api/clear-templates))))

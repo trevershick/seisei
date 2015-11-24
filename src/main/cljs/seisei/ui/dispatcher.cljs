@@ -1,16 +1,16 @@
 (ns seisei.ui.dispatcher
   (:require-macros [cljs.core.async.macros :refer [go]])
   (:require [om.core :as om :include-macros true]
-    [cljs.core.async :refer [sub pub put! chan mult tap <!]]))
+    [cljs.core.async :as async]))
 
-(def dispatcher (chan))
+(def dispatcher (async/chan 1000))
 
-(def mult-c (mult dispatcher))
+(def mult-c (async/mult dispatcher))
 
 ; (def action-topic (pub dispatcher :action))
 (defn subscribe []
-   (let [the-channel (chan)]
-    (tap mult-c the-channel)
+   (let [the-channel (async/chan)]
+    (async/tap mult-c the-channel)
     the-channel))
 
 ; (defn subscribe [topic-name]
@@ -19,5 +19,6 @@
 ;     the-channel))
 
 (defn action [action data]
-  (println "Firing " action " with " data)
-  (put! dispatcher {:action action :data data}))
+  (let [message   {:action action :data data}
+        _         (println "Got Dispatcher Message - Firing " message)
+        result    (async/put! dispatcher message)]))

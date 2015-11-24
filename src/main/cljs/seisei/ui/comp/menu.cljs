@@ -4,23 +4,27 @@
             [seisei.ui.dispatcher :as d]
             [sablono.core :as html :refer-macros [html]]))
 
+(defn- on-login-click [e]
+  (println "On Login Click")
+  (.stopPropagation e)
+  (d/action :login {:x 1}))
+
+(defn- on-logout-click [e]
+  (println "On Login Click")
+  (.stopPropagation e)
+  (d/action :logout nil))
+
+(defn logout-button [data owner]
+  (om/component
+    (html
+      [:a {:onClick on-logout-click } "Logout"])))
+
 (defn login-with-github [data owner]
   (om/component
     (html
-      [:a { :className "btn btn-block btn-social btn-github" :onClick (fn [e] (d/action :login nil)) }
+      [:a { :className "btn btn-block btn-social btn-github" :onClick on-login-click }
         [:i {:className "fa fa-github"}]
         "Sign in with Github" ])))
-; <login-with-github>
-; 	<a onclick={opts.login} class="btn btn-block btn-social btn-github" if={! opts.loggedin && opts.login }>
-; 		<i class="fa fa-github"></i>
-; 		Sign in with Github
-; 	</a>
-; 	<a onclick={ opts.logout } class="btn btn-block" if={ opts.logout && opts.loggedin }>
-; 		Logout
-; 	</a>
-;
-; </login-with-github>
-;
 
 (defn template-submenu [data owner]
   (println "template-submenu data is " data)
@@ -112,9 +116,10 @@
 
                 [:ul {:className "nav navbar-nav navbar-right"}
                   (if (data :feedback-enabled) [:li [:a {:href "#"} [:span {:className "glyphicon glyphicon-feedback"}] " Feedback"]])
-                  (if (not (data :logged-in))
-                    [:li
-                      (om/build login-with-github data)])]
+                  [:li
+                    (if (not (data :logged-in))
+                      (om/build login-with-github data)
+                      (om/build logout-button data))]]
 
               (if (data :template-title)
                 [:ul {:className "nav navbar-nav navbar-right"}

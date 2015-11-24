@@ -12,18 +12,24 @@
 
 ;; API Calls
 (defn refresh-templates []
-  (println "Loading Templates...")
+  ; (println "Loading Templates...")
   (GET "/my/templates" { :keywords? true
                          :response-format :json
                          :handler (fn [ts] (d/action :templates-received ts))
                          }))
 
 (defn clear-templates []
-  (println "Clearing Templates...")
+  ; (println "Clearing Templates...")
   (d/action :templates-received []))
 
 (defn load-my-account []
-  (println "Loading /my/account")
+  ; (println "Loading /my/account")
   (GET "/my/account" {  :keywords? true
                       :response-format :json
-                      :handler (fn [acct] (d/action :my-account acct)) }))
+                      :handler (fn [acct] (println "/my/account" acct) (d/action :my-account acct)) }))
+
+(defn login []
+  (.assign (aget js/window "location") "/auth/github"))
+
+(defn logout []
+  (.assign (aget js/window "location") "/auth/logout"))
