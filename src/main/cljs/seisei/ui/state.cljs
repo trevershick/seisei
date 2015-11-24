@@ -1,13 +1,18 @@
 (ns seisei.ui.state)
 (enable-console-print!)
 (println "Initializing State")
-(def app-state (atom { :menu {  :logged-in false
-                                :new-enabled true
-                                :save-enabled true
-                                :run-enabled true
-                                :tidy-enabled true
-                                :delete-enabled true
-                                :sharing-enabled true
-                                :help-enabled true
-                                :template-title "TT Here"
-                                :feedback-enabled true } }))
+(def app-state (atom {  :editor {
+                          :output   "Test Output"
+                          :id       nil
+                          :title    "Untitled"
+                          :content  "{ \"Nothing here\" : true }" }
+                        :menu { :logged-in        false
+                                :new-enabled      false
+                                :save-enabled     false
+                                :run-enabled      true
+                                :tidy-enabled     true
+                                :delete-enabled   false
+                                :sharing-enabled  false
+                                :help-enabled     true
+                                :template-title   "(new template)"
+                                :feedback-enabled true }}))

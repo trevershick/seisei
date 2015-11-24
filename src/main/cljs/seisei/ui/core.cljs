@@ -4,10 +4,12 @@
             [om.dom :as dom :include-macros true]
             [ajax.core :refer [GET POST]]
 		        [seisei.ui.state :as state]
-            [seisei.ui.comp.menu :as menu]
+            [seisei.ui.comp.menu :refer [editor-menu]]
+            [seisei.ui.comp.editor :refer [editor editor-ro editor-help]]
             [seisei.ui.account :as acct]
             [seisei.ui.store :as store]
             [seisei.ui.templates :as tmpl]
+            [sablono.core :as html :refer-macros [html]]
             [cljs.core.async :refer [put! chan <!]]))
 
 (enable-console-print!)
@@ -25,6 +27,7 @@
       :data-url "http://seisei.elasticbeanstalk.com" } "Tweet #seisei"))
 
 (defn footer [data owner]
+  (om/component
   (dom/div #js {:style #js {:position "absolute" :bottom 5 :left 10 :right 0}}
     (dom/a #js { :href "https://github.com/trevershick" }
       (dom/span nil "Check me out on")
@@ -40,22 +43,56 @@
       (dom/span nil "or even")
       (dom/div #js { :style  #js { :display "inline-block" :margin 0 :padding 0 :verticalAlign "middle"}}
         (tweet data owner))
-      )))
+      ))))
 
 
 (defn hotkey-prompt [data owner]
-  (dom/span #js {:class "kbd"} "esc")
-  (dom/span nil " to show hotkeys"))
+  (om/component
+    (html
+      [:span
+        [:kbd (data :key)]
+        [:span " " (data :purpose)]])))
+
+(defn hotkeys [data owner]
+  (om/component
+    (if (data :show-hotkeys)
+      (html
+        [:div {:className "backdrop" }
+          [:div {:className "hotkeys"}
+            [:ul
+              [:li [:span { :className "kk" } [:kbd { :className "light cmd"} "&#8984;"] "+" [:kbd { :className "light"} "i"]] [:p "Tidy up your JSON"]]
+      				[:li [:span { :className "kk" } [:kbd { :className "light cmd"} "&#8984;"] "+" [:kbd { :className "light"} "r"]] [:p "Run your template on the Server"]]
+      				[:li [:span { :className "kk" } [:kbd { :className "light cmd"} "&#8984;"] "+" [:kbd { :className "light"} "s"]] [:p "Save your template on the server"]]
+              [:li [:span { :className "kk" } [:kbd { :className "light cmd"} "&#8984;"] "+" [:kbd { :className "light"} "e"]] [:p "Create a new template"]]
+              [:li [:span { :className "kk" } [:kbd { :className "light cmd"} "&#8984;"] "+" [:kbd { :className "light"} "s"]] [:p "Delete the current template"]]
+            ]]
+          (om/build hotkey-prompt {:key "esc" :purpose "to dismiss"})
+        ])
+      (html [:noscript]))))
 
 
 (defn app [data owner]
-  (println "App, data is " data)
   (om/component
-    (dom/div nil
-      (om/build menu/editor-menu (data :menu))
+    (html
+      [:editor-app
+        (om/build hotkeys data)
+        [:div { :className "row" } (om/build editor-menu (data :menu))]
+        [:div { :className "row" } (om/build editor (data :editor))]
+        [:div { :className "row editor-row" }
+            [:div { :className "row" :style { :height "100%" } }
+                [:div { :className "col-sm-6 left-side" :style {:height "100%" :padding 0} }
+                    (om/build editor (data :editor))
+                    [:div { :style { :textAlign "right" } }
+                      [:b { :className "floater" } [:span { :className "PROCESSEDCLASSES" } ]]
+                    ]
+                  ]
+                [:div { :className "col-sm-6 right-side" :style { :height "100%" :padding 0} }
+                    (om/build editor-ro (data :editor))
+                    (om/build editor-help data)
+                  ]]]
+        (om/build footer data)
+      ]
     )))
-
-(println (str "app-state is " @state/app-state))
 
 (def app-element (. js/document (getElementById "app")))
 (om/root app state/app-state {:target app-element})

@@ -19,12 +19,31 @@
 ; (go-loop []
 (defmulti handle-action (fn [x] (println "retunrg " (x :action))(x :action)))
 
+
 (defmethod handle-action :login [msg]
   (println "handle-action :login")
   (api/login))
 (defmethod handle-action :logout [msg]
   (api/logout))
 
+(defmethod handle-action :menu-tidy [msg]
+  (println "handle-action :menu-tidy")
+  (let [state        (om/root-cursor state/app-state)
+        editor-state (state :editor)]
+        (try
+          (let [data         (editor-state :content)
+                parsed       (.parse js/JSON data)
+                stringified  (.stringify js/JSON parsed nil 2)]
+            (om/update! editor-state :content stringified))
+        (catch :default e
+          (println "ERROR " e)
+          (om/update! editor-state :invalid true)))))
+
+(defmethod handle-action :editor-updated [{:keys [data]}]
+  (let [state (om/root-cursor state/app-state)
+        editor-state (state :editor) ]
+      (println "Updating app state with template data " data)
+      (om/update! editor-state :content data)))
 
 (defmethod handle-action :templates-received [{:keys [data]}]
   (println "handle action :my-account, data is " data)
