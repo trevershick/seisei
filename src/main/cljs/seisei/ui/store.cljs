@@ -4,6 +4,7 @@
     [seisei.ui.dispatcher :as d]
     [seisei.ui.state :refer [app-state]]
     [seisei.ui.api :as api]
+    [seisei.ui.util :refer [clj->json]]
     [cljs.core.async :refer [<!]]))
 
 
@@ -60,10 +61,7 @@
         menu-state (state :menu)]
         (om/update! state :templates data)
         (om/update! menu-state :templates data)))
-;
-; (def my-account-channel (d/subscribe :my-account))
-; (go-loop []
-;   (let [msg (<! my-account-channel)]
+
 (defmethod handle-action :my-account [{:keys [data]}]
     (let [state (om/root-cursor app-state)]
       (om/update! state :account data)
@@ -71,6 +69,29 @@
     (if (data :logged-in)
       (api/refresh-templates)
       (api/clear-templates))))
+
+(defmethod handle-action :menu-run [_]
+  (let [state         (om/root-cursor app-state)
+        editor-state  (state :editor)
+        content       (editor-state :content)
+        id            (editor-state :id)
+        title         (editor-state :title)
+        template      {:content content :id id :title title}]
+        (api/process-template template)))
+
+
+
+;; coming from server
+(defmethod handle-action :processed-template [{:keys [data]}]
+  (println "store/:processed-template data:" data)
+  (let [state        (om/root-cursor app-state)
+        editor-state (state :editor)
+        output       (clj->json (data :processed))
+        errors       (data :errors)]
+        (om/update! editor-state :output output)))
+
+(defmethod handle-action :process-template [{:keys [data]}]
+  (api/process-template data))
 
 (defmethod handle-action :default [msg]
   (js/alert (str "No handle-action method for " msg)))

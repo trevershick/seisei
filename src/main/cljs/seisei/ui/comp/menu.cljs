@@ -3,17 +3,6 @@
             [seisei.ui.templates :as tmpl]
             [seisei.ui.dispatcher :as d]
             [sablono.core :as html :refer-macros [html]]))
-
-(defn- on-login-click [e]
-  (println "On Login Click")
-  (.stopPropagation e)
-  (d/action :login {:x 1}))
-
-(defn- on-logout-click [e]
-  (println "On Login Click")
-  (.stopPropagation e)
-  (d/action :logout nil))
-
 (defn- simple-menu-item-handler [action & opts]
   (fn [e]
     (.stopPropagation e)
@@ -30,12 +19,12 @@
 (defn logout-button [data owner]
   (om/component
     (html
-      [:a {:onClick on-logout-click } "Logout"])))
+      [:a {:onClick (simple-menu-item-handler :logout) } "Logout"])))
 
 (defn login-with-github [data owner]
   (om/component
     (html
-      [:a { :className "btn btn-block btn-social btn-github" :onClick on-login-click }
+      [:a { :className "btn btn-block btn-social btn-github" :onClick (simple-menu-item-handler :login) }
         [:i {:className "fa fa-github"}]
         "Sign in with Github" ])))
 

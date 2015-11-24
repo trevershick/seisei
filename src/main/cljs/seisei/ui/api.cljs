@@ -27,6 +27,32 @@
   (GET "/my/account" {  :keywords? true
                       :response-format :json
                       :handler (fn [acct] (println "/my/account" acct) (d/action :my-account acct)) }))
+(defn process-template [template]
+  (println "api/process-template " template)
+  (POST "/template/process" { :format :json
+                              :response-format :json
+                              :keywords? true
+                              :cache false
+                              :params {:template template}
+                              :with-credentials true
+                              :handler (fn [response] (println "/template/process repsonse:" response) (d/action :processed-template response))
+                              :error-handler (fn [response] (js/alert response)) }))
+;
+;     })
+;   var body = {
+;     template : this.getCurrentTemplate()
+;   };
+;   $.ajax({
+;     url: "/template/process",
+;     method: "POST",
+;     dataType: "json",
+;     contentType: "application/json",
+;     cache: false,
+;     data : JSON.stringify(body),
+;     error: this.onProcessError.bind(this),
+;     success: this.onReceivedTemplateProcessed.bind(this)
+;   });
+; )
 
 (defn login []
   (.assign (aget js/window "location") "/auth/github"))
