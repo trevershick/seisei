@@ -52,11 +52,18 @@
                               :verbose      true }}
               {   :id "test"
                   :source-paths ["src/main/cljs" "src/test/cljs" ]
-                  :test-paths ["src/test/cljs"]
+                  ; :test-paths ["src/test/cljs"]
                   :compiler {
                               :pretty-print   true
                               :output-dir     "resources/private/js"
                               :output-to      "resources/private/js/test_deps.js" ; MUST be named *deps.js
+                              :verbose        true }}
+              {   :id "prod"
+                  :source-paths ["src/main/cljs"]
+                  :compiler {
+                              :output-to      "resources/public/js/optimized.js"
+                              :optimizations  :advanced
+                              :externs        ["externs/mousetrap.js"]
                               :verbose        true }}]}
   :figwheel {     :server-port  8888
                   :ring-handler seisei.web.handler/app
