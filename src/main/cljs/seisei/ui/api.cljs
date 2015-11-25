@@ -5,6 +5,7 @@
     [ajax.core :refer [GET POST DELETE]]
     [seisei.ui.dispatcher :as d]
     [seisei.ui.state :as state]
+    [seisei.ui.util :refer [debug]]
     [cljs.core.async :refer [put! mult tap chan sub <!]]))
 
 (declare load-my-account)
@@ -19,7 +20,7 @@
 
 ;; API Calls
 (defn refresh-templates []
-  ; (println "Loading Templates...")
+  (debug "api/refresh-templates")
   (GET "/my/templates"
     { :keywords? true
       :response-format :json
@@ -29,7 +30,7 @@
     }))
 
 (defn clear-templates []
-  ; (println "Clearing Templates...")
+  (debug "api/clear-templates")
   (d/action :templates-received []))
 
 (defn load-samples []
@@ -38,22 +39,22 @@
       :response-format  :json
       :error-handler default-error-handler
       :handler          (fn [r]
-                          (println "/samples.json" r)
+                          (debug "api/load-samples GET /samples.json, response=" r)
                           (d/action :samples-received r))
     }))
 
 (defn load-my-account []
-  ; (println "Loading /my/account")
+  (debug "api/load-my-account")
   (GET "/my/account"
     { :keywords? true
       :response-format :json
       :handler  (fn [acct]
-                  (println "api:GET /my/account acct:" acct)
+                  (debug "api/load-my-account GET /my/account, response=" acct)
                   (d/action :my-account-received acct))
     }))
 
 (defn process-template [template]
-  (println "api/process-template " template)
+  (debug "api/process-template " template)
   (POST "/template/process" {
     :format :json
     :response-format :json
@@ -62,7 +63,7 @@
     :params {:template template}
     :with-credentials true
     :handler  (fn [response]
-                (println "api:POST /template/process response:" response)
+                (debug "api:POST /template/process, response=" response)
                 (d/action :processed-template response))
     :error-handler default-error-handler }))
 
@@ -73,14 +74,14 @@
     { :keywords? true
       :response-format :json
       :handler (fn [response]
-        (println "/my/templates/" slug " : " response)
+        (debug ("/my/templates/" slug ", response=") response)
         (d/action :show-success "Loaded.")
         (d/action :loaded-template response))
       :error-handler (fn [response] (js/alert response))
     }))
 
 (defn unpublish-dynamic-template [template]
-  (println "api/unpublish-dynamic-template template:" template)
+  (debug "api/unpublish-dynamic-template template:" template)
   (DELETE (str "/my/templates/" (template :slug) "/publishdynamic")
     { :keywords?          true
       :response-format    :json
@@ -91,7 +92,7 @@
     }))
 
 (defn unpublish-static-template [template]
-  (println "api/unpublish-static-template template:" template)
+  (debug "api/unpublish-static-template template:" template)
   (DELETE (str "/my/templates/" (template :slug) "/publish")
     { :keywords?          true
       :response-format    :json
@@ -136,7 +137,7 @@
         :error-handler default-error-handler })))
 
 (defn publish-template [template]
-  (println "api/publish-template template:" template)
+  (debug "api/publish-template template:" template)
   (if (nil? (template :processed)) (throw "Processed not set"))
   (POST
     (str "/my/templates/" (template :slug) "/publish")
@@ -148,13 +149,13 @@
       :with-credentials true
       :handler  (fn [response]
                   (d/action :show-success "Static Endpoint Published Successfully.")
-                  (println (str "/my/templates/" (template :slug) "/publish") " response:" response)
+                  (debug (str "/my/templates/" (template :slug) "/publish, response=") response)
                   (d/action :published-template (response :template)))
       :error-handler default-error-handler }))
 
 
 (defn publish-template-dynamic [template]
-  (println "api/publish-template-dynamic template:" template)
+  (debug "api/publish-template-dynamic template:" template)
   (POST
     (str "/my/templates/" (template :slug) "/publishdynamic")
     { :format :json
@@ -164,7 +165,7 @@
       :params {:template template}
       :with-credentials true
       :handler  (fn [response]
-                  (println (str "/my/templates/" (template :slug) "/publishdynamic") " response:" response)
+                  (debug (str "/my/templates/" (template :slug) "/publishdynamic, response=") response)
                   (d/action :show-success "Dynamic Endpoint Published Successfully.")
                   (d/action :published-template-dynamic (response :template)))
       :error-handler (fn [response] (js/alert response)) }))

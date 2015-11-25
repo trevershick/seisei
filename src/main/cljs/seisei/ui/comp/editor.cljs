@@ -13,18 +13,14 @@
       (if @*ace*
         (let [new-val    (data :content)
               cur-val    (.getValue @*ace*) ]
-              (if (not= new-val cur-val)
-                (do
-                  (println "Updating editor with new content")
-                  (.setValue @*ace* new-val -1)))))
+              (when (not= new-val cur-val)
+                (.setValue @*ace* new-val -1))))
       (html [:div { :name "editorElement" :className "editor" }]))
     om/IWillUnmount
     (will-unmount [_]
-      (println "editor will-unmount")
-      (if @*ace*
-        (do
-          (.destroy @*ace*)
-          (reset! *ace* nil))))
+      (when @*ace*
+        (.destroy @*ace*)
+        (reset! *ace* nil)))
     om/IDidMount
     (did-mount [_]
       (let [ace-instance (.edit js/ace (.getDOMNode owner))]
@@ -46,18 +42,14 @@
       (if @*ace-ro*
         (let [new-val          (data :output)
               cur-val          (.getValue @*ace-ro*) ]
-              (if (not= new-val cur-val)
-                (do
-                  (println "Updating editor with new content")
-                  (.setValue @*ace-ro* new-val -1)))))
+              (when (not= new-val cur-val)
+                (.setValue @*ace-ro* new-val -1))))
       (html [:div { :name "editorElement" :className "editor editor-ro" }]))
     om/IWillUnmount
     (will-unmount [_]
-      (println "editor-ro will-unmount")
-      (if @*ace-ro*
-        (do
-          (.destroy @*ace-ro*)
-          (reset! *ace-ro* nil))))
+      (when @*ace-ro*
+        (.destroy @*ace-ro*)
+        (reset! *ace-ro* nil)))
     om/IDidMount
     (did-mount [_]
       (let [ace-instance (.edit js/ace (.getDOMNode owner))]

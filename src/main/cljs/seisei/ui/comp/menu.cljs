@@ -33,7 +33,6 @@
         "Sign in with Github" ])))
 
 (defn template-submenu [data owner]
-  (println "template-submenu data is " data)
   (om/component
     (let [dyn-url   (data :dynamic-url)
           sta-url   (data :static-url)
@@ -46,8 +45,6 @@
                 [:a { :onClick (simple-menu-item-handler :menu-template { :slug slug }) :className "main-link"} title]]))))
 
 (defn templates-submenu [data owner]
-  ; (println "templates-submenu data is " data)
-  (println "count is " (> (count (data :templates) 0)))
   (om/component
     (if (and (contains? data :templates) (> (count (data :templates)) 0))
       (html

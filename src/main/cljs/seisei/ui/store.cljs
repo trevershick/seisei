@@ -4,7 +4,7 @@
     [seisei.ui.dispatcher :as d]
     [seisei.ui.state :refer [app-state message-counter]]
     [seisei.ui.api :as api]
-    [seisei.ui.util :refer [clj->json nnil?]]
+    [seisei.ui.util :refer [clj->json nnil? debug]]
     [cljs.core.async :refer [<!]]))
 
 
@@ -63,9 +63,9 @@
         current-template (state :template)
         static-url       (current-template :static-url)
         published        (nnil? static-url)]
-    (println "store/:menu-toggle-static static-url:" static-url)
-    (println "store/:menu-toggle-static current-template:" current-template)
-    (println "store/:menu-toggle-static published:" published)
+    (debug "store/:menu-toggle-static static-url:" static-url)
+    (debug "store/:menu-toggle-static current-template:" current-template)
+    (debug "store/:menu-toggle-static published:" published)
     (if published
       (api/unpublish-static-template current-template)
       (d/action :menu-publish-static)
@@ -76,32 +76,32 @@
         current-template (state :template)
         dynamic-url      (current-template :dynamic-url)
         published        (nnil? dynamic-url)]
-    (println "store/:menu-toggle-dynamic current-template:" current-template)
+    (debug "store/:menu-toggle-dynamic current-template:" current-template)
     (if published
       (api/unpublish-dynamic-template current-template)
       (d/action :menu-publish-dynamic)
       )))
 
 (defmethod handle-action :unpublished-static-template [{:keys [data]}]
-  (println "store/:unpublished-static-template data:" data)
+  (debug "store/:unpublished-static-template data:" data)
   (let [state           (om/root-cursor app-state)
         menu-cursor     (-> state :menu)
         template-cursor (-> state :template)]
     (api/refresh-templates)
     (om/update! template-cursor :static-url nil)
     (om/update! menu-cursor     :template-shared-statically false)
-    (println "store/:unpublished-static-template template state is now " template-cursor)
+    (debug "store/:unpublished-static-template template state is now " template-cursor)
   ))
 
 (defmethod handle-action :unpublished-dynamic-template [{:keys [data]}]
-  (println "store/:unpublished-dynamic-template data:" data)
+  (debug "store/:unpublished-dynamic-template data:" data)
   (let [state           (om/root-cursor app-state)
         menu-cursor     (-> state :menu )
         template-cursor (-> state :template)]
         (api/refresh-templates)
     (om/update! template-cursor :dynamic-url nil)
     (om/update! menu-cursor :template-shared-dynamically false)
-    (println "template state is now " (-> state :template))
+    (debug "template state is now " (-> state :template))
   ))
 
 (defn save-existing []
@@ -109,14 +109,14 @@
         editor-cursor    (state :editor)
         template         (state :template)
         template         (assoc template :content (editor-cursor :content))]
-        (println "store/save-existing template:" template)
+        (debug "store/save-existing template:" template)
         (api/save-template template)))
 
 (defn save-new []
   (let [state            (om/root-cursor app-state)
         editor-cursor    (state :editor)
         new-template     { :content (editor-cursor :content) :id nil :title "Untitled"}]
-        (println "store/save-new new-template:" new-template)
+        (debug "store/save-new new-template:" new-template)
         (api/save-template new-template)))
 
 (defmethod handle-action :menu-save [_]
@@ -138,7 +138,7 @@
   (let [state           (om/root-cursor app-state)
         template        (state :template)
         title           (template :title)]
-    (println "store/:menu-delete")
+    (debug "store/:menu-delete")
     (om/transact! state :confirm (fn [confirm]
       (let [c confirm
             c (assoc c :show true)
@@ -148,7 +148,7 @@
             c (assoc c :no    "Don't Delete")
             c (assoc c :confirm-action :delete-template)]
         c))
-    (println "store/:menu-delete state is now:" (state :confirm)))))
+    (debug "store/:menu-delete state is now:" (state :confirm)))))
 
 ;; this version is used to delete the template directly without confirmation
 (defmethod handle-action :delete-template [_]
@@ -160,9 +160,9 @@
         current-template (state :template)
         processed        (-> state :editor :processed)
         template         (assoc current-template :processed processed)]
-        (println "store/:menu-publish-static editor:" (-> state :editor))
-        (println "store/:menu-publish-static template:" template)
-        (println "store/:menu-publish-static processed:" processed)
+        (debug "store/:menu-publish-static editor:" (-> state :editor))
+        (debug "store/:menu-publish-static template:" template)
+        (debug "store/:menu-publish-static processed:" processed)
         (api/publish-template template)))
 
 (defmethod handle-action :menu-publish-dynamic [_]
@@ -171,33 +171,33 @@
         (api/publish-template-dynamic template)))
 
 (defmethod handle-action :published-template [{:keys [data]}]
-  (println "store/:published-template data:" data)
+  (debug "store/:published-template data:" data)
   (let [state                       (om/root-cursor app-state)
         menu-cursor                 (-> state :menu)
         template-cursor             (-> state :template)]
     (api/refresh-templates)
     (om/update! template-cursor :static-url (data :static-url))
     (om/update! menu-cursor :template-shared-statically true)
-    (println "template state is now " (-> state :template))
+    (debug "template state is now " (-> state :template))
   ))
 
 (defmethod handle-action :published-template-dynamic [{:keys [data]}]
-  (println "store/:published-template-dynamic data:" data)
+  (debug "store/:published-template-dynamic data:" data)
   (let [state                 (om/root-cursor app-state)
         menu-cursor           (-> state :menu)
         template-cursor       (-> state :template)]
     (api/refresh-templates)
     (om/update! template-cursor :dynamic-url (data :dynamic-url))
     (om/update! menu-cursor :template-shared-dynamically true)
-    (println "store/:published-template-dynamic template is now:" template-cursor)
+    (debug "store/:published-template-dynamic template is now:" template-cursor)
   ))
 
 (defmethod handle-action :menu-template [{{:keys [slug]} :data}]
-  (println "store/:menu-template slug:" slug)
+  (debug "store/:menu-template slug:" slug)
   (api/load-template slug))
 
 (defmethod handle-action :menu-tidy [msg]
-  ; (println "handle-action :menu-tidy")
+  ; (debug "handle-action :menu-tidy")
   (let [state        (om/root-cursor app-state)
         editor-state (state :editor)]
         (try
@@ -206,23 +206,22 @@
                 stringified  (.stringify js/JSON parsed nil 2)]
             (om/update! editor-state :content stringified))
         (catch :default e
-          ; (println "ERROR " e)
+          ; (debug "ERROR " e)
           (om/update! editor-state :invalid true)))))
 
 (defmethod handle-action :editor-updated [{:keys [data]}]
   (let [state (om/root-cursor app-state)
         editor-state (state :editor) ]
-      ; (println "Updating app state with template data " data)
+      ; (debug "Updating app state with template data " data)
       (om/update! editor-state :content data)
       (om/update! editor-state :dirty true)))
 
 (defmethod handle-action :samples-received [{:keys [data]}]
-  (println "store/:samples-received data:" data)
   (let [state (om/root-cursor app-state)]
         (om/update! state :samples data)))
 
 (defmethod handle-action :templates-received [{:keys [data]}]
-  ; (println "handle action :my-account, data is " data)
+  ; (debug "handle action :my-account, data is " data)
   (let [state (om/root-cursor app-state)
         menu-state (state :menu)]
         (om/update! state :templates data)
@@ -251,7 +250,7 @@
 
 ;; coming from server
 (defmethod handle-action :processed-template [{:keys [data]}]
-  (println "store/:processed-template data:" data)
+  (debug "store/:processed-template data:" data)
   (let [state        (om/root-cursor app-state)
         editor-state (state :editor)
         output       (clj->json (data :processed))
@@ -282,7 +281,7 @@
 
 
 (defmethod handle-action :loaded-template [{{:keys [processed template]} :data}]
-  (println "store/:loaded-template template:" template)
+  (debug "store/:loaded-template template:" template)
   (let [state        (om/root-cursor app-state)
         editor-state (state :editor)
         menu-state   (state :menu)
@@ -320,7 +319,7 @@
 (defonce channel (d/subscribe))
 (go-loop []
   (let [msg (<! channel)]
-    ; (println "Got Dispatcher Message " msg)
+    ; (debug "Got Dispatcher Message " msg)
     (handle-action msg))
     (recur))
     ; (.assign (aget js/window "location") "/auth/github")))
