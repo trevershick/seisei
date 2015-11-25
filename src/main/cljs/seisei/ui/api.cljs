@@ -84,7 +84,7 @@
     }))
 
 (defn unpublish-static-template [template]
-  (println "api/unpublish-dynamic-template template:" template)
+  (println "api/unpublish-static-template template:" template)
   (DELETE (str "/my/templates/" (template :slug) "/publish")
     { :keywords?          true
       :response-format    :json
@@ -106,16 +106,16 @@
       :params {:template template}
       :with-credentials true
       :handler  (fn [response]
-                  (d/action :show-success "Published Successfully.")
+                  (d/action :show-success "Static Endpoint Published Successfully.")
                   (println (str "/my/templates/" (template :slug) "/publish") " response:" response)
-                  (d/action :published-template response))
+                  (d/action :published-template (response :template)))
       :error-handler default-error-handler }))
 
 
 (defn publish-template-dynamic [template]
   (println "api/publish-template-dynamic template:" template)
   (POST
-    (str "/my/templates/" (template :slug) "/publish")
+    (str "/my/templates/" (template :slug) "/publishdynamic")
     { :format :json
       :response-format :json
       :keywords? true
@@ -124,8 +124,8 @@
       :with-credentials true
       :handler  (fn [response]
                   (println (str "/my/templates/" (template :slug) "/publishdynamic") " response:" response)
-                  (d/action :show-success "Published Successfully.")
-                  (d/action :published-template-dynamic response))
+                  (d/action :show-success "Dynamic Endpoint Published Successfully.")
+                  (d/action :published-template-dynamic (response :template)))
       :error-handler (fn [response] (js/alert response)) }))
 
 (defn goto-github-issues []
