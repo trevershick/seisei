@@ -46,6 +46,7 @@
 ; some of the hotkeys need additional logic to determine if
 ; they're enabled or not so I used specific :hotkey-XXX keywords
 ; to separate out the handlers
+(defmethod handle-action :hotkey-help [_] (d/action :menu-help nil))
 (defmethod handle-action :hotkey-tidy [_] (d/action :menu-tidy nil))
 (defmethod handle-action :hotkey-new [_] (d/action :menu-new nil))
 (defmethod handle-action :hotkey-save [_]
@@ -289,7 +290,7 @@
         template-cursor (state :template)]
     (om/update! template-cursor :title data)
     (d/action :menu-save)))
-    
+
 (defmethod handle-action :process-template [{:keys [data]}]
   (api/process-template data))
 

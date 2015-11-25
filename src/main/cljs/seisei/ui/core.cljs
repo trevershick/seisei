@@ -60,7 +60,7 @@
               [:li [:span { :className "kk" } [:kbd { :className "light cmd"} "⌘"] "+" [:kbd { :className "light"} "e"]] [:p "Create a new template"]]
               [:li [:span { :className "kk" } [:kbd { :className "light cmd"} "⌘"] "+" [:kbd { :className "light"} "s"]] [:p "Delete the current template"]]
             ]]
-          (om/build hotkey-prompt {:key "esc" :purpose "to dismiss"})
+          (om/build hotkey-prompt {:key "⌘ + h" :purpose "to dismiss"})
         ])
       (html [:noscript]))))
 
@@ -86,7 +86,7 @@
                     (om/build editor-ro (data :editor))
                     (om/build editor-help (data :samples))
                   ]]]
-        (om/build hotkey-prompt {:key "esc" :purpose "to show hotkeys"})
+        (om/build hotkey-prompt {:key "⌘ + h" :purpose "to show hotkeys"})
         (om/build footer data)
       ]
     )))

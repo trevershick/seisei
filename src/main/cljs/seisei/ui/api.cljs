@@ -7,8 +7,15 @@
     [seisei.ui.state :as state]
     [cljs.core.async :refer [put! mult tap chan sub <!]]))
 
+(declare load-my-account)
+
 (defn default-error-handler [ajax-response]
-  (d/action :show-error (str ajax-response)))
+  (if
+    (= 403 (ajax-response :status))
+    (load-my-account)
+    (d/action :show-error (str ajax-response))
+  ))
+
 
 ;; API Calls
 (defn refresh-templates []

@@ -88,7 +88,7 @@
     (html
       [:li
         [:a {:href "#" :onClick (simple-menu-item-handler action opts) }
-          [:span {:className className}] menu-text
+          [:span {:className className}] " " menu-text
     ]])))
 
 (defn editor-menu [data owner]
@@ -133,7 +133,6 @@
           ]]]])))
 (if js/Mousetrap
   (do
-    (.bindGlobal js/Mousetrap "esc" (fn [] (d/action :toggle-hotkeys nil) false))
     (.bindGlobal js/Mousetrap "mod+e" (fn [] (d/action :hotkey-new nil) false))
     (.bindGlobal js/Mousetrap "mod+d" (fn [] (d/action :hotkey-delete nil) false))
     (.bindGlobal js/Mousetrap "mod+s" (fn [] (d/action :hotkey-save nil) false))

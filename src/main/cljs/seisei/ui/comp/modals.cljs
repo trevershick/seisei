@@ -14,6 +14,16 @@
 		(.stopPropagation e)
 		(om/update! data :show false)))
 
+(defn- on-key-press [data]
+  (fn [e]
+    (let [cc (aget e "charCode")
+          kc (aget e "keyCode")]
+      (case (+ kc cc)
+        27 ((on-rename-cancelled data) e)
+        13 ((on-rename-save data) e)
+        true
+      ))))
+
 (defn- on-change [data]
 	(fn [e]
 		(om/update! data :value (aget (aget e "target") "value"))))
@@ -28,15 +38,15 @@
 				  [:div { :className "modal-dialog" }
 				    [:div { :className "modal-content" }
 				      [:div { :className "modal-header" }
-				        [:button  { :type "button" :className "close" :data-dismiss "modal" :aria-label "Close"}
-									[:span { :aria-hidden true } "x" ]
-								]
+				        ; [:button  { :type "button" :className "close" :data-dismiss "modal" :aria-label "Close"}
+								; 	[:span { :aria-hidden true } "x" ]
+								; ]
 				        [:h4 { :className "modal-title" } "Rename Template" ]
 							]
 				      [:div { :className "modal-body" }
 				      	[:div { :className "form-group" }
 				      		[:label { :for "newName" } "Rename the template to : " ]
-				      		[:input { :type "text" :name "newName" :id "newName" :value value :className "form-control" :onChange (on-change data) }]
+				      		[:input { :type "text" :name "newName" :id "newName" :value value :className "form-control" :onKeyDown (on-key-press data) :onChange (on-change data) }]
 								]
 							]
 							[:div { :className "modal-footer" }
