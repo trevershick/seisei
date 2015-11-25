@@ -2,7 +2,7 @@
   (:require-macros [cljs.core.async.macros :refer [go]])
   (:require [om.core :as om :include-macros true]
             [seisei.ui.dispatcher :as d]
-            [seisei.ui.util :refer [clj->json]]
+            [seisei.ui.util :refer [clj->json debug]]
             [sablono.core :as html :refer-macros [html]]))
 
 (def *ace* (atom nil))
@@ -61,25 +61,30 @@
       )
     )
 
-(defn- sample-li-input-output [io]
+(defn- sample-li-input-output [idx io]
   (html
-    [:div {:className "sample"}
+    [:div {:className "sample" :key idx}
       [:div {:className "input"} [:a (clj->json (io :input) 0)]] [:div {:className "output"} (clj->json (io :output) 0)]
     ]))
 
 (defn- sample-li [sample]
   (html
-    [:li {:className "tag-samples"}
+    [:li {:className "tag-samples" :key (sample :name)}
       [:div {:className "tag"} (sample :name) ]
-      [:div {:className "samples"} (map sample-li-input-output (sample :samples)) ]
+      [:div {:className "samples"} (map-indexed sample-li-input-output (sample :samples)) ]
     ]))
+
 (defn editor-help [data owner]
-  (om/component
-    (html
-      [:div {:className "editor-help help"}
-        [:h1 "Directives"]
-        [:ul (map sample-li (data :samples)) ]
-        [:h1 "Other Examples"]
-        [:ul (map sample-li (data :mixed)) ]]
-      )))
-; )))
+  (reify
+    om/IRender
+    (render [_]
+      (html
+        [:div {:className "editor-help help"}
+          [:h1 "Directives"]
+          [:ul (map sample-li (data :samples)) ]
+          [:h1 "Other Examples"]
+          [:ul (map sample-li (data :mixed)) ]]
+        ))
+    om/IShouldUpdate
+    (should-update [this next-props next-state]
+      (not= (om/get-props owner) next-props))))

@@ -74,7 +74,7 @@
     { :keywords? true
       :response-format :json
       :handler (fn [response]
-        (debug ("/my/templates/" slug ", response=") response)
+        (debug (str "/my/templates/" slug ", response=") response)
         (d/action :show-success "Loaded.")
         (d/action :loaded-template response))
       :error-handler (fn [response] (js/alert response))
