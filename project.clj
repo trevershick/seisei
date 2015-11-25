@@ -37,7 +37,6 @@
                         [lein-ring "0.8.13"]
                         [lein-bower "0.5.1"]
                         [lein-beanstalk "0.2.7"]
-                        [lein-riot "0.0.1"]
                         [lein-figwheel "0.5.0-1"]
                         [org.clojure/clojurescript "1.7.170"]
                         [lein-cljsbuild "1.1.1"]]
@@ -72,10 +71,6 @@
                   :secret-key ~aws-s3-secret-key
                   :beanstalk  {:environments ["seisei-prod"] :s3-bucket "trevershick-seisei" } }
 
-  :riot {
-                  :compact true
-                  :tags [["resources/public/" "resources/public/seisei-tags.js"]]}
-
   :resource {
                   :resource-paths  ["bower_components/mousetrap/plugins/global-bind/"]
                   :target-path     "resources/public/vendor/"
@@ -94,9 +89,8 @@
                                 :source-paths ["src/main/cljs"]}
                     :test     { :dependencies [[midje "1.8.2" :exclusions [org.clojure/clojure]]] }
   }
-  :aliases {"ci-deploy" ["do" ["clean"] ["bower" "install"] ["riot"] ["resource"] ["beanstalk" "deploy" "seisei-prod"]]
+  :aliases {"ci-deploy" ["do" ["clean"] ["bower" "install"] ["resource"] ["beanstalk" "deploy" "seisei-prod"]]
             "data" ["run" "-m" "seisei.tools.all"]
             "cities" ["run" "-m" "seisei.tools.cities"]
-            "states" ["run" "-m" "seisei.tools.states"]
-            }
+            "states" ["run" "-m" "seisei.tools.states"] }
 )
