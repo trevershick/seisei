@@ -16,6 +16,15 @@
                         :rename     {
                                       :show false
                         }
+                        :confirm    {
+                                      :show false
+                                      :title nil
+                                      :question nil
+                                      :confirm-action nil
+                                      :confirm-data nil
+                                      :deny-action nil
+                                      :deny-data nil
+                        }
                         :samples      {
                           :samples  []
                           :mixed    []
@@ -24,7 +33,7 @@
                         :show-hotkeys false
                         :account      { :logged-in false }
                         :menu { :logged-in        false ; duplicateion from :account, but is that ok?
-                                :new-enabled      false
+                                :new-enabled      true
                                 :save-enabled     false
                                 :run-enabled      true
                                 :tidy-enabled     true

@@ -135,6 +135,23 @@
     (om/update! rename-cursor :show true)))
 
 (defmethod handle-action :menu-delete [_]
+  (let [state           (om/root-cursor app-state)
+        template        (state :template)
+        title           (template :title)]
+    (println "store/:menu-delete")
+    (om/transact! state :confirm (fn [confirm]
+      (let [c confirm
+            c (assoc c :show true)
+            c (assoc c :question (str "Are you sure you want to delete " title " ?"))
+            c (assoc c :title "Delete your template?")
+            c (assoc c :yes   "Delete")
+            c (assoc c :no    "Don't Delete")
+            c (assoc c :confirm-action :delete-template)]
+        c))
+    (println "store/:menu-delete state is now:" (state :confirm)))))
+
+;; this version is used to delete the template directly without confirmation
+(defmethod handle-action :delete-template [_]
   (let [state           (om/root-cursor app-state)]
     (api/delete-template (state :template))))
 
@@ -215,9 +232,11 @@
     (let [state (om/root-cursor app-state)]
       (om/update! state :account data)
       (om/update! (state :menu) :logged-in (data :logged-in))
-    (if (data :logged-in)
-      (api/refresh-templates)
-      (api/clear-templates))))
+      (om/update! (state :menu) :save-enabled (data :logged-in))
+      (if (data :logged-in)
+        (api/refresh-templates)
+        (api/clear-templates)
+      )))
 
 (defmethod handle-action :menu-run [_]
   (let [state         (om/root-cursor app-state)

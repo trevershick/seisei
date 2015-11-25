@@ -247,4 +247,11 @@ li#rename-menu-item {
 	right: 0;
 	margin-right: 20px;
 	margin-bottom: 10px;
-}	
+}
+
+.modal {
+	z-index: 10000;
+}
+.modal-backdrop {
+	z-index: 9999;
+}

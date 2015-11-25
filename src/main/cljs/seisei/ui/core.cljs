@@ -7,7 +7,7 @@
             [seisei.ui.comp.messages :refer [messages]]
             [seisei.ui.comp.menu :refer [editor-menu]]
             [seisei.ui.comp.editor :refer [editor editor-ro editor-help]]
-            [seisei.ui.comp.modals :refer [rename-modal]]
+            [seisei.ui.comp.modals :refer [confirm-modal rename-modal]]
             [seisei.ui.store :as store]
             [sablono.core :as html :refer-macros [html]]
             [cljs.core.async :refer [put! chan <!]]))
@@ -69,6 +69,7 @@
   (om/component
     (html
       [:editor-app
+        (om/build confirm-modal (data :confirm))
         (om/build rename-modal (data :rename))
         (om/build hotkeys data)
         (om/build messages (data :messages))
