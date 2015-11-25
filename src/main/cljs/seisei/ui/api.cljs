@@ -7,39 +7,57 @@
     [seisei.ui.state :as state]
     [cljs.core.async :refer [put! mult tap chan sub <!]]))
 
+(defn default-error-handler [ajax-response]
+  (d/action :show-error (str ajax-response)))
 
 ;; API Calls
 (defn refresh-templates []
   ; (println "Loading Templates...")
-  (GET "/my/templates" { :keywords? true
-                         :response-format :json
-                         :handler (fn [ts] (d/action :templates-received ts))
-                         }))
+  (GET "/my/templates"
+    { :keywords? true
+      :response-format :json
+      :error-handler default-error-handler
+      :handler  (fn [ts]
+                  (d/action :templates-received ts))
+    }))
 
 (defn clear-templates []
   ; (println "Clearing Templates...")
   (d/action :templates-received []))
 
 (defn load-samples []
-  (GET "/samples.json" {:keywords? true
-                        :response-format :json
-                        :handler (fn [r] (println "/samples.json" r) (d/action :samples-received r)) }))
+  (GET "/samples.json"
+    { :keywords?        true
+      :response-format  :json
+      :error-handler default-error-handler
+      :handler          (fn [r]
+                          (println "/samples.json" r)
+                          (d/action :samples-received r))
+    }))
 
 (defn load-my-account []
   ; (println "Loading /my/account")
-  (GET "/my/account" {  :keywords? true
-                      :response-format :json
-                      :handler (fn [acct] (println "/my/account" acct) (d/action :my-account-received acct)) }))
+  (GET "/my/account"
+    { :keywords? true
+      :response-format :json
+      :handler  (fn [acct]
+                  (println "api:GET /my/account acct:" acct)
+                  (d/action :my-account-received acct))
+    }))
+
 (defn process-template [template]
   (println "api/process-template " template)
-  (POST "/template/process" { :format :json
-                              :response-format :json
-                              :keywords? true
-                              :cache false
-                              :params {:template template}
-                              :with-credentials true
-                              :handler (fn [response] (println "/template/process repsonse:" response) (d/action :processed-template response))
-                              :error-handler (fn [response] (js/alert response)) }))
+  (POST "/template/process" {
+    :format :json
+    :response-format :json
+    :keywords? true
+    :cache false
+    :params {:template template}
+    :with-credentials true
+    :handler  (fn [response]
+                (println "api:POST /template/process response:" response)
+                (d/action :processed-template response))
+    :error-handler default-error-handler }))
 
 
 (defn load-template [slug]
@@ -47,7 +65,10 @@
     (str "/my/templates/" slug)
     { :keywords? true
       :response-format :json
-      :handler (fn [response] (println "/my/templates/" slug " : " response) (d/action :loaded-template response))
+      :handler (fn [response]
+        (println "/my/templates/" slug " : " response)
+        (d/action :show-success "Loaded.")
+        (d/action :loaded-template response))
       :error-handler (fn [response] (js/alert response))
     }))
 
@@ -63,9 +84,10 @@
       :params {:template template}
       :with-credentials true
       :handler  (fn [response]
+                  (d/action :show-success "Published Successfully.")
                   (println (str "/my/templates/" (template :slug) "/publish") " response:" response)
                   (d/action :published-template response))
-      :error-handler (fn [response] (js/alert response)) }))
+      :error-handler default-error-handler }))
 
 
 (defn publish-template-dynamic [template]
@@ -80,6 +102,7 @@
       :with-credentials true
       :handler  (fn [response]
                   (println (str "/my/templates/" (template :slug) "/publishdynamic") " response:" response)
+                  (d/action :show-success "Published Successfully.")
                   (d/action :published-template-dynamic response))
       :error-handler (fn [response] (js/alert response)) }))
 

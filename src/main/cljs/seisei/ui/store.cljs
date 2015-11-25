@@ -2,7 +2,7 @@
   (:require-macros [cljs.core.async.macros :refer [go-loop]])
   (:require [om.core :as om :include-macros true]
     [seisei.ui.dispatcher :as d]
-    [seisei.ui.state :refer [app-state]]
+    [seisei.ui.state :refer [app-state message-counter]]
     [seisei.ui.api :as api]
     [seisei.ui.util :refer [clj->json nnil?]]
     [cljs.core.async :refer [<!]]))
@@ -22,6 +22,30 @@
 
 (defmethod handle-action :logout [msg]
   (api/logout))
+
+(defmethod handle-action :close-message [{:keys [data]}]
+  (let [ state            (om/root-cursor app-state)
+         messages         (state :messages)
+         messages         (remove #(= data (:id %)) messages)]
+    (om/update! state :messages messages)))
+
+(defn- show-message [type text]
+  (let [state             (om/root-cursor app-state)
+        messages          (state :messages)
+        messages          (conj messages {:type type :message text :id (swap! message-counter inc)})]
+    (om/update! state :messages messages)))
+
+(defmethod handle-action :show-error [{:keys [data]}]
+  (show-message :alert data))
+
+(defmethod handle-action :show-info [{:keys [data]}]
+  (show-message :info data))
+
+(defmethod handle-action :show-warn [{:keys [data]}]
+  (show-message :warn data))
+
+(defmethod handle-action :show-success [{:keys [data]}]
+  (show-message :success data))
 
 (defmethod handle-action :menu-feedback [_] (api/goto-github-issues))
 (defmethod handle-action :menu-help [_]

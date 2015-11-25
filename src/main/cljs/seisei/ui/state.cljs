@@ -1,7 +1,14 @@
 (ns seisei.ui.state)
 (enable-console-print!)
-(println "Initializing State")
-(def app-state (atom {  :editor     {
+
+(def message-counter (atom 0))
+(def app-state (atom {  :messages   [
+                          {:type :alert    :message "test alert"   :id (swap! message-counter inc)}
+                          {:type :info     :message "test info"    :id (swap! message-counter inc)}
+                          {:type :warn     :message "test warn"    :id (swap! message-counter inc)}
+                          {:type :success  :message "test success" :id (swap! message-counter inc)}
+                        ]
+                        :editor     {
                                       :dirty    false
                                       :output   "Test Output" ; always a string
                                       :content  "{ \"Nothing here\" : true }" }

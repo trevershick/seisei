@@ -2,8 +2,9 @@
   (:require-macros [cljs.core.async.macros :refer [go]])
   (:require [om.core :as om :include-macros true]
             [om.dom :as dom :include-macros true]
-            [ajax.core :refer [GET POST]]
+            [seisei.ui.dispatcher :as d]
 		        [seisei.ui.state :as state]
+            [seisei.ui.comp.messages :refer [messages]]
             [seisei.ui.comp.menu :refer [editor-menu]]
             [seisei.ui.comp.editor :refer [editor editor-ro editor-help]]
             [seisei.ui.store :as store]
@@ -68,6 +69,7 @@
     (html
       [:editor-app
         (om/build hotkeys data)
+        (om/build messages (data :messages))
         [:div { :className "row" } (om/build editor-menu (data :menu))]
         [:div { :className "row" } (om/build editor (data :editor))]
         [:div { :className "row editor-row" }
