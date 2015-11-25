@@ -24,7 +24,7 @@
   (dom/div #js {:style #js {:position "absolute" :bottom 5 :left 10 :right 0}}
     (dom/a #js { :href "https://github.com/trevershick" }
       (dom/span nil "Check me out on ")
-      (dom/img #js { :class "emoji"
+      (dom/img #js { :className "emoji"
         :title ":octocat:"
         :alt ":octocat:"
         :src "https://assets.github.com/images/icons/emoji/octocat.png"

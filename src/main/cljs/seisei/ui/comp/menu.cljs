@@ -42,7 +42,7 @@
           (html
             [:li
               (if sta-url [:a { :target "_new" :className "static-link" :href sta-url} [:span {:className "glyphicon glyphicon-link"}]])
-              (if dyn-url [:a { :target "_new" :class "dynamic-link" :href dyn-url } [:span {:className "glyphicon glyphicon-flash"}]])
+              (if dyn-url [:a { :target "_new" :className "dynamic-link" :href dyn-url } [:span {:className "glyphicon glyphicon-flash"}]])
                 [:a { :onClick (simple-menu-item-handler :menu-template { :slug slug }) :className "main-link"} title]]))))
 
 (defn templates-submenu [data owner]

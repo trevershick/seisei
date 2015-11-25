@@ -113,6 +113,24 @@
     (println "template state is now " (-> state :template))
   ))
 
+(defn save-existing [])
+(defn save-new []
+  (let [state            (om/root-cursor app-state)
+        editor-cursor    (state :editor)
+        new-template     { :content (editor-cursor :content) :id nil :title "Untitled"}]
+        (println "store/save-new new-template:" new-template)
+        (api/save-template new-template)))
+
+(defmethod handle-action :menu-save [_]
+  (let [state            (om/root-cursor app-state)
+        is-new           (nil? (state :template))]
+    (if is-new
+      (save-new)
+      (save-existing))))
+
+(defmethod handle-action :menu-delete [_]
+  (let [state           (om/root-cursor app-state)]
+    (api/delete-template (state :template))))
 
 (defmethod handle-action :menu-publish-static [_]
   (let [state            (om/root-cursor app-state)
@@ -215,6 +233,28 @@
         errors       (data :errors)]
         (om/update! editor-state :processed (data :processed))
         (om/update! editor-state :output output)))
+
+(defmethod handle-action :deleted-template [_]
+  (let [state        (om/root-cursor app-state)
+        editor-state (state :editor)
+        menu-state   (state :menu)]
+        (om/update! state :template nil)
+        (om/update! editor-state :content "{}")
+        (om/update! editor-state :output "{}")
+        (om/update! editor-state :dirty false)
+        (om/update! editor-state :processed {})
+        ;; update the menu's state
+        (om/transact! state :menu (fn [s]
+          (let [s (assoc s :new-enabled true)
+                s (assoc s :save-enabled true)
+                s (assoc s :delete-enabled false)
+                s (assoc s :sharing-enabled false)
+                s (assoc s :template-shared-statically false)
+                s (assoc s :template-shared-dynamically false)
+                s (assoc s :template-title "Untitled")]
+            s )))
+        ))
+
 
 (defmethod handle-action :loaded-template [{{:keys [processed template]} :data}]
   (println "store/:loaded-template template:" template)

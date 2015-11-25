@@ -94,6 +94,40 @@
                             (d/action :unpublished-static-template template))
     }))
 
+
+
+(defn delete-template [template]
+  (let [slug    (template :slug)
+        url     (str "/my/templates/" slug)]
+    (DELETE url
+      { :response-format :json
+        :keywords? true
+        :with-credentials true
+        :handler (fn [response]
+          (d/action :show-success "Deleted.")
+          (d/action :deleted-template)
+          (refresh-templates))
+        :error-handler default-error-handler
+        })))
+
+(defn save-template [template]
+  (let [slug    (template :slug)
+        isnew   (nil? (template :slug))
+        url     (if isnew "/my/templates" (str "/my/templates" slug)) ]
+    (POST url
+      { :response-format :json
+        :format :json
+        :keywords? true
+        :cache false
+        :params {:template template}
+        :with-credentials true
+        :handler  (fn [response]
+                    (d/action :show-success "Saved.")
+                    (println url " response:" response)
+                    (d/action :loaded-template response)
+                    (process-template (response :template)))
+        :error-handler default-error-handler })))
+
 (defn publish-template [template]
   (println "api/publish-template template:" template)
   (if (nil? (template :processed)) (throw "Processed not set"))
