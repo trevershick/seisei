@@ -2,7 +2,7 @@
   (:require-macros [cljs.core.async.macros :refer [go-loop]])
   (:require [om.core :as om :include-macros true]
     [om.dom :as dom :include-macros true]
-    [ajax.core :refer [GET POST]]
+    [ajax.core :refer [GET POST DELETE]]
     [seisei.ui.dispatcher :as d]
     [seisei.ui.state :as state]
     [cljs.core.async :refer [put! mult tap chan sub <!]]))
@@ -70,6 +70,28 @@
         (d/action :show-success "Loaded.")
         (d/action :loaded-template response))
       :error-handler (fn [response] (js/alert response))
+    }))
+
+(defn unpublish-dynamic-template [template]
+  (println "api/unpublish-dynamic-template template:" template)
+  (DELETE (str "/my/templates/" (template :slug) "/publishdynamic")
+    { :keywords?          true
+      :response-format    :json
+      :error-handler      default-error-handler
+      :handler            (fn [r]
+                            (d/action :show-success "Dynamic endpoint unpublished.")
+                            (d/action :unpublished-dynamic-template template))
+    }))
+
+(defn unpublish-static-template [template]
+  (println "api/unpublish-dynamic-template template:" template)
+  (DELETE (str "/my/templates/" (template :slug) "/publish")
+    { :keywords?          true
+      :response-format    :json
+      :error-handler      default-error-handler
+      :handler            (fn [r]
+                            (d/action :show-success "Static endpoint unpublished.")
+                            (d/action :unpublished-static-template template))
     }))
 
 (defn publish-template [template]

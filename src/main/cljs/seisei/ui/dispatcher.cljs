@@ -18,7 +18,10 @@
 ;     (sub action-topic topic-name the-channel)
 ;     the-channel))
 
-(defn action [action data]
-  (let [message   {:action action :data data}
-        _         (println "Got Dispatcher Message - Firing " message)
-        result    (async/put! dispatcher message)]))
+(defn action
+  ([a]
+    (action a nil))
+  ([a data]
+    (let [message   {:action a :data data}
+          _         (println "Got Dispatcher Message - Firing " message)
+          result    (async/put! dispatcher message)])))

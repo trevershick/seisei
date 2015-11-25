@@ -62,8 +62,41 @@
 (defmethod handle-action :hotkey-tidy [_]
   (d/action :menu-tidy nil))
 
-(defmethod handle-action :hotkey-run [_]
-  (d/action :menu-run nil))
+(defmethod handle-action :hotkey-new [_] (d/action :menu-new nil))
+(defmethod handle-action :hotkey-delete [_] (d/action :menu-delete nil))
+(defmethod handle-action :hotkey-run [_] (d/action :menu-run nil))
+(defmethod handle-action :hotkey-save [_] (d/action :menu-save nil))
+
+(defmethod handle-action :menu-toggle-static [_]
+  (let [state            (om/root-cursor app-state)
+        current-template (state :template)]
+    (if (current-template :static-url)
+      (api/unpublish-static-template current-template)
+      (d/action :menu-publish-static))))
+
+(defmethod handle-action :menu-toggle-dynamic [_]
+  (let [state            (om/root-cursor app-state)
+        current-template (state :template)]
+    (if (current-template :dynamic-url)
+      (api/unpublish-dynamic-template current-template)
+      (d/action :menu-publish-dynamic))))
+
+(defmethod handle-action :unpublished-static-template [{:keys [data]}]
+  (println "store/:unpublished-static-template data:" data)
+  (let [state             (om/root-cursor app-state)
+        cursor            (-> state :template :static-url)]
+    (om/update! cursor nil)
+    (println "template state is now " (-> state :template))
+  ))
+
+(defmethod handle-action :unpublished-dynamic-template [{:keys [data]}]
+  (println "store/:unpublished-dynamic-template data:" data)
+  (let [state             (om/root-cursor app-state)
+        cursor            (-> state :template :dynamic-url)]
+    (om/update! cursor nil)
+    (println "template state is now " (-> state :template))
+  ))
+
 
 (defmethod handle-action :menu-publish-static [_]
   (let [state            (om/root-cursor app-state)
@@ -77,10 +110,8 @@
         template (state :template)]
         (api/publish-template-dynamic template)))
 
-
 (defmethod handle-action :published-template [{:keys [data]}]
-  (println "store/:published-template data:" data)
-  )
+  (println "store/:published-template data:" data))
 
 (defmethod handle-action :menu-template [{{:keys [slug]} :data}]
   (println "store/:menu-template slug:" slug)
