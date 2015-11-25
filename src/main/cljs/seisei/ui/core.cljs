@@ -7,6 +7,7 @@
             [seisei.ui.comp.messages :refer [messages]]
             [seisei.ui.comp.menu :refer [editor-menu]]
             [seisei.ui.comp.editor :refer [editor editor-ro editor-help]]
+            [seisei.ui.comp.modals :refer [rename-modal]]
             [seisei.ui.store :as store]
             [sablono.core :as html :refer-macros [html]]
             [cljs.core.async :refer [put! chan <!]]))
@@ -42,7 +43,7 @@
 (defn hotkey-prompt [data owner]
   (om/component
     (html
-      [:span
+      [:div {:className "lr"}
         [:kbd (data :key)]
         [:span " " (data :purpose)]])))
 
@@ -68,6 +69,7 @@
   (om/component
     (html
       [:editor-app
+        (om/build rename-modal (data :rename))
         (om/build hotkeys data)
         (om/build messages (data :messages))
         [:div { :className "row" } (om/build editor-menu (data :menu))]
@@ -84,6 +86,7 @@
                     (om/build editor-ro (data :editor))
                     (om/build editor-help (data :samples))
                   ]]]
+        (om/build hotkey-prompt {:key "esc" :purpose "to show hotkeys"})
         (om/build footer data)
       ]
     )))

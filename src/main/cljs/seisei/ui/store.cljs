@@ -14,14 +14,10 @@
   (api/load-samples))
 
 ;; store methods -- actually update the state
-(defmulti handle-action (fn [x] (x :action)))
+(defmulti handle-action :action)
 
-(defmethod handle-action :login [msg]
-  ; (println "handle-action :login")
-  (api/login))
-
-(defmethod handle-action :logout [msg]
-  (api/logout))
+(defmethod handle-action :login [msg] (api/login))
+(defmethod handle-action :logout [msg] (api/logout))
 
 (defmethod handle-action :close-message [{:keys [data]}]
   (let [ state            (om/root-cursor app-state)
@@ -35,37 +31,31 @@
         messages          (conj messages {:type type :message text :id (swap! message-counter inc)})]
     (om/update! state :messages messages)))
 
-(defmethod handle-action :show-error [{:keys [data]}]
-  (show-message :alert data))
-
-(defmethod handle-action :show-info [{:keys [data]}]
-  (show-message :info data))
-
-(defmethod handle-action :show-warn [{:keys [data]}]
-  (show-message :warn data))
-
-(defmethod handle-action :show-success [{:keys [data]}]
-  (show-message :success data))
+(defmethod handle-action :show-error [{:keys [data]}] (show-message :alert data))
+(defmethod handle-action :show-info [{:keys [data]}] (show-message :info data))
+(defmethod handle-action :show-warn [{:keys [data]}] (show-message :warn data))
+(defmethod handle-action :show-success [{:keys [data]}] (show-message :success data))
 
 (defmethod handle-action :menu-feedback [_] (api/goto-github-issues))
-(defmethod handle-action :menu-help [_]
-  (om/update! (om/root-cursor app-state) :show-hotkeys true))
-  ; (println app-state))
+(defmethod handle-action :menu-help [_] (d/action :toggle-hotkeys))
 
 (defmethod handle-action :toggle-hotkeys [_]
-  (om/transact! (om/root-cursor app-state) :show-hotkeys (fn [x] (not x))))
+  (om/transact! (om/root-cursor app-state) :show-hotkeys not))
 
 ; rebind :hotkey-tidy to :menu-tidy
 ; some of the hotkeys need additional logic to determine if
 ; they're enabled or not so I used specific :hotkey-XXX keywords
 ; to separate out the handlers
-(defmethod handle-action :hotkey-tidy [_]
-  (d/action :menu-tidy nil))
-
+(defmethod handle-action :hotkey-tidy [_] (d/action :menu-tidy nil))
 (defmethod handle-action :hotkey-new [_] (d/action :menu-new nil))
-(defmethod handle-action :hotkey-delete [_] (d/action :menu-delete nil))
+(defmethod handle-action :hotkey-save [_]
+  (if (-> app-state om/root-cursor :menu :save-enabled)
+    (d/action :menu-save nil)))
+(defmethod handle-action :hotkey-delete [_]
+  (if (-> app-state om/root-cursor :menu :delete-enabled)
+    (d/action :menu-delete)))
+
 (defmethod handle-action :hotkey-run [_] (d/action :menu-run nil))
-(defmethod handle-action :hotkey-save [_] (d/action :menu-save nil))
 
 (defmethod handle-action :menu-toggle-static [_]
   (let [state            (om/root-cursor app-state)
@@ -113,7 +103,14 @@
     (println "template state is now " (-> state :template))
   ))
 
-(defn save-existing [])
+(defn save-existing []
+  (let [state            (om/root-cursor app-state)
+        editor-cursor    (state :editor)
+        template         (state :template)
+        template         (assoc template :content (editor-cursor :content))]
+        (println "store/save-existing template:" template)
+        (api/save-template template)))
+
 (defn save-new []
   (let [state            (om/root-cursor app-state)
         editor-cursor    (state :editor)
@@ -127,6 +124,14 @@
     (if is-new
       (save-new)
       (save-existing))))
+
+(defmethod handle-action :menu-rename [_]
+  (let [state           (om/root-cursor app-state)
+        template-cursor (state :template)
+        rename-cursor   (state :rename)
+        current-title   (template-cursor :title)]
+    (om/update! rename-cursor :value current-title)
+    (om/update! rename-cursor :show true)))
 
 (defmethod handle-action :menu-delete [_]
   (let [state           (om/root-cursor app-state)]
@@ -279,18 +284,12 @@
             s )))
         ))
 
-  ; :template {
-  ;   :dynamic-url "http://seisei.elasticbeanstalk.com/templates/WMX64U",
-  ;   :static-url "http://trevershick-seisei-json.s3-website-us-east-1.amazonaws.com/WMX64U.json",
-  ;   :title "This is a long name for a template or an een really longer name",
-  ;   :updated 1427210586549,
-  ;   :user "trevershick",
-  ;   :slug "WMX64U",
-  ;   :content "{\n    \"x\": \"{{city}}\"\n}"},
-  ;   :processed {:x "Thoreau"},
-  ;   :errors [],
-  ;   :input "{\n    \"x\": \"{{city}}\"\n}"}}
-
+(defmethod handle-action :rename-template [{:keys [data]}]
+  (let [state        (om/root-cursor app-state)
+        template-cursor (state :template)]
+    (om/update! template-cursor :title data)
+    (d/action :menu-save)))
+    
 (defmethod handle-action :process-template [{:keys [data]}]
   (api/process-template data))
 

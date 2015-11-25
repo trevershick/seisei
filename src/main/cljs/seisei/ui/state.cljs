@@ -13,6 +13,9 @@
                                       :processed  {}
                                       :output     "" ; always a string
                                       :content    "{\"c\":[\"{{repeat(3)}}\",{\"x\":1}]}" }
+                        :rename     {
+                                      :show false
+                        }
                         :samples      {
                           :samples  []
                           :mixed    []
@@ -22,7 +25,7 @@
                         :account      { :logged-in false }
                         :menu { :logged-in        false ; duplicateion from :account, but is that ok?
                                 :new-enabled      false
-                                :save-enabled     true
+                                :save-enabled     false
                                 :run-enabled      true
                                 :tidy-enabled     true
                                 :delete-enabled   false

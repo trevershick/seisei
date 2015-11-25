@@ -113,7 +113,7 @@
 (defn save-template [template]
   (let [slug    (template :slug)
         isnew   (nil? (template :slug))
-        url     (if isnew "/my/templates" (str "/my/templates" slug)) ]
+        url     (if isnew "/my/templates" (str "/my/templates/" slug)) ]
     (POST url
       { :response-format :json
         :format :json
@@ -123,8 +123,8 @@
         :with-credentials true
         :handler  (fn [response]
                     (d/action :show-success "Saved.")
-                    (println url " response:" response)
                     (d/action :loaded-template response)
+                    (refresh-templates)
                     (process-template (response :template)))
         :error-handler default-error-handler })))
 

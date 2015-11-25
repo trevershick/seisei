@@ -1,4 +1,4 @@
-function MessageStore() {	
+function MessageStore() {
 	riot.observable(this);
 	this.messageNumber = 0;
 	this._messages = [];
@@ -29,7 +29,7 @@ MessageStore.prototype.messages = function() {
 MessageStore.prototype.alert = function(message, opts) {
 	this.alertMessage = message;
 };
-	
+
 MessageStore.prototype.clearAlert = function() {
 	this.alertMessage = null;
 }
@@ -63,7 +63,7 @@ MessageStore.prototype.addMessage = function(type,message) {
 	m = _.isString(m.message) ? m.message : m;
 	m = _.isString(m.responseText) ? m.status + " - " + m.responseText : m;
 	m = m.toString();
-	
+
 	var m = {
 		id: this.messageNumber++,
 		when: new Date(),
@@ -164,7 +164,7 @@ var test_template = {
 function EditorStore() {
 	riot.observable(this);
 	this.init();
-	
+
 	//console.log("EditorStore, ctor", test_template);
 	//console.log("EditorStore, ctor", this.currentTemplate);
 	this.templateOutput = null;
@@ -271,7 +271,7 @@ EditorStore.prototype.onTemplateSaved = function(data) {
 	this.emitChange(); // notify everyone that stuff has changed
 
 	if (existingSlug !== data.template.slug) {
-		this.trigger('on-slug', data.template.slug); 
+		this.trigger('on-slug', data.template.slug);
 	}
 };
 
