@@ -25,6 +25,16 @@ page.onConsoleMessage = function (message) {
 };
 
 console.log("Loading URL: " + url);
+/* wait for a callback (from inside our evaluate function below to
+  notify when the test suite is complete */
+page.onCallback = function(result) {
+  if (result != 0) {
+    console.log("*** Test failed! ***");
+  } else {
+    console.log("Test succeeded.");
+  }
+  phantom.exit(result);
+};
 
 page.open(url, function (status) {
     if (status != "success") {
@@ -32,21 +42,13 @@ page.open(url, function (status) {
         phantom.exit(1);
     }
 
-    var result = page.evaluate(function() {
+    page.evaluate(function() {
       console.log("Running test.");
-      return seisei.test.run();
+      /* The callback passed in is called when the test suite is finished.
+      So we then call window.callPhantom which invokes our page.onCallback method
+      above */
+      seisei.test.run(function(result) {
+        window.callPhantom(result);
+      });
     });
-
-    // NOTE: PhantomJS 1.4.0 has a bug that prevents the exit codes
-    //        below from being returned properly. :(
-    //
-    // http://code.google.com/p/phantomjs/issues/detail?id=294
-    console.log("result is " + result);
-    if (result != 0) {
-        console.log("*** Test failed! ***");
-        phantom.exit(1);
-    }
-
-    console.log("Test succeeded.");
-    phantom.exit(0);
 });
