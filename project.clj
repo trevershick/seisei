@@ -39,16 +39,27 @@
             [lein-beanstalk "0.2.7"]
             [lein-riot "0.0.1"]
             [lein-figwheel "0.5.0-1"]
-            [org.clojure/clojurescript "1.7.170"]]
+            [org.clojure/clojurescript "1.7.170"]
+            [lein-cljsbuild "1.1.1"]]
   :cljsbuild {
+    :test-commands {"unit" ["phantomjs" "phantom/unit-test.js" "resources/private/main.html"]}
     :builds [ { :id "dev"
-              :source-paths ["src/main/cljs"]
-              :figwheel true
-              :compiler { :main seisei.ui.core
-                          :asset-path "js"
-                          :output-to "resources/public/js/main.js"
-                          :output-dir "resources/public/js"
-                          :verbose true }}]}
+                :source-paths ["src/main/cljs"]
+                :figwheel true
+                :compiler { :main         seisei.ui.core
+                            :asset-path   "js"
+                            :output-to    "resources/public/js/main.js"
+                            :output-dir   "resources/public/js"
+                            :verbose      true }}
+              { :id "test"
+                :source-paths ["src/main/cljs" "src/test/cljs" ]
+                :test-paths ["src/test/cljs"]
+                :compiler {
+                            :pretty-print   true
+                            :output-dir     "resources/private/js"
+                            :output-to      "resources/private/js/test_deps.js" ; MUST be named *deps.js
+                            :verbose        true }}
+            ]}
   :figwheel {
     :server-port 8888
     :ring-handler seisei.web.handler/app
