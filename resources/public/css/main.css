@@ -25,29 +25,29 @@ div.row {
 }
 
 /* start editor-app */
-editor-app b.floater {
+.editor-app b.floater {
 	z-index: 99;
 	position: absolute;
 	bottom: 10px;
 	right: 10px;
 }
-editor-app .glyphicon-remove {
+.editor-app .glyphicon-remove {
 	color:red;
 }
-editor-app .glyphicon-ok {
+.editor-app .glyphicon-ok {
 	color: green;
 }
-editor-app .editor-row {
+.editor-app .editor-row {
 	position: absolute;
 	left:0px;
 	right:0px;
 	top:40px;
 	bottom:35px;
 }
-editor-app .left-side {
+.editor-app .left-side {
 	border: 1px solid rgb(78, 93, 108);
 }
-editor-app .right-side {
+.editor-app .right-side {
 	border: 1px solid rgb(78, 93, 108);
 }
 /* end editor-app */

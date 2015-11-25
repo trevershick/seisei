@@ -68,7 +68,7 @@
 (defn app [data owner]
   (om/component
     (html
-      [:editor-app
+      [:div {:className "editor-app"}
         (om/build confirm-modal (data :confirm))
         (om/build rename-modal (data :rename))
         (om/build hotkeys data)
