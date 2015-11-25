@@ -1,6 +1,7 @@
 (ns seisei.tags-test
   (:use midje.sweet)
   (:require [clojure.data.json :as json]
+            [clojure.test :refer [deftest]]
             [seisei.engine :refer :all]
             [seisei.json :refer :all]
             [seisei.test-helpers :refer :all :as h]
@@ -10,6 +11,8 @@
             [seisei.generated.states]
             [seisei.generated.surnames]
             [seisei.generated.streets]))
+
+(deftest tags
 
 (def repeat-factor 1)
 
@@ -271,6 +274,4 @@
                  i => (roughly thisyear (- thisyear 2014))
                  )))
 )))
-
-
-
+)

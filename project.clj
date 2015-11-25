@@ -14,8 +14,8 @@
                            [org.clojure/clojure "1.7.0"]
                            [org.clojure/clojurescript "1.7.170"]
                            [org.clojure/data.json "0.2.5"]
-                           [midje "1.6.3" :exclusions [org.clojure/clojure]]
-                           [clj-time "0.9.0"]
+                           [midje "1.8.2" :exclusions [org.clojure/clojure]]
+                           [clj-time "0.11.0"]
                            [compojure "1.4.0"]
                            [clj-aws-s3 "0.3.10" :exclusions [joda-time]]
                            [ring/ring-defaults "0.1.2"]
@@ -31,7 +31,7 @@
                                                               com.sun.jmdk/jmxtools
                                                               com.sun.jmx/jmxri]]]
   :bower-dependencies [[mousetrap "1.5.3"]]
-  :plugins [[lein-midje "3.1.3"]
+  :plugins [[lein-midje "3.2"]
             [lein-marginalia "0.8.0"]
             [lein-resource "15.10.1"]
             [lein-ring "0.8.13"]
@@ -73,6 +73,7 @@
              :skip-stencil [ #".*" ]
              }
   :source-paths ["src/main/clojure" "src/tools/clojure" "src/generated/clojure"]
+  :test-paths ["src/test/clojure"]
   :resource-paths ["src/main/resources" "resources"]
   :target-path "target/%s"
   :clean-targets [:target-path [:bower :directory]]

@@ -1,10 +1,12 @@
 (ns seisei.engine-test
 	(:use midje.sweet)
 	(:require [clojure.data.json :as json]
+			[clojure.test :refer [deftest]]
 			[seisei.engine :refer :all]
 			[seisei.json :refer :all]
 			[seisei.test-helpers :refer :all :as h]))
 
+(deftest engine-test
 
 (facts "about `parse-operation`"
 	(fact "it can handle parameters"
@@ -29,6 +31,4 @@
 			( -> processed :x :z ) => truthy
 			( -> processed :x :z ) => h/uuid-regex
 		)))
-
-
-
+)
