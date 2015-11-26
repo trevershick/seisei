@@ -258,3 +258,24 @@ li#rename-menu-item {
 .modal-backdrop {
 	z-index: 9999;
 }
+#curtain {
+	position: absolute;
+	top: 0;
+	left: 0;
+	bottom: 0;
+	right: 0;
+	z-index: 9;
+	background: rgba(44, 63, 90, 0.7);
+	text-align: center;
+	padding:0; margin:0;
+	font-size:24pt;
+}
+#curtain span {
+	opacity:1;
+	color:white;
+	left:0;
+	top:50%;
+	width:100%;
+	margin:auto;
+	position:absolute;
+}
