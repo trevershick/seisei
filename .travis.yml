@@ -1,5 +1,5 @@
 language: clojure
-script: lein midje
+script: lein test
 sudo: false
 
 env:
