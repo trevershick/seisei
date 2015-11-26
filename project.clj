@@ -40,6 +40,7 @@
                         [lein-figwheel "0.5.0-1"]
                         [org.clojure/clojurescript "1.7.170"]
                         [lein-cljsbuild "1.1.1"]]
+  :hooks [leiningen.cljsbuild]
   :cljsbuild {
     :test-commands { "unit" ["phantomjs" "phantom/unit-test.js" "resources/private/main.html"] }
     :builds [ {   :id "dev"

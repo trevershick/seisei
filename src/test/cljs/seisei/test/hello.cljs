@@ -3,5 +3,5 @@
 (enable-console-print!)
 
 (deftest test-sum-two-numbers
-    (is (= (+ 2 2) 3))
+    (is (= (+ 2 2) 4))
     (is (= (+ 0 5) 5)))
