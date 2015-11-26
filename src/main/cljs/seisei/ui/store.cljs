@@ -130,9 +130,11 @@
   (let [state           (om/root-cursor app-state)
         template-cursor (state :template)
         rename-cursor   (state :rename)
-        current-title   (template-cursor :title)]
-    (om/update! rename-cursor :value current-title)
-    (om/update! rename-cursor :show true)))
+        current-title   (if template-cursor (template-cursor :title) nil)]
+    (when
+      current-title
+      (om/update! rename-cursor :value current-title)
+      (om/update! rename-cursor :show true))))
 
 (defmethod handle-action :menu-delete [_]
   (let [state           (om/root-cursor app-state)
@@ -320,6 +322,8 @@
 (go-loop []
   (let [msg (<! channel)]
     ; (debug "Got Dispatcher Message " msg)
-    (handle-action msg))
-    (recur))
+    (try
+      (handle-action msg)
+      (catch :default e (println e)))
+    (recur)))
     ; (.assign (aget js/window "location") "/auth/github")))

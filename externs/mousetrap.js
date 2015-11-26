@@ -2,6 +2,7 @@ var Mousetrap = {};
 
 Mousetrap.bindGlobal = function(){};
 
+var Velocity = {};
 var ace = {};
 ace.edit = function(){};
 ace.setTheme = function (){};

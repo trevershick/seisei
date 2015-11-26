@@ -1,3 +1,6 @@
+* {  animation-duration: .2s; }
+
+
 a { cursor: pointer;}
 body {
 	position:absolute;

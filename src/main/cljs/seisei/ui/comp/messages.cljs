@@ -10,20 +10,32 @@
   :warn     ["alert" "alert-warning" "message"]
   :success  ["alert" "alert-success" "message"] })
 
+(defn- slide-up [dom-element complete]
+   (js/Velocity dom-element "slideUp" #js {"duration" 500 "complete" complete}))
+
+(defn- slide-down [dom-element complete]
+  (js/Velocity dom-element "slideDown" #js {"duration" 500 "complete" complete}))
+
+(defn- close-alert [owner id]
+  "Returns a function, that when called will submit a close message for the given id"
+  (fn[]
+    (slide-up (om/get-node owner) #(d/action :close-message (:id id)))))
+
 (defn- message [data owner]
   (reify
     om/IRender
     (render [_]
       (html
-        [:div
-          [:div { :className (clojure.string/join " " (messages-classes (data :type))) }
-            [:button { :type "button" :className "close" :aria-label "Close" :onClick (fn [e] (d/action :close-message (:id data)) ) }
+          [:div { :style { :display "none" } :className (clojure.string/join " " (messages-classes (data :type))) }
+            [:button { :type "button" :className "close" :aria-label "Close"
+              :onClick (close-alert owner data) }
               [:span { :aria-hidden true } "x"]]
               (data :message)
-        ]]))
+        ]))
     om/IDidMount
     (did-mount [_]
-      (.setTimeout js/window #(d/action :close-message (:id data)) 3000))
+      (slide-down (om/get-node owner) nil)
+      (.setTimeout js/window (close-alert owner data) 3000))
   ))
 
 (defn- messages [data owner]
