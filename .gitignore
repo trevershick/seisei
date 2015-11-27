@@ -1,4 +1,6 @@
 aws.*
+resources/.DS_Store
+resources/optimized/
 npm-debug.log
 resources/private/js/
 figwheel_server.log

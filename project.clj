@@ -37,38 +37,8 @@
                         [lein-ring "0.9.7"]
                         [lein-bower "0.5.1"]
                         [lein-beanstalk "0.2.7"]
-                        [lein-figwheel "0.5.0-1"]
                         [org.clojure/clojurescript "1.7.170"]
                         [lein-cljsbuild "1.1.1"]]
-  :hooks [leiningen.cljsbuild]
-  :cljsbuild {
-    :test-commands { "unit" ["phantomjs" "phantom/unit-test.js" "resources/private/main.html"] }
-    :builds [ {   :id "dev"
-                  :source-paths ["src/main/cljs"]
-                  :figwheel true
-                  :compiler { :main         seisei.ui.core
-                              :asset-path   "js"
-                              :output-to    "resources/public/js/main.js"
-                              :output-dir   "resources/public/js"
-                              :verbose      true }}
-              {   :id "test"
-                  :source-paths ["src/main/cljs" "src/test/cljs" ]
-                  ; :test-paths ["src/test/cljs"]
-                  :compiler {
-                              :pretty-print   true
-                              :output-dir     "resources/private/js"
-                              :output-to      "resources/private/js/test_deps.js" ; MUST be named *deps.js
-                              :verbose        true }}
-              {   :id "prod"
-                  :source-paths ["src/main/cljs"]
-                  :compiler {
-                              :output-to      "resources/public/js/optimized.js"
-                              :optimizations  :advanced
-                              :externs        ["externs/mousetrap.js"]
-                              :verbose        true }}]}
-  :figwheel {     :server-port  8888
-                  :ring-handler seisei.web.handler/app
-                  :nrepl-port   7888 }
 
   :ring {         :handler       seisei.web.handler/app
                   :port          8888
@@ -77,7 +47,7 @@
 
   :aws {          :access-key ~aws-s3-access-key
                   :secret-key ~aws-s3-secret-key
-                  :beanstalk  {:environments ["seisei-prod"] :s3-bucket "trevershick-seisei" } }
+                  :beanstalk  {:environments ["seisei-prod" "seisei-test"] :s3-bucket "trevershick-seisei" } }
 
   :resource {
                   :resource-paths  ["bower_components/mousetrap/plugins/global-bind/"]
@@ -91,13 +61,56 @@
   :bower          {:directory "bower_components"}
   :clean-targets ^{:protect false} [:target-path [:bower :directory] "resources/private/js" "resources/public/js"]
   :main ^:skip-aot seisei.core
-  :profiles       { :uberjar  { :aot :all}
-                    :dev      { :dependencies [[javax.servlet/servlet-api "2.5"]
-                                              [ring-mock "0.1.5"]]
-                                :source-paths ["src/main/cljs"]}
-                    :test     { :dependencies [[midje "1.8.2" :exclusions [org.clojure/clojure]]] }
+  :profiles       {
+                    :dev      { :plugins [[lein-figwheel "0.5.0-1"]]
+                                :dependencies [[javax.servlet/servlet-api "2.5"]
+                                              [ring-mock "0.1.5"]
+                                              [midje "1.8.2" :exclusions [org.clojure/clojure]]]
+                                :hooks [leiningen.cljsbuild]
+                                :source-paths ["src/main/cljs"]
+                                :figwheel {     :server-port  8888
+                                                :ring-handler seisei.web.handler/app
+                                                :nrepl-port   7888
+                                                :css-dirs     ["resources/public/css"] }
+                                :cljsbuild {
+                                  :test-commands { "unit" ["phantomjs" "phantom/unit-test.js" "resources/private/main.html"] }
+                                  :builds { :dev {
+                                              :source-paths ["src/main/cljs"]
+                                              :figwheel true
+                                              :compiler { :main         seisei.ui.core
+                                                          :asset-path   "js"
+                                                          :output-to    "resources/public/js/main.js"
+                                                          :output-dir   "resources/public/js"
+                                                          :verbose      true }}
+                                            :test {
+                                              :source-paths ["src/main/cljs" "src/test/cljs" ]
+                                              :compiler {
+                                                        :pretty-print   true
+                                                        :output-dir     "resources/private/js"
+                                                        :output-to      "resources/private/js/test_deps.js" ; MUST be named *deps.js
+                                                        :verbose        true }}
+                                  }
+                                }
+                              }
+                    :uberjar  { :aot :all
+                                :omit-source true
+                                :hooks [leiningen.cljsbuild]
+                                :cljsbuild ^:replace {
+                                  :builds {
+                                    :test nil
+                                    :dev {
+                                      :source-paths ["src/main/cljs"]
+                                      :compiler {
+                                                  :output-to      "resources/public/js/main.js"
+                                                  :optimizations  :advanced
+                                                  :externs        ["externs/mousetrap.js"]
+                                                  :verbose        true }}}
+                                }
+                    }
+
   }
   :aliases {"ci-deploy" ["do" ["clean"] ["bower" "install"] ["resource"] ["beanstalk" "deploy" "seisei-prod"]]
+            "ci-deploy-test" ["do" ["clean"] ["bower" "install"] ["resource"] ["beanstalk" "deploy" "seisei-test"]]
             "data" ["run" "-m" "seisei.tools.all"]
             "cities" ["run" "-m" "seisei.tools.cities"]
             "states" ["run" "-m" "seisei.tools.states"] }
