@@ -3,6 +3,23 @@
 <head>
   <meta charset="utf-8"/>
   <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+  <script type="text/javascript">
+      if (window.location.hash && window.location.hash == '#_=_') {
+          if (window.history && history.pushState) {
+              window.history.pushState("", document.title, window.location.pathname);
+          } else {
+              // Prevent scrolling by storing the page's current scroll offset
+              var scroll = {
+                  top: document.body.scrollTop,
+                  left: document.body.scrollLeft
+              };
+              window.location.hash = '';
+              // Restore the scroll offset, should be flicker free
+              document.body.scrollTop = scroll.top;
+              document.body.scrollLeft = scroll.left;
+          }
+      }
+  </script>  
   <!--[if lt IE 9]>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/es5-shim/4.0.5/es5-shim.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.2/html5shiv.min.js"></script>
@@ -52,6 +69,7 @@
         // document.getElementById("curtain-text").innerHTML = "";
         Velocity(document.getElementById("curtain"), "fadeOut", {duration:1000}).then(function() {
         document.getElementById("curtain").remove();
-    });</script>
+    });
+    </script>
 </body>
 </html>
