@@ -1,6 +1,7 @@
 (ns seisei.web.oauth-facebook
   (:require [compojure.core :refer [GET defroutes]]
             [ring.util.response :refer [redirect]]
+            [ring.util.response :refer [header]]
             [ring.middleware.defaults :refer [wrap-defaults site-defaults]]
             [clj-http.client :as client]
             [clojure.tools.logging :as log]
@@ -79,8 +80,13 @@
    :name            (:name    facebook-account)
    :last-login      (.getTime (java.util.Date.)) })
 
+(defn auth-facebook-callback-failure
+  [{ session :session  { error :error code :error_code description :error_description reason :error_reason } :params }]
+    (log/debugf "OK, got oauth error from %s" "facebook")
+    (-> (redirect "/")
+        (assoc :session (assoc session :flash { :error error :code code :description description :reason reason }))))
 
-(defn auth-facebook-callback
+(defn auth-facebook-callback-success
   [{ session :session { code :code } :params }]
   (let [access-token            (get-facebook-access-token code)
         authenticated           (if access-token true false)
@@ -103,6 +109,10 @@
     (-> (redirect "/")
         (assoc :session updated-session))))
 
+(defn auth-facebook-callback [{params :params :as r}]
+  (if (:code params)
+    (auth-facebook-callback-success r)
+    (auth-facebook-callback-failure r)))
 
 
 
