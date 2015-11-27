@@ -279,3 +279,8 @@ li#rename-menu-item {
 	margin:auto;
 	position:absolute;
 }
+
+.fa {
+	width: 15px;
+	height: 15px;
+}

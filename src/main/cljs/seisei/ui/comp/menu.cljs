@@ -22,15 +22,17 @@
 
 (defn logout-button [data owner]
   (om/component
-    (html
-      [:a {:onClick (simple-menu-item-handler :logout) } "Logout"])))
+    (html [:a {:onClick (simple-menu-item-handler :logout) } "Logout"])))
 
 (defn login-with-github [data owner]
   (om/component
     (html
-      [:a { :className "btn btn-block btn-social btn-github" :onClick (simple-menu-item-handler :login) }
-        [:i {:className "fa fa-github"}]
-        "Sign in with Github" ])))
+      [:a { :className "" :onClick (simple-menu-item-handler :login-github) } [:i {:className "fa fa-github"}] " Sign in with Github" ])))
+
+(defn login-with-facebook [data owner]
+  (om/component
+    (html
+      [:a { :className "" :onClick (simple-menu-item-handler :login-facebook) } [:i {:className "fa fa-facebook"}] " Sign in with Facebook" ])))
 
 (defn template-submenu [data owner]
   (om/component
@@ -43,6 +45,16 @@
               (if sta-url [:a { :target "_new" :className "static-link" :href sta-url} [:span {:className "glyphicon glyphicon-link"}]])
               (if dyn-url [:a { :target "_new" :className "dynamic-link" :href dyn-url } [:span {:className "glyphicon glyphicon-flash"}]])
                 [:a { :onClick (simple-menu-item-handler :menu-template { :slug slug }) :className "main-link"} title]]))))
+
+(defn submenu-dropdown [data owner title & children]
+  (html
+    [:li
+        [:a {:href "#" :className "dropdown-toggle" :data-toggle "dropdown" :role "button" :aria-expanded "false"}
+          title
+          [:span {:className "caret"}]]
+        [:ul {:className "dropdown-menu" :role "menu"}
+          (map (fn [child] [:li child]) children)
+            ]]))
 
 (defn templates-submenu [data owner]
   (om/component
@@ -112,16 +124,17 @@
                 (if (data :sharing-enabled)
                   (om/build sharing-submenu data))
                 (om/build templates-submenu data)
-                (if (data :help-enabled)
-                  (menu-item "Help" :action :menu-help)) ]
+                (if (data :feedback-enabled) (menu-item "Feedback" :icon "feedback" :action :menu-feedback))
+                (if (data :help-enabled) (menu-item "Help" :action :menu-help)) ]
 
                 [:ul {:className "nav navbar-nav navbar-right"}
-                  (if (data :feedback-enabled)
-                  (menu-item "Feedback" :icon "feedback" :action :menu-feedback))
-                  [:li
-                    (if (not (data :logged-in))
+                  (if (not (data :logged-in))
+                    (submenu-dropdown data owner "Login"
                       (om/build login-with-github data)
-                      (om/build logout-button data))]]
+                      (om/build login-with-facebook data))
+                    (submenu-dropdown data owner "My Account"
+                      (om/build logout-button data)))]
+
 
               (if (data :template-title)
                 [:ul {:className "nav navbar-nav navbar-right"}

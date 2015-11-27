@@ -16,7 +16,8 @@
 ;; store methods -- actually update the state
 (defmulti handle-action :action)
 
-(defmethod handle-action :login [msg] (api/login))
+(defmethod handle-action :login-github [msg] (api/login))
+(defmethod handle-action :login-facebook [msg] (api/login-facebook))
 (defmethod handle-action :logout [msg] (api/logout))
 
 (defmethod handle-action :close-message [{:keys [data]}]

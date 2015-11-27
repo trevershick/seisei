@@ -173,6 +173,9 @@
 (defn goto-github-issues []
   (.open js/window "https://github.com/trevershick/seisei/issues" "_blank"))
 
+(defn login-facebook []
+  (.open js/window "/auth/facebook" "_self"))
+
 (defn login []
   (.open js/window "/auth/github" "_self"))
 
