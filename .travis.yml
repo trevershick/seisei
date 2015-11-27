@@ -1,6 +1,6 @@
 language: clojure
 script: lein test
-sudo: false
+sudo: required
 
 env:
   global:
