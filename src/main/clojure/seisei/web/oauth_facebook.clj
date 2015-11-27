@@ -1,6 +1,6 @@
 (ns seisei.web.oauth-facebook
   (:require [compojure.core :refer [GET defroutes]]
-            [ring.util.response :refer [resource-response response]]
+            [ring.util.response :refer [redirect]]
             [ring.middleware.defaults :refer [wrap-defaults site-defaults]]
             [clj-http.client :as client]
             [clojure.tools.logging :as log]
@@ -13,11 +13,11 @@
 (def facebook-oauth-callback    (env :facebook-oauth-callback))
 
 (defn startupcheck []
-  (if (nil? facebook-oauth-app-id)
+  (when (nil? facebook-oauth-app-id)
     (log/error "FACEBOOK_OAUTH_APP_ID is not set"))
-  (if (nil? facebook-oauth-secret)
+  (when (nil? facebook-oauth-secret)
     (log/error "FACEBOOK_OAUTH_SECRET is not set"))
-  (if (nil? facebook-oauth-callback)
+  (when (nil? facebook-oauth-callback)
     (log/error "FACEBOOK_OAUTH_CALLBACK is not set")))
 
 (def facebook-login-url
@@ -37,10 +37,9 @@
   (log/debugf "session is %s" session)
   (cond
     (user/logged-in? session)
-    (ring.util.response/redirect "/") ;; ur already logged in
+    (redirect "/") ;; ur already logged in
     :else
-    (ring.util.response/redirect facebook-login-url)
-    ))
+    (redirect facebook-login-url)))
 
 (defn get-facebook-account [access-token]
   "Returns the raw json response from facebook for the 'current' authed user"
@@ -50,8 +49,7 @@
                      :as :json}
         response    (client/get u getargs)]
     (log/debugf "oauth-facebook/get-facebook-account response=%s" response)
-    (:body response)
-    ))
+    (:body response)))
 
 (defn get-facebook-access-token
   [facebook-session-code]
@@ -60,17 +58,16 @@
                      :code          facebook-session-code
                      :redirect_uri  facebook-oauth-callback }]
     (log/debugf "form-params is %s" form-params)
-    ( ->
-     (client/post
-       "https://graph.facebook.com/v2.4/oauth/access_token"
-       {:form-params form-params
-        :socket-timeout 1000  ;; in milliseconds
-        :conn-timeout 1000    ;; in milliseconds
-        :accept :json
-        :as :json })
-     :body
-     :access_token
-     )))
+    (->
+      (client/post
+        "https://graph.facebook.com/v2.4/oauth/access_token"
+        { :form-params    form-params
+          :socket-timeout 1000        ;; in milliseconds
+          :conn-timeout   1000        ;; in milliseconds
+          :accept         :json
+          :as             :json })
+      :body
+      :access_token)))
 
 
 (defn user-from-facebook-account
@@ -103,7 +100,7 @@
     (log/debugf "Access Token is %s" access-token)
     (log/debugf "updated-session is %s" updated-session)
 
-    (-> (ring.util.response/redirect "/")
+    (-> (redirect "/")
         (assoc :session updated-session))))
 
 
