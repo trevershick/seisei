@@ -2,6 +2,9 @@ language: clojure
 script: lein test
 sudo: required
 
+before_script:
+  - npm install -g bower
+
 env:
   global:
   - secure: gUiG4z3HeitrQgMLomkZlLeLAUf3kV4UJW4KoauiPkOjlPvaLVZP132LXQVIzQXX6OnFC/IDuLhY1yOS9dkDJT7xXggsq513/gVWCNz1mBKp/Erp2eQ99G9NQUIdwIECr2+16RDsv9kYpDxEl8pLzgEBr9M8Cm7cWdt8pNVV2ZY=
@@ -9,4 +12,4 @@ env:
 
 after_success:
   - test $TRAVIS_BRANCH == "master" && sudo apt-get install nodejs && sudo apt-get install npm && npm install -g bower && lein ci-deploy
-  - test $TRAVIS_BRANCH != "master" && sudo apt-get install nodejs && sudo apt-get install npm && npm install -g bower && lein ci-deploy-test
+  - test $TRAVIS_BRANCH != "master" && lein ci-deploy-test
