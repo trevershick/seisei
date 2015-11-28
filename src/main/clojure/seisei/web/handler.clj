@@ -16,6 +16,7 @@
             [seisei.web.template-handlers]
             [seisei.web.logout]
             [seisei.engine]
+            [seisei.web.flash]
             [seisei.json]
             ))
 
@@ -24,10 +25,6 @@
   (seisei.web.s3/startupcheck)
   (seisei.web.db/startupcheck))
 
-(defn hot-flashes [{{flash :flash} :session session :session}]
-  (->
-    (response { :flash flash })
-    (assoc :session (assoc session :flash []))))
 
 (defn my-account [{session :session}]
   (let [logged-in (seisei.web.user/logged-in? session)]
@@ -46,7 +43,7 @@
   (ANY "*" [] seisei.web.oauth-facebook/facebook-oauth-routes)
   (ANY "*" [] seisei.web.github-oauth/github-oauth-routes)
   (ANY "*" [] seisei.web.template-handlers/template-routes)
-  (GET "/my/hot-flashes"    r (hot-flashes r))
+  (GET "/my/hot-flashes"    r (seisei.web.flash/hot-flashes r))
   (GET "/my/account"        r (my-account r))
   (GET "/" [] ( ->
      (resource-response "index.html" {:root "public"})
@@ -63,18 +60,13 @@
                        opts (assoc-in opts [:security :anti-forgery] false) ]
                    opts ))
 
-(defn wrap-flash-header [handler]
-  (fn [request]
-    (-> (handler request)
-        (header "X-seisei-flash" (not (nil? (-> request :session :flash)))))))
-
 
 
 (def app
   (routes
     healthcheck-routes ; healthcheck-routes doesn't need all the wrappers
     (-> app-routes
-        (wrap-flash-header)
+        (seisei.web.flash/wrap-flash-header)
         (json-middle/wrap-json-body {:keywords? true})
         (json-middle/wrap-json-response)
         (wrap-defaults my-defaults)

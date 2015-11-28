@@ -318,7 +318,20 @@
 (defmethod handle-action :default [msg]
   (js/alert (str "No handle-action method for " msg)))
 
+(defmethod handle-action :load-flash [_]
+  (api/load-flash))
+
 ;; store methods -- handle requests, call the API, update the store...
+; (defn debounce [in ms]
+;   (let [out (chan)]
+;     (go-loop [last-val nil]
+;       (let [val (if (nil? last-val) (<! in) last-val)
+;             timer (timeout ms)
+;             [new-val ch] (alts! [in timer])]
+;         (condp = ch
+;           timer (do (>! out val) (recur nil))
+;           in (recur new-val))))
+;     out))
 (defonce channel (d/subscribe))
 (go-loop []
   (let [msg (<! channel)]

@@ -6,6 +6,7 @@
             [clj-http.client :as client]
             [clojure.tools.logging :as log]
             [seisei.web.user :as user]
+            [seisei.web.flash :refer [add-flash]]
             [environ.core :refer [env]]))
 
 
@@ -80,11 +81,16 @@
    :name            (:name    facebook-account)
    :last-login      (.getTime (java.util.Date.)) })
 
+
 (defn auth-facebook-callback-failure
   [{ session :session  { error :error code :error_code description :error_description reason :error_reason } :params }]
     (log/debugf "OK, got oauth error from %s" "facebook")
-    (-> (redirect "/")
-        (assoc :session (assoc session :flash { :error error :code code :description description :reason reason }))))
+    (let [msg           { :type :error :message description }
+          session       (add-flash session msg)
+          response      (redirect "/")
+          response      (assoc response :session session)]
+      response))
+
 
 (defn auth-facebook-callback-success
   [{ session :session { code :code } :params }]
