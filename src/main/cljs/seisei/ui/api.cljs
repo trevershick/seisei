@@ -2,7 +2,7 @@
   (:require-macros [cljs.core.async.macros :refer [go-loop]])
   (:require [om.core :as om :include-macros true]
     [om.dom :as dom :include-macros true]
-    [ajax.core :refer [GET POST DELETE default-interceptors to-interceptor get-header]]
+    [ajax.core :refer [GET POST DELETE default-interceptors to-interceptor]]
     [seisei.ui.dispatcher :as d]
     [seisei.ui.state :as state]
     [seisei.ui.util :refer [debug]]
