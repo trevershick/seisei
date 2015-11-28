@@ -12,7 +12,7 @@
 
 (defn hot-flashes [{{flash :flash} :session session :session}]
   (->
-    (response { :flash flash })
+    (response { :flash (or flash []) })
     (assoc :session (assoc session :flash []))))
 
 (defn wrap-flash-header [handler]

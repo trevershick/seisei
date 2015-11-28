@@ -8,8 +8,8 @@
             [environ.core :refer [env]]))
 
 
-(def github-oauth-client-id (env :github-oauth-client-id))
-(def github-oauth-secret    (env :github-oauth-secret))
+(def ^:dynamic github-oauth-client-id (env :github-oauth-client-id))
+(def ^:dynamic github-oauth-secret    (env :github-oauth-secret))
 
 (defn startupcheck []
   (if (nil? github-oauth-client-id)
@@ -17,13 +17,14 @@
   (if (nil? github-oauth-secret)
     (log/error "GITHUB_OAUTH_SECRET is not set")))
 
-(def github-login-url (str "https://github.com/login/oauth/authorize"
-                           "?"
-                           "client_id="
-                           github-oauth-client-id
-                           "&"
-                           "scope="
-                           "user:email"))
+(defn github-login-url []
+  (str "https://github.com/login/oauth/authorize"
+  "?"
+  "client_id="
+  github-oauth-client-id
+  "&"
+  "scope="
+  "user:email"))
 
 (defn auth-github
   [{session :session}]
@@ -32,7 +33,7 @@
     (user/logged-in? session)
     (ring.util.response/redirect "/") ;; ur already logged in
     :else
-    (ring.util.response/redirect github-login-url)
+    (ring.util.response/redirect (github-login-url))
     ))
 
 (defn get-github-account [access-token]
@@ -51,8 +52,7 @@
                      :headers {"Authorization" (str "token " access-token)}
                      :as :json}
         response    (client/get u getargs)]
-    (:email (first (:body response)))
-    ))
+    (:email (first (:body response)))))
 
 
 (defn get-github-access-token
