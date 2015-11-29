@@ -33,6 +33,7 @@
   :bower-dependencies   [[mousetrap "1.5.3"]]
   :plugins              [[lein-midje "3.2"]
                         [lein-auto "0.1.2"]
+                        [lein-codox "0.9.0"]
                         [lein-cloverage "1.0.6"]
                         [lein-resource "15.10.1"]
                         [lein-ring "0.9.7"]
@@ -110,7 +111,8 @@
                     }
 
   }
-  :aliases {"ci-deploy" ["do" ["clean"] ["bower" "install"] ["resource"] ["beanstalk" "deploy" "seisei-prod"]]
+  :aliases {"full-build" ["do" ["clean"] ["bower" "install"] ["resource"] ["test"] ["codox"] ["cloverage"]]
+            "ci-deploy" ["do" ["clean"] ["bower" "install"] ["resource"] ["beanstalk" "deploy" "seisei-prod"]]
             "ci-deploy-test" ["do" ["clean"] ["bower" "install"] ["resource"] ["beanstalk" "deploy" "seisei-test"]]
             "data" ["run" "-m" "seisei.tools.all"]
             "cities" ["run" "-m" "seisei.tools.cities"]
