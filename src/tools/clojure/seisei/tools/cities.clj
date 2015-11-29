@@ -19,7 +19,7 @@
   [cols]
   (u/capitalize (nth cols 11)))
 
-(defn ^:private parse-file []
+(defn parse-file []
   (with-open [rdr (io/reader (:input params))
               wrt (io/writer (:output params)) ]
     (.write wrt (s/join " " [ "(" "ns" (:ns params) ")" ]))
