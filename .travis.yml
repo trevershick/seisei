@@ -1,6 +1,8 @@
 language: clojure
-script: lein midje
-sudo: false
+script: lein test
+
+before_script:
+  - npm install -g bower
 
 env:
   global:
@@ -8,4 +10,5 @@ env:
   - secure: vbyZ+Pf0tLd1R17sQ2W4CPgtVFPtgQYmmBpo6eVXmc3G8aqHSQxc+Sdf6Yn8qDqs1V//Sv+J9ajXjCqIjYhRZk99eLDLSM0q3J8OrTQRhff2KuDXbznPlu7A84vX7UEpf2t16ReN42Q/DChyhJwwNixTR4qAMYwtjftgchhAsQg=
 
 after_success:
-  - test $TRAVIS_BRANCH == "master" && sudo apt-get install nodejs && sudo apt-get install npm && npm install -g bower && lein ci-deploy
+  - test $TRAVIS_BRANCH == "master" && lein ci-deploy
+  - test $TRAVIS_BRANCH != "master" && lein ci-deploy-test

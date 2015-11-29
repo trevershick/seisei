@@ -3,118 +3,73 @@
 <head>
   <meta charset="utf-8"/>
   <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+  <script type="text/javascript">
+      if (window.location.hash && window.location.hash == '#_=_') {
+          if (window.history && history.pushState) {
+              window.history.pushState("", document.title, window.location.pathname);
+          } else {
+              // Prevent scrolling by storing the page's current scroll offset
+              var scroll = {
+                  top: document.body.scrollTop,
+                  left: document.body.scrollLeft
+              };
+              window.location.hash = '';
+              // Restore the scroll offset, should be flicker free
+              document.body.scrollTop = scroll.top;
+              document.body.scrollLeft = scroll.left;
+          }
+      }
+  </script>  
   <!--[if lt IE 9]>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/es5-shim/4.0.5/es5-shim.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.2/html5shiv.min.js"></script>
   <script>html5.addElements('todo')</script>
   <![endif]-->
 
-<script>
-  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
-
-  ga('create', 'UA-38007431-2', 'auto');
-  ga('send', 'pageview');
-
-</script>
-
-  <script src="//cdn.jsdelivr.net/webjars/lodash/3.9.0/lodash.min.js"></script>
-  <script src="//cdn.jsdelivr.net/webjars/jquery/2.1.4/jquery.min.js" type="text/javascript"></script>
-  <script src="//cdn.jsdelivr.net/webjars/bootstrap/3.3.2/bootstrap.min.js"></script>
-  <script src="//cdn.jsdelivr.net/webjars/ace/1.1.8/ace.js" type="text/javascript" charset="utf-8"></script>
-  <script src="//cdn.jsdelivr.net/webjars/ace/1.1.8/theme-twilight.js" type="text/javascript" charset="utf-8"></script>
-  <script src="//cdn.jsdelivr.net/webjars/ace/1.1.8/mode-javascript.js" type="text/javascript" charset="utf-8"></script>
-  <script src="//cdn.jsdelivr.net/webjars/mousetrap/1.5.3/mousetrap.min.js" type="text/javascript" charset="utf-8"></script>
-  <script src="vendor/mousetrap-global-bind.min.js" type="text/javascript" charset="utf-8"></script>
-
-  <script src="//cdn.jsdelivr.net/webjars/riot/2.2.4/riot.min.js"></script>
-  <script src="seisei-tags.js" ></script>
-  <script src="store.js"></script>
-
-  <link rel="stylesheet" href="//cdn.jsdelivr.net/webjars/bootstrap/3.3.2/bootstrap.min.css">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/webjars/bootstrap/3.3.5/bootstrap.min.css">
   <link rel="stylesheet" href="//bootswatch.com/superhero/bootstrap.min.css"></head>
   <link rel="stylesheet" href="//cdn.jsdelivr.net/webjars/bootstrap-social/4.9.0/bootstrap-social.css">
   <link rel="stylesheet" href="css/main.css">
   <link rel="stylesheet" href="css/keys.css">
   <title>生成 - JSON Generation</title>
-<body>
-  <alert-dialog></alert-dialog>
-  <messages></messages>
-  <editor-app></editor-app>
-
-  <script>
-    var router = function(collection, id, action) {
-      // console.log("route", {collection:collection, id:id, action:action});
-      if ("login" === collection && accountStore.loggedIn === false) {
-        accountStore.login();
-      } else if ("logout" === collection) {
-        // console.log("routing to logout");
-        accountStore.logout();
-      } else if ("template" === collection && id) {
-        editorStore.loadTemplate(id);
-      }
+<body >
+    <div id="curtain"><span id="curtain-text">Loading ...</span></div>
+	<div id="app"></div>
+    <script src="//cdn.rawgit.com/julianshapiro/velocity/1.2.3/velocity.min.js"></script>
+    <script src="//cdn.jsdelivr.net/webjars/jquery/2.1.4/jquery.min.js" type="text/javascript"></script>
+    <script src="//cdn.jsdelivr.net/webjars/bootstrap/3.3.5/bootstrap.min.js"></script>
+    <script src="//cdn.jsdelivr.net/ace/1.2.2/min/ace.js" type="text/javascript" charset="utf-8"></script>
+    <script src="//cdn.jsdelivr.net/ace/1.2.2/min/theme-twilight.js" type="text/javascript" charset="utf-8"></script>
+    <script src="//cdn.jsdelivr.net/ace/1.2.2/min/mode-javascript.js" type="text/javascript" charset="utf-8"></script>
+    <script src="//cdn.jsdelivr.net/webjars/mousetrap/1.5.3/mousetrap.min.js" type="text/javascript" charset="utf-8"></script>
+    <script src="vendor/mousetrap-global-bind.min.js" type="text/javascript" charset="utf-8"></script>
+	<script src="js/main.js"></script>
+    <script>var t=function(d,s,id){
+    	var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';
+    	if(!d.getElementById(id)){
+    		js=d.createElement(s);
+    		js.id=id;
+    		js.src=p+'://platform.twitter.com/widgets.js';
+    		fjs.parentNode.insertBefore(js,fjs);
+    	}
     };
-    riot.route(router);
+    t(document, 'script', 'twitter-wjs');
+    </script>
+    <script>
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
 
-    var accountStore = new MyAccountStore();
-    var editorStore = new EditorStore();
-    var messageStore = new MessageStore();
-    var templateListStore = new TemplateListStore();
-
-    accountStore.init();
-    editorStore.init();
-
-    var updateriot= function(eventName) {
-      riot.update();
-    };
-
-    accountStore.on('change', updateriot);
-    editorStore.on('change', updateriot);
-    messageStore.on('change', updateriot);
-    templateListStore.on('change', updateriot);
-
-    editorStore.on('on-slug', function(newSlug) {
-      riot.route("template/" + newSlug);
+    ga('create', 'UA-38007431-2', 'auto');
+    ga('send', 'pageview');
+    </script>
+    <script>
+        // document.getElementById("curtain-text").innerHTML = "";
+        Velocity(document.getElementById("curtain"), "fadeOut", {duration:1000}).then(function() {
+        document.getElementById("curtain").remove();
     });
-
-    editorStore.on('on-new', function(newSlug) {
-      riot.route("#");
-    });
-    editorStore.on('template-deleted', function() {
-      riot.route("#");
-      templateListStore.refresh();
-    });
-    editorStore.on('template-saved', function() {
-      templateListStore.refresh();
-    });
-    editorStore.on('template-published', function() {
-      var message = "Template " + editorStore.getCurrentTemplate().slug + " has been published to " + editorStore.getCurrentTemplate()['static-url'];
-      templateListStore.refresh();
-      messageStore.alert(message);
-    });
-    editorStore.on('template-published-dynamic', function() {
-      var message = "Template " + editorStore.getCurrentTemplate().slug + " has been published to " + editorStore.getCurrentTemplate()['dynamic-url'];
-      templateListStore.refresh();
-      messageStore.alert(message);
-    });
-
-
-    messageStore.listen(editorStore);
-    messageStore.listen(accountStore);
-
-
-    accountStore.on("received-account", templateListStore.refresh.bind(templateListStore));
-
-    $(function() {
-      riot.mount('editor-app', { accounts: accountStore, editor: editorStore, templates: templateListStore });
-      riot.mount('alert-dialog', {messages:messageStore});
-      riot.mount('messages', { messages: messageStore.messages.bind(messageStore), close:messageStore.removeMessage.bind(messageStore)});
-      riot.route.exec(router);
-    });
-
-  </script>
-
+    </script>
 </body>
 </html>

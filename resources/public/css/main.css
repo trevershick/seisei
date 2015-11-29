@@ -1,3 +1,6 @@
+* {  animation-duration: .2s; }
+
+
 a { cursor: pointer;}
 body {
 	position:absolute;
@@ -22,4 +25,262 @@ div.row {
 }
 .navbar {
 	margin-bottom:5px;
+}
+
+/* start editor-app */
+.editor-app b.floater {
+	z-index: 99;
+	position: absolute;
+	bottom: 10px;
+	right: 10px;
+}
+.editor-app .glyphicon-remove {
+	color:red;
+}
+.editor-app .glyphicon-ok {
+	color: green;
+}
+.editor-app .editor-row {
+	position: absolute;
+	left:0px;
+	right:0px;
+	top:40px;
+	bottom:35px;
+}
+.editor-app .left-side {
+	border: 1px solid rgb(78, 93, 108);
+}
+.editor-app .right-side {
+	border: 1px solid rgb(78, 93, 108);
+}
+/* end editor-app */
+
+
+/* menu */
+.dropdown-menu {
+		max-height:350px;
+		overflow-y:auto;
+}
+
+.templates-menu ul {
+		max-width:250px;
+		min-width:100px;
+}
+.templates-menu a {
+}
+.templates-menu .main-link {
+		margin-right:60px;
+		overflow-x: hidden;
+		text-overflow: ellipsis;
+}
+
+.templates-menu .static-link {
+		position: absolute;
+		right: 0;
+		padding-left: 10px;
+		padding-right: 10px;
+		display:inline-block;
+}
+.templates-menu .dynamic-link {
+		position: absolute;
+		right: 30px;
+		padding-left: 10px;
+		padding-right: 10px;
+		display:inline-block;
+}
+
+.sharing-menu .static-link {
+		position: absolute;
+		right: 0;
+		padding-left: 10px;
+		padding-right: 10px;
+		display:inline-block;
+}
+.sharing-menu .main-link {
+		margin-right:30px;
+}
+/* end menu */
+
+/* start hotkeys */
+.backdrop {
+  background-color: black;
+  opacity: 0.9;
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 1000;
+}
+kbd {
+  min-width:25px;
+}
+kbd.cmd {
+  width: 40px;
+}
+kbd {
+  margin-right:5px;
+  margin-left:5px;
+}
+.hotkeys dl {
+  display: block;
+  margin-top: 20%;
+}
+.hotkeys ul {
+  margin-top: 5%;
+}
+.hotkeys li {
+  width: 30%;
+  margin-left: 10%;
+  margin-top: 20px;
+  font-weight: bold;
+  display: inline-block;
+}
+.hotkeys li p {
+  display: inline-block;
+  position: absolute;
+}
+.hotkeys dd {
+  display: inline-block;
+  max-wilih: 30%;
+  border: 1px solid yellow;
+  margin-left: 20px;
+}
+.hotkeys .kk {
+  margin-right: 20px;
+}
+/* end hotkeys */
+
+.ace_editor {
+	width:100%;
+	height:100%;
+
+}
+/* template OR start */
+.editor-ro.ace_editor {
+	  width:100%;
+	  height:50%;
+}
+template-ro .processing {
+	opacity: 0.2;
+}
+/* template RO end */
+
+
+.editor-help.help {
+	  width:100%;
+	  height:50%;
+	  overflow-y:auto;
+	  padding-left:10px;
+	  z-index:100;
+		background-color: #222;
+		border-top: 1px solid rgb(78, 93, 108);
+		border-left:none;
+
+}
+.editor-help h1 {
+	font-size:16px;
+}
+.editor-help .tag-samples {
+	list-style: none;
+	margin-right: 10px
+}
+.editor-help .tag {
+	padding-left: 10px;
+	margin-right: 10px;
+	margin-top: 10px;
+	border-left: 2px solid #df691a;
+}
+.editor-help .samples {
+	padding-left:10px;
+	border-left: 2px solid #df691a;
+}
+.editor-help .sample {
+	height:16px;
+	font-family:monospace;
+	font-size:10px;
+}
+.editor-help .input {
+	float: left;
+	padding-left:10px;
+	color:yellow;
+}
+.editor-help .input a {
+	color:yellow;
+}
+.editor-help .output {
+	float: right;
+	padding-right:10px;
+	color:lime;
+}
+.editor-help .other-samples {
+	list-style: none;
+	margin-right: 10px
+
+}
+.editor-help .other-samples .input {
+
+}
+.editor-help .other-samples .output {
+	float:left;
+	padding-left:10px;
+}
+li#rename-menu-item {
+	max-width:200px;
+	overflow-x: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+.messages-overlay {
+	position: absolute;
+	width: 100%;
+	z-index: 2000;
+	bottom: 0;
+}
+.messages-overlay .alert {
+	margin-left:auto;
+	margin-right:auto;
+	width:50%;
+}
+
+.lr {
+	text-align: right;
+	position: absolute;
+	bottom: 0;
+	right: 0;
+	margin-right: 20px;
+	margin-bottom: 10px;
+}
+
+.modal {
+	z-index: 10000;
+}
+.modal-backdrop {
+	z-index: 9999;
+}
+#curtain {
+	position: absolute;
+	top: 0;
+	left: 0;
+	bottom: 0;
+	right: 0;
+	z-index: 9;
+	background: rgba(44, 63, 90, 0.7);
+	text-align: center;
+	padding:0; margin:0;
+	font-size:24pt;
+}
+#curtain span {
+	opacity:1;
+	color:white;
+	left:0;
+	top:50%;
+	width:100%;
+	margin:auto;
+	position:absolute;
+}
+
+.fa {
+	width: 15px;
+	height: 15px;
 }

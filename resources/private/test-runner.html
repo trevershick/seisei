@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <title>Main</title>
+    <script src="js/goog/base.js"></script>
+    <script src="js/test_deps.js" type="text/javascript"></script>
+    <script>goog.require("seisei.test");</script>
+    <script>
+    function runTheTests() {
+      console.log = function(x) {
+        document.body.innerHTML += "<div>" + x + "</div>";
+      }
+      seisei.test.run();
+    }
+    </script>
+    <style>
+    body {
+      font-family : "Courier"
+    }
+    </style>
+</head>
+<body>
+    <h1 id="main"></h1>
+    <a href="#" onclick="runTheTests();return false;">Click to run the suite.</a>
+</body>
+</html>

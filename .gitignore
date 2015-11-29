@@ -1,4 +1,11 @@
+aws.*
+resources/.DS_Store
+resources/optimized/
+npm-debug.log
+resources/private/js/
+figwheel_server.log
 resources/public/seisei-tags.js
+resources/public/js
 env.my
 node_modules/
 resources/public/fonts/

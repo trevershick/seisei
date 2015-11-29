@@ -32,6 +32,16 @@
     (log/debugf "lookup-user, user =%s" user)
     user))
 
+(defn lookup-user-by
+  [fieldname value]
+  (let [results (far/query
+                  db/aws-dynamodb-client-opts
+                  db/table-users
+                  {fieldname [:eq value]}
+                  {:index (str (name fieldname) "-index")})]
+    (log/debugf "lookup-user-by, results =%s" results)
+    (first results)))
+
 (defn create-user
   [user-id attr-map]
   (let [ clean-attr (into {} (remove (comp nil? val) attr-map))]
@@ -41,9 +51,10 @@
                   (merge { :id user-id } clean-attr))
     (assoc clean-attr :id user-id)))
 
-(defn user-logged-in
-  [user-id]
+(defn user-logged-in!
+  [user-id provider]
   (far/update-item db/aws-dynamodb-client-opts
                    db/table-users
                    { :id user-id }
-                   { :last-login [ :put (.getTime (java.util.Date.)) ] }))
+                   { :last-method [ :put (name provider) ]
+                     :last-login [ :put (.getTime (java.util.Date.)) ] }))

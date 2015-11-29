@@ -17,7 +17,7 @@
   [slug]
   (let [filename (str slug ".json")]
     (log/infof "Removing %s from s3 %s" slug aws-s3-bucket)
-    (s3/delete-object aws-s3-client-opts 
+    (s3/delete-object aws-s3-client-opts
                       aws-s3-bucket
                       filename)))
 
@@ -26,14 +26,14 @@
   [slug content]
   (let [filename (str slug ".json")]
     (log/infof "Publishing %s to s3 %s" (str content) aws-s3-bucket)
-    (s3/put-object aws-s3-client-opts 
+    (s3/put-object aws-s3-client-opts
                    aws-s3-bucket
                    filename
-                   (json/write-str content))  
-    (s3/update-object-acl aws-s3-client-opts 
+                   (json/write-str content))
+    (s3/update-object-acl aws-s3-client-opts
                           aws-s3-bucket
                           filename
-                          (s3/grant :all-users :read))  
+                          (s3/grant :all-users :read))
     (str aws-s3-endpoint filename)))
 
 

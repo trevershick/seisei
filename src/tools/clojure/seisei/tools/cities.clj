@@ -7,15 +7,15 @@
 
 ;; http://download.maxmind.com/download/worldcities/worldcitiespop.txt.gz
 
-(def f 50)
-(def params {
+(def ^:private f 50)
+(def ^:private params {
              :input "./data/cities.csv"
              :output "src/generated/clojure/seisei/generated/cities.clj"
              :ns "seisei.generated.cities" })
 
 
 
-(defn to-map
+(defn ^:private to-map
   [cols]
   (u/capitalize (nth cols 11)))
 
@@ -42,8 +42,6 @@
 
 
 (defn -main
-  "I don't do a whole lot ... yet."
+  "Downloads a world cities file and generates seisei.generated.cities"
   [& args]
   (parse-file))
-
-
