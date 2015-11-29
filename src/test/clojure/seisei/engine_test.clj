@@ -4,7 +4,17 @@
 			[clojure.test :refer [deftest]]
 			[seisei.engine :refer :all]
 			[seisei.json :refer :all]
-			[seisei.test-helpers :refer :all :as h]))
+			[seisei.test-helpers :refer :all :as h])
+  (:import (java.util Date)))
+
+(defonce ^:dynamic *processed* nil)
+(defmacro with-processed-json [arg & body]
+  `(binding [*processed* (process ~arg)] (do ~@body)))
+
+
+(defonce ^:private 
+  js2
+  (h/jsonfixture { :x { :y 1 :z "{{objectId(3)}}"} }))
 
 (deftest engine-test
 
@@ -24,11 +34,17 @@
 			(:i x) => 3
 		)))
 
-(def js2 (h/jsonfixture { :x { :y 1 :z "{{objectId(3)}}"} }))
+(facts "about yesterday"
+  (fact "returns a date"
+    (instance? java.util.Date (yesterday)) => true
+  ))
+
+
 (facts "about tag processing"
-	(let [ processed ( process js2 ) ]
+  (with-processed-json js2
 		(fact "it should work even when nested"
-			( -> processed :x :z ) => truthy
-			( -> processed :x :z ) => h/uuid-regex
-		)))
+			( -> *processed* :x :z ) => truthy
+			( -> *processed* :x :z ) => h/uuid-regex
+		))
+)
 )
