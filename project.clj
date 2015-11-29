@@ -74,7 +74,7 @@
                                                 :nrepl-port   7888
                                                 :css-dirs     ["resources/public/css"] }
                                 :cljsbuild {
-                                  :test-commands { "unit" ["phantomjs" "phantom/unit-test.js" "resources/private/main.html"] }
+                                  :test-commands { "unit" ["phantomjs" "src/phantom/test-driver.js" "resources/private/test-runner.html"] }
                                   :builds { :dev {
                                               :source-paths ["src/main/cljs"]
                                               :figwheel true
@@ -104,7 +104,7 @@
                                       :compiler {
                                                   :output-to      "resources/public/js/main.js"
                                                   :optimizations  :advanced
-                                                  :externs        ["externs/mousetrap.js"]
+                                                  :externs        ["src/externs/externs.js"]
                                                   :verbose        true }}}
                                 }
                     }
