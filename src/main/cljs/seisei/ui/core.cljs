@@ -15,7 +15,7 @@
 (enable-console-print!)
 
 (defn tweet [data owner]
-  (dom/a #js { :href "https://twitter.com/intent/tweet?button_hashtag=seisei&text=%23seisei%20is%20great!"
+  (dom/a #js { :href "https://twitter.com/intent/tweet?button_hashtag=seisei&text=Thanks%20@trevermshick%20I%20love%20it!"
       :className "twitter-hashtag-button"
       :data-related "trevermshick"
       :data-url "http://seisei.elasticbeanstalk.com" } "Tweet #seisei"))
