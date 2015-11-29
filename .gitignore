@@ -1,9 +1,11 @@
-aws.*
+*.env
+aws.policy
 resources/.DS_Store
 resources/optimized/
 npm-debug.log
 resources/private/js/
 figwheel_server.log
+dev-resources
 resources/public/seisei-tags.js
 resources/public/js
 env.my
