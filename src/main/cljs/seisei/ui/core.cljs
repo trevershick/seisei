@@ -33,7 +33,7 @@
         :width "20"
         :align "absmiddle"})
       (dom/span nil " or ")
-      (dom/a { :href "http://trevershick.github.io" } "my blog")
+      (dom/a #js { :href "http://trevershick.github.io" } "my blog")
       (dom/span nil " or even ")
       (dom/div #js { :style  #js { :display "inline-block" :margin 0 :padding 0 :verticalAlign "middle"}}
         (tweet data owner))
