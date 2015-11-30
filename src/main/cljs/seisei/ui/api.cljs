@@ -17,7 +17,8 @@
     (d/action :show-error (str ajax-response))
   ))
 
-
+;; This interceptor catches the flash notification
+;; this is done via cljs-ajax capabilities
 (def flash-interceptor
      (to-interceptor {:name "JSON special case nil"
                       :response (fn [response]

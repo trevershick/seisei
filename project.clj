@@ -12,6 +12,7 @@
                         [sablono "0.4.0"]
                         [org.omcljs/om "0.9.0"]
                         [cljs-ajax "0.5.1"]
+                        [secretary "1.2.3"]
                         [org.clojure/clojure "1.7.0"]
                         [org.clojure/clojurescript "1.7.170"]
                         [org.clojure/data.json "0.2.5"]

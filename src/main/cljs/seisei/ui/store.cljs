@@ -2,6 +2,7 @@
   (:require-macros [cljs.core.async.macros :refer [go-loop]])
   (:require [om.core :as om :include-macros true]
     [seisei.ui.dispatcher :as d]
+    [secretary.core :as sec]
     [seisei.ui.state :refer [app-state message-counter]]
     [seisei.ui.api :as api]
     [seisei.ui.util :refer [clj->json nnil? debug]]
@@ -195,9 +196,14 @@
     (debug "store/:published-template-dynamic template is now:" template-cursor)
   ))
 
+(defmethod handle-action :route-with-template-slug [{slug :data}]
+  (debug "store/:route-with-template-slug slug:" slug)
+  (api/load-template slug))
+
 (defmethod handle-action :menu-template [{{:keys [slug]} :data}]
   (debug "store/:menu-template slug:" slug)
-  (api/load-template slug))
+  ;; i need to figure out where i want this.
+  (-> js/document .-location (set! (str "#/template/" slug))))
 
 (defmethod handle-action :menu-tidy [msg]
   ; (debug "handle-action :menu-tidy")
@@ -261,6 +267,30 @@
         (om/update! editor-state :processed (data :processed))
         (om/update! editor-state :output output)))
 
+(defmethod handle-action :menu-new [_]
+  ; this is the same as 'deleted-template', need to merge
+  ; somehow intelligently
+  (let [state        (om/root-cursor app-state)
+        editor-state (state :editor)
+        menu-state   (state :menu)]
+        (om/update! state :template nil)
+        (om/update! editor-state :content "{}")
+        (om/update! editor-state :output "{}")
+        (om/update! editor-state :dirty false)
+        (om/update! editor-state :processed {})
+        ;; update the menu's state
+        (om/transact! state :menu (fn [s]
+          (let [s (assoc s :new-enabled true)
+                s (assoc s :save-enabled true)
+                s (assoc s :delete-enabled false)
+                s (assoc s :sharing-enabled false)
+                s (assoc s :template-shared-statically false)
+                s (assoc s :template-shared-dynamically false)
+                s (assoc s :template-title "Untitled")]
+            s )))
+        )
+  (-> js/document .-location (set! "#/")))
+
 (defmethod handle-action :deleted-template [_]
   (let [state        (om/root-cursor app-state)
         editor-state (state :editor)
@@ -280,7 +310,8 @@
                 s (assoc s :template-shared-dynamically false)
                 s (assoc s :template-title "Untitled")]
             s )))
-        ))
+        )
+  (-> js/document .-location (set! "#/")))
 
 
 (defmethod handle-action :loaded-template [{{:keys [processed template]} :data}]
