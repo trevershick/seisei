@@ -10,7 +10,8 @@
   ([action opts]
     (fn [e]
       (.stopPropagation e)
-      (d/action action opts))))
+      (d/action action opts)
+      false)))
 
 (defn- highlight-first [s mnemonic]
   (let [idx     (.indexOf s mnemonic)
