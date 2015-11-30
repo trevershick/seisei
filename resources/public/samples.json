@@ -32,7 +32,7 @@
     "name": "random",
     "samples": [{
       "input": {
-        "c": "{{random(blue, brown, green)}}"
+        "c": "{{random('blue', 'brown', 'green')}}"
       },
       "output": {
         "c": 1
