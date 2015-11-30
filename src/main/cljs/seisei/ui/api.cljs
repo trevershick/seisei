@@ -100,7 +100,6 @@
       :response-format :json
       :handler (fn [response]
         (debug (str "/my/templates/" slug ", response=") response)
-        (d/action :show-success "Loaded.")
         (d/action :loaded-template response))
       :error-handler (fn [response] (js/alert response))
     }))
@@ -157,6 +156,7 @@
         :handler  (fn [response]
                     (d/action :show-success "Saved.")
                     (d/action :loaded-template response)
+                    (when isnew (-> js/document .-location (set! (str "#/template/" (-> response :template :slug)))))
                     (refresh-templates)
                     (process-template (response :template)))
         :error-handler default-error-handler })))
