@@ -19,7 +19,8 @@
 (defn- close-alert [owner id]
   "Returns a function, that when called will submit a close message for the given id"
   (fn[]
-    (slide-up (om/get-node owner) #(d/action :close-message (:id id)))))
+    (when (.isMounted owner)
+    (slide-up (om/get-node owner) #(d/action :close-message (:id id))))))
 
 (defn- message [data owner]
   (reify
