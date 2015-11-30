@@ -1,4 +1,4 @@
-(ns seisei.ui.comp.modals
+(ns seisei.ui.editor.modals
   (:require [om.core :as om :include-macros true]
             [seisei.ui.dispatcher :as d]
             [seisei.ui.util :refer [nnil?]]

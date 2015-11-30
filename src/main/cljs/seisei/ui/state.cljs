@@ -1,7 +1,5 @@
 (ns seisei.ui.state)
-(enable-console-print!)
 
-(def message-counter (atom 0))
 (def app-state (atom {  :messages   [
                           ; {:type :alert    :message "test alert"   :id (swap! message-counter inc)}
                           ; {:type :info     :message "test info"    :id (swap! message-counter inc)}

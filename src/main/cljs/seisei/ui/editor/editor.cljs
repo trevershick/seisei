@@ -1,29 +1,12 @@
-(ns seisei.ui.core
-  (:require-macros [cljs.core.async.macros :refer [go]])
-  (:import goog.History)
+(ns seisei.ui.editor
   (:require [om.core :as om :include-macros true]
             [om.dom :as dom :include-macros true]
-            [seisei.ui.dispatcher :as d]
-            [seisei.ui.state :as state]
-            [seisei.ui.comp.messages :refer [messages]]
-            [seisei.ui.comp.menu :refer [editor-menu]]
-            [seisei.ui.comp.editor :refer [editor editor-ro editor-help]]
-            [seisei.ui.comp.modals :refer [confirm-modal rename-modal]]
-            [goog.events :as events]
-            [goog.history.EventType :as EventType]            [seisei.ui.store :as store]
-            [secretary.core :as sec :include-macros true]
-            [sablono.core :as html :refer-macros [html]]
-            [cljs.core.async :refer [put! chan <!]]))
-
-(enable-console-print!)
-
-(defn navigation-view [_ _]
-  (om/component
-    (html [:noscript])))
-      ; [:div
-      ;   [:a { :href "#/" } "Home" ]
-      ;   [:a { :href "#/something" } "Something" ]
-      ;   [:a { :href "#/about" } "About" ]])))
+            [seisei.ui.messages :refer [messages]]
+            [seisei.ui.editor.menu :refer [editor-menu]]
+            [seisei.ui.editor.ace :refer [editor editor-ro editor-help]]
+            [seisei.ui.editor.store]
+            [seisei.ui.editor.modals :refer [confirm-modal rename-modal]]
+            [sablono.core :as html :refer-macros [html]]))
 
 (defn tweet [data owner]
   (dom/a #js { :href "https://twitter.com/intent/tweet?button_hashtag=seisei&text=Thanks%20@trevermshick%20I%20love%20it!"
@@ -76,15 +59,13 @@
       (html [:noscript]))))
 
 
-(defn app [data owner]
+(defn editor-view [data owner]
   (om/component
     (html
       [:div {:className "editor-app"}
         (om/build confirm-modal (data :confirm))
         (om/build rename-modal (data :rename))
         (om/build hotkeys data)
-        (om/build messages (data :messages))
-        (om/build navigation-view {})
         [:div { :className "row" } (om/build editor-menu (data :menu))]
         [:div { :className "row" } (om/build editor (data :editor))]
         [:div { :className "row editor-row" }
@@ -103,52 +84,3 @@
         (om/build footer data)
       ]
     )))
-
-
-
-(defn something-page-view [_ _]
-  (om/component
-    (html
-      [:div
-        (om/build navigation-view {})
-          [:div "Something"]])))
-
-(defn about-page-view [_ _]
-  (om/component
-    (html
-      [:div
-        (om/build navigation-view {})
-          [:div "About Page"]])))
-
-
-
-; (om/root app state/app-state {:target app-element})
-(def ^:private app-element (. js/document (getElementById "app")))
-(def ^:private history-element (. js/document (getElementById "hidden-history")))
-(sec/set-config! :prefix "#")
-
-(sec/defroute index-page "/" []
-  (om/root app state/app-state {:target app-element}))
-
-(sec/defroute editor-with-template "/template/:slug" [slug]
-  (om/root app state/app-state {:target app-element})
-  (d/action :route-with-template-slug slug))
-
-(sec/defroute something-page "/something" []
-  (om/root something-page-view state/app-state {:target app-element}))
-
-(sec/defroute about-page "/about" []
-  (om/root about-page-view state/app-state {:target app-element}))
-
-(sec/defroute catchall "*" []
-  (js/alert "Set to #/")
-  (-> js/document .-location (set! "#/")))
-
-(let [history (History. false nil history-element)
-      navigation EventType/NAVIGATE]
-  (goog.events/listen history
-                     navigation
-                     #(-> % .-token sec/dispatch!))
-  (doto history (.setEnabled true)))
-
-(store/init)

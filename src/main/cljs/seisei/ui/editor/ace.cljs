@@ -1,4 +1,4 @@
-(ns seisei.ui.comp.editor
+(ns seisei.ui.editor.ace
   (:require-macros [cljs.core.async.macros :refer [go]])
   (:require [om.core :as om :include-macros true]
             [seisei.ui.dispatcher :as d]

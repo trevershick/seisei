@@ -1,7 +1,8 @@
-(ns seisei.ui.comp.messages
+(ns seisei.ui.messages
   (:require-macros [cljs.core.async.macros :refer [go]])
   (:require [om.core :as om :include-macros true]
             [seisei.ui.dispatcher :as d]
+            [seisei.ui.messages.store]
             [sablono.core :as html :refer-macros [html]]))
 
 (defonce messages-classes {

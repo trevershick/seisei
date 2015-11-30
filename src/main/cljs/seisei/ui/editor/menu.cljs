@@ -1,4 +1,4 @@
-(ns seisei.ui.comp.menu
+(ns seisei.ui.editor.menu
   (:require [om.core :as om :include-macros true]
             [seisei.ui.dispatcher :as d]
             [sablono.core :as html :refer-macros [html]]))

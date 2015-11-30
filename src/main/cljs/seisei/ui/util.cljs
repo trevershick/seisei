@@ -1,5 +1,7 @@
 (ns seisei.ui.util)
 
+(enable-console-print!)
+
 (defn clj->json
   ([edn] (clj->json edn 2))
   ([edn spaces]

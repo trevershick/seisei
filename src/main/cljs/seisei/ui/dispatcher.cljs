@@ -5,7 +5,7 @@
 (defonce ^:private dispatcher
   (async/chan 1000))
 
-(def ^:private mult-c
+(defonce ^:private mult-c
   (async/mult dispatcher))
 
 (defn subscribe []

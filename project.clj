@@ -80,7 +80,7 @@
                                   :builds { :dev {
                                               :source-paths ["src/main/cljs"]
                                               :figwheel true
-                                              :compiler { :main         seisei.ui.core
+                                              :compiler { :main         seisei.ui.main
                                                           :asset-path   "js"
                                                           :output-to    "resources/public/js/main.js"
                                                           :output-dir   "resources/public/js"
