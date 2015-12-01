@@ -8,6 +8,10 @@
 (def table-sessions :sessions)
 (def table-templates :templates)
 (def table-slugs :slugs)
+(def table-scores :scores)
+(def index-users-fbid :fbid-index)
+(def index-users-ghid :ghid-index)
+(def index-scores-type-score :type-score-index)
 
 (def aws-dynamodb-access-key (env :aws-dynamodb-access-key))
 (def aws-dynamodb-secret-key (env :aws-dynamodb-secret-key))
@@ -187,6 +191,7 @@
 
 (def capacities {:sessions      { :read 5 :write 5 }
                  :users         { :read 5 :write 5 }
+                 :scores        { :read 5 :write 5 }
                  :templates     { :read 5 :write 5 }
                  :slugs         { :read 5 :write 5 } })
 
@@ -204,16 +209,41 @@
     aws-dynamodb-client-opts
     table-users ;; table name
     [:id :s] ;; key structure (username)
-    {:throughput (:users capacities)
-     :block? true })
+    {:throughput  (:users capacities)
+     :block?      true
+     :gsindexes [
+       { :name         index-users-ghid
+         :hash-keydef  [:ghid :s]
+         :projection   :all
+         :throughput   {:read 1 :write 1}}
+       { :name         index-users-fbid
+         :hash-keydef  [:fbid :s]
+         :projection   :all
+         :throughput   {:read 1 :write 1}}
+     ]})
 
   (far/ensure-table
     aws-dynamodb-client-opts
     table-templates ;; table name
     [:user :s] ;; key structure (username)
-    {:range-keydef [ :slug :s ]
-     :throughput (:templates capacities)
-     :block? true })
+    { :range-keydef [ :slug :s ]
+      :throughput (:templates capacities)
+      :block? true })
+
+  (far/ensure-table
+    aws-dynamodb-client-opts
+    table-scores ;; table name
+    [:slug :s] ;; key structure (username)
+    { :range-keydef [ :type :s ]
+      :throughput   (:scores capacities)
+      :block?       true
+      :gsindexes [
+        { :name         index-scores-type-score
+          :hash-keydef  [ :type :s ]
+          :range-keydef [ :score :n ]
+          :projection   :all
+          :throughput   {:read 1 :write 1}}
+      ]})
 
   (far/ensure-table  ;; this is the public slugs table that will piont to a user/slug combo (maybe)
                     aws-dynamodb-client-opts

@@ -24,6 +24,16 @@
 ;;  last-login
 ; (defrecord User [ id admin access-key email company name last-login])
 
+(defn public-user-attributes
+  [user]
+  (select-keys user [:name :email :last-login :id]))
+
+(defn get-users [ids]
+  (let [results (far/batch-get-item
+    db/aws-dynamodb-client-opts
+    { db/table-users { :prim-kvs { :id ids }}})]
+    (get results db/table-users)))
+
 (defn lookup-user
   [user-id]
   (let [user (far/get-item db/aws-dynamodb-client-opts

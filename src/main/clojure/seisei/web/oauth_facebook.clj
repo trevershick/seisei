@@ -5,6 +5,7 @@
             [ring.middleware.defaults :refer [wrap-defaults site-defaults]]
             [clj-http.client :as client]
             [clojure.tools.logging :as log]
+            [seisei.web.db :as db]
             [seisei.web.user :as user]
             [seisei.web.flash :refer [add-flash]]
             [environ.core :refer [env]]))
@@ -99,7 +100,7 @@
         facebook-account        (if access-token (get-facebook-account access-token) {})
         updated-session         session
         updated-session         (user/logged-in! updated-session authenticated)
-        user-record             (if authenticated (user/lookup-user-by :fbid (:id facebook-account)))
+        user-record             (if authenticated (user/lookup-user-by db/index-users-fbid (:id facebook-account)))
         user-record             (if
                                   (and authenticated (nil? user-record))
                                   (user/create-user

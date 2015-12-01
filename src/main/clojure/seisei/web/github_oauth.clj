@@ -4,6 +4,7 @@
             [ring.middleware.defaults :refer [wrap-defaults site-defaults]]
             [clj-http.client :as client]
             [clojure.tools.logging :as log]
+            [seisei.web.db :as db]
             [seisei.web.user :as user]
             [environ.core :refer [env]]))
 
@@ -94,7 +95,7 @@
          email              (if access-token (get-github-email access-token) nil)
          authenticated      (if access-token true false)
          session            (user/logged-in! session authenticated)
-         user-record        (if authenticated (user/lookup-user-by :ghid (:login github-account)))
+         user-record        (if authenticated (user/lookup-user-by db/index-users-ghid (:login github-account)))
          user-record        (if
                               (and authenticated (nil? user-record))
                               (user/create-user (str "gh:" (:login github-account)) (assoc (user-from-github-account access-token github-account) :email email))

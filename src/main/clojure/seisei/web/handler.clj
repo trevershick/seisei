@@ -13,6 +13,7 @@
             [seisei.web.user]
             [seisei.web.db :as db]
             [seisei.web.s3]
+            [seisei.web.leaderboard]
             [seisei.web.template-handlers]
             [seisei.web.logout]
             [seisei.engine]
@@ -24,7 +25,6 @@
   (seisei.web.github-oauth/startupcheck)
   (seisei.web.s3/startupcheck)
   (seisei.web.db/startupcheck))
-
 
 (defn my-account [{session :session}]
   (let [logged-in (seisei.web.user/logged-in? session)]
@@ -43,6 +43,7 @@
   (ANY "*" [] seisei.web.oauth-facebook/facebook-oauth-routes)
   (ANY "*" [] seisei.web.github-oauth/github-oauth-routes)
   (ANY "*" [] seisei.web.template-handlers/template-routes)
+  (ANY "*" [] seisei.web.leaderboard/routes)
   (GET "/my/hot-flashes"    r (seisei.web.flash/hot-flashes r))
   (GET "/my/account"        r (my-account r))
   (GET "/" [] ( ->

@@ -2,6 +2,7 @@
   (:use midje.sweet)
   (:require   [clojure.test     :refer [testing is deftest]]
               [seisei.web.github-oauth :as o]
+              [seisei.db :as db]
               [clojure.tools.logging :as l]
               [clj-http.client :as c]
               [seisei.web.user :as user]
