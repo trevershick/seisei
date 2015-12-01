@@ -126,6 +126,7 @@
                   (om/build sharing-submenu data))
                 (om/build templates-submenu data)
                 (if (data :feedback-enabled) (menu-item "Feedback" :icon "feedback" :action :menu-feedback))
+                [:li [:a {:href "#/popular"} "Popular Templates"]]
                 (if (data :help-enabled) (menu-item "Help" :action :menu-help)) ]
 
                 [:ul {:className "nav navbar-nav navbar-right"}

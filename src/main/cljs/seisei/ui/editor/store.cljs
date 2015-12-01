@@ -35,6 +35,9 @@
 
 (defmethod handle-action :hotkey-run [_] (d/action :menu-run nil))
 
+(defmethod handle-action :load-samples [_]
+  (eapi/load-samples))
+
 (defmethod handle-action :menu-toggle-static [_]
   (let [state            (om/root-cursor app-state)
         current-template (state :template)
@@ -332,5 +335,3 @@
       (handle-action msg)
       (catch :default e (println e)))
     (recur)))
-
-(eapi/load-samples)

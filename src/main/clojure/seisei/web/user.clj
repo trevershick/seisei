@@ -1,5 +1,5 @@
 (ns seisei.web.user
-  (:require [seisei.web.db :as db]
+  (:require [seisei.db.core :as db]
             [clojure.tools.logging :as log]
             [taoensso.faraday :as far]))
 

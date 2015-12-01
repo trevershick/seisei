@@ -6,6 +6,7 @@
                           ; {:type :warn     :message "test warn"    :id (swap! message-counter inc)}
                           ; {:type :success  :message "test success" :id (swap! message-counter inc)}
                         ]
+                        :leaderboard {}
                         :editor     {
                                       :dirty    false
                                       :processed  {}

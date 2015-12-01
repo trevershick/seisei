@@ -11,7 +11,7 @@
             [seisei.web.healthcheck :refer [healthcheck-routes]]
             [seisei.web.session]
             [seisei.web.user]
-            [seisei.web.db :as db]
+            [seisei.db.core :as db]
             [seisei.web.s3]
             [seisei.web.leaderboard]
             [seisei.web.template-handlers]
@@ -24,7 +24,7 @@
 (defn startupcheck []
   (seisei.web.github-oauth/startupcheck)
   (seisei.web.s3/startupcheck)
-  (seisei.web.db/startupcheck))
+  (seisei.db.core/startupcheck))
 
 (defn my-account [{session :session}]
   (let [logged-in (seisei.web.user/logged-in? session)]

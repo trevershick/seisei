@@ -4,6 +4,7 @@
             [seisei.ui.messages :refer [messages]]
             [seisei.ui.editor.menu :refer [editor-menu]]
             [seisei.ui.editor.ace :refer [editor editor-ro editor-help]]
+            [seisei.ui.dispatcher :as d]
             [seisei.ui.editor.store]
             [seisei.ui.editor.modals :refer [confirm-modal rename-modal]]
             [sablono.core :as html :refer-macros [html]]))
@@ -60,27 +61,32 @@
 
 
 (defn editor-view [data owner]
-  (om/component
-    (html
-      [:div {:className "editor-app"}
-        (om/build confirm-modal (data :confirm))
-        (om/build rename-modal (data :rename))
-        (om/build hotkeys data)
-        [:div { :className "row" } (om/build editor-menu (data :menu))]
-        [:div { :className "row" } (om/build editor (data :editor))]
-        [:div { :className "row editor-row" }
-            [:div { :className "row" :style { :height "100%" } }
-                [:div { :className "col-sm-6 left-side" :style {:height "100%" :padding 0} }
-                    (om/build editor (data :editor))
-                    [:div { :style { :textAlign "right" } }
-                      [:b { :className "floater" } [:span { :className "PROCESSEDCLASSES" } ]]
+  (reify
+    om/IRender
+    (render [_]
+      (html
+        [:div {:className "editor-app"}
+          (om/build confirm-modal (data :confirm))
+          (om/build rename-modal (data :rename))
+          (om/build hotkeys data)
+          [:div { :className "row" } (om/build editor-menu (data :menu))]
+          [:div { :className "row" } (om/build editor (data :editor))]
+          [:div { :className "row editor-row" }
+              [:div { :className "row" :style { :height "100%" } }
+                  [:div { :className "col-sm-6 left-side" :style {:height "100%" :padding 0} }
+                      (om/build editor (data :editor))
+                      [:div { :style { :textAlign "right" } }
+                        [:b { :className "floater" } [:span { :className "PROCESSEDCLASSES" } ]]
+                      ]
                     ]
-                  ]
-                [:div { :className "col-sm-6 right-side" :style { :height "100%" :padding 0} }
-                    (om/build editor-ro (data :editor))
-                    (om/build editor-help (data :samples))
-                  ]]]
-        (om/build hotkey-prompt {:key "⌘ + h" :purpose "to show hotkeys"})
-        (om/build footer data)
-      ]
-    )))
+                  [:div { :className "col-sm-6 right-side" :style { :height "100%" :padding 0} }
+                      (om/build editor-ro (data :editor))
+                      (om/build editor-help (data :samples))
+                    ]]]
+          (om/build hotkey-prompt {:key "⌘ + h" :purpose "to show hotkeys"})
+          (om/build footer data)
+        ]
+      ))
+    om/IDidMount
+    (did-mount [_] (d/action :load-samples))
+    ))

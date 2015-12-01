@@ -4,6 +4,7 @@
   (:require [om.core :as om :include-macros true]
             [seisei.ui.dispatcher :as d]
             [seisei.ui.state :as state]
+            [seisei.ui.leaderboard :refer [leaderboard]]
             [seisei.ui.messages :refer [messages]]
             [seisei.ui.editor :refer [editor-view]]
             [goog.events :as events]
@@ -20,19 +21,14 @@
       ;   [:a { :href "#/something" } "Something" ]
       ;   [:a { :href "#/about" } "About" ]])))
 
-(defn something-page-view [_ _]
-  (om/component
-    (html
-      [:div
-        (om/build navigation-view {})
-          [:div "Something"]])))
 
-(defn about-page-view [_ _]
+(defn leaderboard-page-view [data owner]
   (om/component
     (html
       [:div
         (om/build navigation-view {})
-          [:div "About Page"]])))
+        (om/build messages (data :messages))
+        (om/build leaderboard (data :leaderboard)) ])))
 
 (defn editor-page-view [data owner]
   (om/component
@@ -61,11 +57,8 @@
   ; knows how. maybe this route should be defined up there?
   (d/action :route-editor-template-slug slug))
 
-(sec/defroute something-page "/something" []
-  (om/root something-page-view state/app-state {:target app-element}))
-
-(sec/defroute about-page "/about" []
-  (om/root about-page-view state/app-state {:target app-element}))
+(sec/defroute about-page "/popular" []
+  (om/root leaderboard-page-view state/app-state {:target app-element}))
 
 (sec/defroute catchall "*" []
   (-> js/document .-location (set! "#/")))

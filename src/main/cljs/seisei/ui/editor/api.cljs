@@ -9,6 +9,14 @@
     [seisei.ui.util :refer [debug]]
     [cljs.core.async :refer [put! mult tap chan sub <!]]))
 
+(defn load-flash []
+  (GET "/my/hot-flashes"
+    { :keywords?        true
+      :response-format  :json
+      :error-handler    default-error-handler
+      :handler          (fn [r]
+                          (doseq [x (:flash r)] (show-flash x))
+                          )}))
 
 ;; API Calls
 (defn refresh-templates []

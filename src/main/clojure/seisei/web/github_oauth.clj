@@ -4,7 +4,7 @@
             [ring.middleware.defaults :refer [wrap-defaults site-defaults]]
             [clj-http.client :as client]
             [clojure.tools.logging :as log]
-            [seisei.web.db :as db]
+            [seisei.db.core :as db]
             [seisei.web.user :as user]
             [environ.core :refer [env]]))
 

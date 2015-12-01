@@ -2,7 +2,7 @@
   (:require [taoensso.faraday :as far]
             [ring.middleware.session.store :refer [SessionStore]]
             [clojure.tools.logging :as log]
-            [seisei.web.db :as db]))
+            [seisei.db.core :as db]))
 
 
 (def client-opts db/aws-dynamodb-client-opts)

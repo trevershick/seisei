@@ -1,4 +1,4 @@
-(ns seisei.web.db
+(ns seisei.db.core
   (:require [taoensso.faraday :as far]
             [clojure.tools.logging :as log]
             [environ.core :refer [env]]))

@@ -1,5 +1,5 @@
 (ns seisei.db.leaderboard
-  (:require [seisei.web.db :as db]
+  (:require [seisei.db.core :as db]
             [taoensso.faraday :as far]
             [seisei.web.user :as user]
             [clojure.tools.logging :as log]))

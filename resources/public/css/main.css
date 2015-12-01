@@ -284,3 +284,19 @@ li#rename-menu-item {
 	width: 15px;
 	height: 15px;
 }
+
+
+.leaderboard ul.leader-list-item  {
+    list-style: none;
+    margin: 0;
+    padding:0;
+}
+
+.leaderboard .leader-list-item ul li {
+}
+
+.leaderboard .leader-list-item ul li:last-child {
+}
+
+.leaderboard .leader-list-item ul li {
+}

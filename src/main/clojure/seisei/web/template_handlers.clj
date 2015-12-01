@@ -5,7 +5,7 @@
             [seisei.web.user]
             [seisei.json]
             [seisei.engine]
-            [seisei.web.db :as db]
+            [seisei.db.core :as db]
             [seisei.web.s3 :as s3]
             [clojure.tools.logging :as log]))
 
