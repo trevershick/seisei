@@ -22,8 +22,7 @@
 
 (defn startupcheck []
   (seisei.web.github-oauth/startupcheck)
-  (seisei.web.s3/startupcheck)
-  (seisei.web.db/startupcheck))
+  (seisei.web.oauth-facebook/startupcheck))
 
 
 (defn my-account [{session :session}]

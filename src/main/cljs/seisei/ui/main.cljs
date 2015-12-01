@@ -4,6 +4,7 @@
   (:require [om.core :as om :include-macros true]
             [seisei.ui.dispatcher :as d]
             [seisei.ui.state :as state]
+            [seisei.ui.store]
             [seisei.ui.messages :refer [messages]]
             [seisei.ui.editor :refer [editor-view]]
             [goog.events :as events]

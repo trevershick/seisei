@@ -9,14 +9,7 @@
 (def table-templates :templates)
 (def table-slugs :slugs)
 
-(def aws-dynamodb-access-key (env :aws-dynamodb-access-key))
-(def aws-dynamodb-secret-key (env :aws-dynamodb-secret-key))
-(def aws-dynamodb-endpoint   (env :aws-dynamodb-endpoint))
-
-
-(def aws-dynamodb-client-opts {:access-key aws-dynamodb-access-key
-                               :secret-key aws-dynamodb-secret-key
-                               :endpoint aws-dynamodb-endpoint})
+(def aws-dynamodb-client-opts {})
 
 (def not-nil? (comp not nil?))
 
@@ -223,15 +216,3 @@
                      :block? true })
 
   (log/info "Done."))
-
-
-(defn startupcheck []
-  (if (nil? aws-dynamodb-access-key)
-    (log/error "AWS_DYNAMODB_ACCESS_KEY is not set"))
-  (if (nil? aws-dynamodb-secret-key)
-    (log/error "AWS_DYNAMODB_SECRET_KEY is not set"))
-  (if (nil? aws-dynamodb-endpoint)
-    (log/error "AWS_DYNAMODB_ENDPOINT is not set"))
-  (try
-    (startup-database)
-    (catch Exception e (log/error e))))
