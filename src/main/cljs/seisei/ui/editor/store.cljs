@@ -215,6 +215,7 @@
     (let [state (om/root-cursor app-state)]
       (om/update! state :account data)
       (om/update! (state :menu) :logged-in (data :logged-in))
+      (om/update! (state :menu) :user data)
       (om/update! (state :menu) :save-enabled (data :logged-in))
       (if (data :logged-in)
         (eapi/refresh-templates)

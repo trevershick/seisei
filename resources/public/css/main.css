@@ -313,3 +313,9 @@ li#rename-menu-item {
 	width: 15px;
 	height: 15px;
 }
+
+#gravatar {
+  width:20px;
+  height:20px;
+  margin: 0px 5px 0px 0px;
+}

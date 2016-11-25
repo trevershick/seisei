@@ -1,6 +1,7 @@
 (ns seisei.ui.editor.menu
   (:require [om.core :as om :include-macros true]
             [seisei.ui.dispatcher :as d]
+            [seisei.ui.util :refer [clj->json]]
             [sablono.core :as html :refer-macros [html]]))
 
 ; overloaded with multiple arities
@@ -132,7 +133,11 @@
                     (submenu-dropdown data owner "Login"
                       (om/build login-with-github data)
                       (om/build login-with-facebook data))
-                    (submenu-dropdown data owner "My Account"
+                    (submenu-dropdown data owner
+                        [:span
+                         [:img { :id "gravatar" :src (str "//gravatar.com/avatar/" (-> data :user :gravatar))}]
+                         [:span { :class "username" } (-> data :user :name)]
+                         ]
                       (om/build logout-button data)))]
 
 
