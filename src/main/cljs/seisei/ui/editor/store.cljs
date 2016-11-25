@@ -327,6 +327,15 @@
 (defmethod handle-action :process-template [{:keys [data]}]
   (eapi/process-template data))
 
+(defmethod handle-action :expand-samples [_]
+  (let [state           (om/root-cursor app-state)]
+      (om/update! state :samples-collapsed false)))
+
+(defmethod handle-action :collapse-samples [_]
+  (let [state           (om/root-cursor app-state)]
+      (om/update! state :samples-collapsed true)))
+
+
 (defmethod handle-action :default [msg]
   (debug "editor/store/handle-action :default ignored msg=" msg))
 

@@ -5,9 +5,9 @@
             [seisei.ui.util :refer [clj->json debug]]
             [sablono.core :as html :refer-macros [html]]))
 
-(defn- simple-sample-item-handler
+(defn- onclick-handler
   ([action]
-    (simple-sample-item-handler action nil))
+    (onclick-handler action nil))
   ([action opts]
     (fn [e]
       (.stopPropagation e)
@@ -76,7 +76,7 @@
   (html
     [:div {:className "sample" :key idx}
       [:div {:className "input"}
-        [:a {:onClick (simple-sample-item-handler :apply-sample (io :input)) } (clj->json (io :input) 0)]]
+        [:a {:onClick (onclick-handler :apply-sample (io :input)) } (clj->json (io :input) 0)]]
         [:div {:className "output"} (clj->json (io :output) 0)]
     ]))
 

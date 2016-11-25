@@ -1,12 +1,22 @@
 (ns seisei.ui.editor
   (:require [om.core :as om :include-macros true]
             [om.dom :as dom :include-macros true]
+            [seisei.ui.dispatcher :as d]
             [seisei.ui.messages :refer [messages]]
             [seisei.ui.editor.menu :refer [editor-menu]]
             [seisei.ui.editor.ace :refer [editor editor-ro editor-help]]
             [seisei.ui.editor.store]
             [seisei.ui.editor.modals :refer [confirm-modal rename-modal]]
             [sablono.core :as html :refer-macros [html]]))
+
+(defn- onclick-handler
+  ([action]
+    (onclick-handler action nil))
+  ([action opts]
+    (fn [e]
+      (.stopPropagation e)
+      (d/action action opts)
+      false)))
 
 (defn tweet [data owner]
   (dom/a #js { :href "https://twitter.com/intent/tweet?button_hashtag=seisei&text=Thanks%20@trevermshick%20I%20love%20it!"
@@ -76,9 +86,15 @@
                       [:b { :className "floater" } [:span { :className "PROCESSEDCLASSES" } ]]
                     ]
                   ]
-                [:div { :className "col-sm-6 right-side" :style { :height "100%" :padding 0} }
+                [:div { :className (str "col-sm-6 right-side" (if (data :samples-collapsed) " collapsed-samples"))
+                        :style { :height "100%" :padding 0} }
                     (om/build editor-ro (data :editor))
-                    (om/build editor-help (data :samples))
+                    (if (not (data :samples-collapsed)) (om/build editor-help (data :samples)))
+                    (cond (data :samples-collapsed)
+                          [:div {:id "samples-expander" :className "collapsed" } [:a {:onClick (onclick-handler :expand-samples) } "View Samples"]]
+                      :else
+                          [:div {:id "samples-expander" :className "expanded" } [:a {:onClick (onclick-handler :collapse-samples) } "Collapse Samples"]])
+
                   ]]]
         (om/build hotkey-prompt {:key "⌘ + h" :purpose "to show hotkeys"})
         (om/build footer data)

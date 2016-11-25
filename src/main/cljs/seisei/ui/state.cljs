@@ -43,9 +43,10 @@
                                       :deny-action nil
                                       :deny-data nil
                         }
+                        :samples-collapsed true
                         :samples      {
-                          :samples  []
-                          :mixed    []
+                          :samples    []
+                          :mixed      []
                         }
                         :templates    []
                         :show-hotkeys false
