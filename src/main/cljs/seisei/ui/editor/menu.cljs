@@ -20,7 +20,6 @@
     (html
       [:span left [:u mnemonic] right])))
 
-
 (defn logout-button [data owner]
   (om/component
     (html [:a {:onClick (simple-menu-item-handler :logout) } "Logout"])))

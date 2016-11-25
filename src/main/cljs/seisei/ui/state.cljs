@@ -1,4 +1,24 @@
-(ns seisei.ui.state)
+(ns seisei.ui.state
+  (:require [seisei.ui.util :refer [clj->json nnil? debug]]))
+
+(def ^{:private true} starting-json
+  {
+    :cats [
+      "{{repeat(2)}}"
+      {
+        :i           "{{index}}"
+        :name        "{{cat.name}}"
+        :breed       "{{cat.breed}}"
+        :registry    "{{cat.registry}}"
+        :homepage    "http://{{internet.url}}"
+       }
+    ]
+    :code {
+      :isbn10 "{{code.isbn10}}"
+      :isbn13 "{{code.isbn13}}"
+    }
+    :chuck-norris "{{chuckNorris.fact}}"
+  })
 
 (def app-state (atom {  :messages   [
                           ; {:type :alert    :message "test alert"   :id (swap! message-counter inc)}
@@ -10,7 +30,7 @@
                                       :dirty    false
                                       :processed  {}
                                       :output     "" ; always a string
-                                      :content    "{\"c\":[\"{{repeat(3)}}\",{\"x\":1}]}" }
+                                      :content    (clj->json starting-json) }
                         :rename     {
                                       :show false
                         }
