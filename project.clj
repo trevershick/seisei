@@ -9,7 +9,7 @@
                         :url "http://www.eclipse.org/legal/epl-v10.html"}
 
   :dependencies         [[org.clojure/core.async "0.2.395"]
-                        [sablono "0.7.6"]
+                        [sablono "0.4.0"]
                         [org.omcljs/om "0.9.0"]
                         [cljs-ajax "0.5.8"]
                         [secretary "1.2.3"]
@@ -119,7 +119,5 @@
   :aliases {"full-build" ["do" ["clean"] ["bower" "install"] ["resource"] ["test"] ["codox"] ["cloverage"]]
             "ci-deploy" ["do" ["clean"] ["bower" "install"] ["resource"] ["beanstalk" "deploy" "seisei-prod"]]
             "ci-deploy-test" ["do" ["clean"] ["bower" "install"] ["resource"] ["beanstalk" "deploy" "seisei-test"]]
-            "data" ["run" "-m" "seisei.tools.all"]
-            "cities" ["run" "-m" "seisei.tools.cities"]
-            "states" ["run" "-m" "seisei.tools.states"] }
+            "data" ["run" "-m" "seisei.tools.all"] }
 )
