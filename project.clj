@@ -8,7 +8,7 @@
   :license {            :name "Eclipse Public License"
                         :url "http://www.eclipse.org/legal/epl-v10.html"}
 
-  :dependencies         [[org.clojure/core.async "0.2.374"]
+  :dependencies         [[org.clojure/core.async "0.2.395"]
                         [sablono "0.4.0"]
                         [org.omcljs/om "0.9.0"]
                         [cljs-ajax "0.5.1"]
@@ -19,7 +19,7 @@
                         [com.amazonaws/aws-java-sdk-core "1.10.37"]
                         [com.amazonaws/aws-java-sdk-s3 "1.10.37"]
                         [com.amazonaws/aws-java-sdk-dynamodb "1.10.37"]
-                        [clj-time "0.11.0"]
+                        [clj-time "0.12.2"]
                         [compojure "1.4.0"]
                         [ring/ring-defaults "0.1.5"]
                         [ring/ring-core "1.4.0"]
