@@ -242,14 +242,20 @@
         (om/update! editor-state :processed (data :processed))
         (om/update! editor-state :output output)))
 
-(defmethod handle-action :menu-new [_]
+(defmethod handle-action :apply-sample [x]
+  (d/action :menu-new {:content (x :data)}))
+
+(defmethod handle-action :menu-new [{:keys [data]}]
   ; this is the same as 'deleted-template', need to merge
   ; somehow intelligently
   (let [state        (om/root-cursor app-state)
         editor-state (state :editor)
-        menu-state   (state :menu)]
+        menu-state   (state :menu)
+        content      (data :content)
+        content      (or content {})
+        content      (clj->json content)]
         (om/update! state :template nil)
-        (om/update! editor-state :content "{}")
+        (om/update! editor-state :content content)
         (om/update! editor-state :output "{}")
         (om/update! editor-state :dirty false)
         (om/update! editor-state :processed {})
@@ -320,6 +326,15 @@
 
 (defmethod handle-action :process-template [{:keys [data]}]
   (eapi/process-template data))
+
+(defmethod handle-action :expand-samples [_]
+  (let [state           (om/root-cursor app-state)]
+      (om/update! state :samples-collapsed false)))
+
+(defmethod handle-action :collapse-samples [_]
+  (let [state           (om/root-cursor app-state)]
+      (om/update! state :samples-collapsed true)))
+
 
 (defmethod handle-action :default [msg]
   (debug "editor/store/handle-action :default ignored msg=" msg))

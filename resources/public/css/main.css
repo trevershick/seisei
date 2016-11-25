@@ -166,6 +166,35 @@ template-ro .processing {
 }
 /* template RO end */
 
+#samples-expander {
+  bottom:0px;
+  right:10px;
+  z-index:1000;
+  position:absolute;
+  padding:0px;
+  margin:0px;
+  height:24px;
+}
+
+#samples-expander a {
+  color:yellow;
+  text-decoration:none;
+  font-size:8pt;
+  line-height:10px;
+  margin:0px;
+  background-color:#434343;
+  padding:3px 10px 3px 10px;
+  z-index:1000;
+}
+div.collapsed-samples > #samples-expander {
+  bottom:0px;
+  z-index:1000;
+  position:absolute;
+}
+
+div.collapsed-samples > .editor-ro.ace_editor {
+    height:100%;
+}
 
 .editor-help.help {
 	  width:100%;
@@ -176,8 +205,8 @@ template-ro .processing {
 		background-color: #222;
 		border-top: 1px solid rgb(78, 93, 108);
 		border-left:none;
-
 }
+
 .editor-help h1 {
 	font-size:16px;
 }

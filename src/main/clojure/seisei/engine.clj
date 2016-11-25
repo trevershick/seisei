@@ -1,13 +1,8 @@
 (ns seisei.engine
   (:require [seisei.json :as json]
             [clj-time.format :as f]
-            [seisei.generated.states]
-            [seisei.generated.cities]
-            [seisei.generated.companies]
-            [seisei.generated.zips]
             [seisei.generated.names]
-            [seisei.generated.surnames]
-            [seisei.generated.streets])
+            [seisei.faker])
   (:gen-class)
   )
 
@@ -24,11 +19,9 @@
 (defn is-tag
   "Returns true/false if the given clause is a tag, i.e. '{{a}}' format"
   [clause]
-  (if (re-matches tag-regex clause) true false)
-  )
+  (if (re-matches tag-regex clause) true false))
 
-
-
+;; simple struct used to store the parsed information from the macro call
 (defstruct operation :name :params :arg)
 
 (defn ^:private parse-operation-params [paramsString]
@@ -37,15 +30,15 @@
     :else (map json/jsonify (clojure.string/split paramsString #","))))
 
 (defn parse-operation [clause & [arg i]]
-  (let [matcher (re-matcher #"([a-zA-Z]+)\(?([^\)]*)\)?" clause)]
+  (let [matcher (re-matcher #"([a-zA-Z0-9\.]+)\(?([^\)]*)\)?" clause)]
     (if (re-find matcher)
       (struct-map operation
-        :name (get (re-groups matcher) 1)
-        :params (parse-operation-params (get (re-groups matcher) 2))
-        :tag (str "{{" clause "}}")
-        :text clause
-        :arg arg
-        :i i
+        :name       (get (re-groups matcher) 1)
+        :params     (parse-operation-params (get (re-groups matcher) 2))
+        :tag        (str "{{" clause "}}")
+        :text       clause
+        :arg        arg
+        :i          i
         )
       nil
       )
@@ -58,23 +51,17 @@
 (defmulti execute :name)
 
 
-
-
 (defmethod execute "objectId" [operation]
-  (str (java.util.UUID/randomUUID))
-  )
+  (str (java.util.UUID/randomUUID)))
 
 (defmethod execute "bool" [operation]
-  (rand-nth [true false])
-  )
+  (rand-nth [true false]))
 
 (defmethod execute "guid" [operation]
-  (str (java.util.UUID/randomUUID))
-  )
+  (str (java.util.UUID/randomUUID)))
 
 (defmethod execute "index" [operation]
-  (:i operation)
-  )
+  (:i operation))
 
 (defmethod execute "firstName" [op]
   (let [params (:params op)
@@ -88,25 +75,25 @@
       (> paramsz 0) (rand-nth (get byarg (first params))))))
 
 
+;; these all use faker now.  we're going to maintain
+;; these i think for a little bit
 (defmethod execute "street" [_]
-  (:full (rand-nth seisei.generated.streets/streets)))
+  (seisei.faker/faker-expr "address.streetName"))
 
 (defmethod execute "surname" [_]
-  (rand-nth seisei.generated.surnames/surnames))
+  (seisei.faker/faker-expr "name.lastName"))
 
 (defmethod execute "company" [_]
-  (rand-nth seisei.generated.companies/companies))
+  (seisei.faker/faker-expr "company.name"))
 
 (defmethod execute "city" [_]
-  (rand-nth seisei.generated.cities/cities))
+  (seisei.faker/faker-expr "address.city"))
 
 (defmethod execute "zip" [_]
-  (rand-nth seisei.generated.zips/zips))
+  (seisei.faker/faker-expr "address.zipCode"))
 
 (defmethod execute "state" [operation]
-  ( ->> seisei.generated.states/states
-   rand-nth
-   :abbrev))
+  (seisei.faker/faker-expr "address.stateAbbr"))
 
 (defmethod execute "repeat" [operation]
   (let [n (first (:params operation))
@@ -125,6 +112,7 @@
   (java.util.Date. (- (.getTime (java.util.Date.)) 86400000)))
 
 (defn now
+  "Returns a new date instance via 'new java.util.Date'"
   []
   (java.util.Date.))
 
@@ -142,9 +130,9 @@
     (nil? in-str) default-val
     (= "today" (str in-str)) (now)
     (= "yesterday" (str in-str)) (yesterday)
-    :else (.toDate (f/parse default-date-formatter (str in-str)))
-    ))
-(defn local-date [from-date]
+    :else (.toDate (f/parse default-date-formatter (str in-str)))))
+
+(defn ^{:private true} local-date [from-date]
   (org.joda.time.DateTime. from-date))
 
 (defn rand-date
@@ -193,8 +181,13 @@
    )
   )
 
-(defmethod execute :default [operation]
-  (str (:tag operation)))
+(comment (defmethod execute :default [operation]
+  (str (:tag operation))))
+
+;; by default, any unknown tag will be resolved against a Faker instance
+(defmethod execute :default [op]
+  (seisei.faker/faker-expr (:name op)))
+
 
 
 
@@ -207,8 +200,6 @@
     (cond (= 0 (count tags)) s
           (and (= 0 (count texts)) (= 1 (count tags))) (first processed-tags)
           :else zipped)))
-
-
 
 (defmethod process Long [s & {:keys [arg i]}] s)
 

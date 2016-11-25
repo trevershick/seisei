@@ -12,7 +12,7 @@
   `(binding [*processed* (process ~arg)] (do ~@body)))
 
 
-(defonce ^:private 
+(defonce ^:private
   js2
   (h/jsonfixture { :x { :y 1 :z "{{objectId(3)}}"} }))
 
@@ -32,7 +32,15 @@
 			(:name x) => "random"
 			(:arg x) => "thearg"
 			(:i x) => 3
+		))
+	(fact "it can handle no params"
+		(let [x (parse-operation "code.name" "thearg" 3)]
+			(:params x) => '()
+			(:name x) => "code.name"
+			(:arg x) => "thearg"
+			(:i x) => 3
 		)))
+
 
 (facts "about yesterday"
   (fact "returns a date"

@@ -1,4 +1,5 @@
 {
+  "collapsed": true,
   "mixed": [{
     "name": "Mixed Tags",
     "samples": [{
@@ -133,14 +134,14 @@
       }
     }, {
       "input": {
-        "c": "{{firstName(male)}}"
+        "c": "{{firstName('male')}}"
       },
       "output": {
         "c": "John"
       }
     }, {
       "input": {
-        "c": "{{firstName(female)}}"
+        "c": "{{firstName('female')}}"
       },
       "output": {
         "c": "Linda"

@@ -5,6 +5,15 @@
             [seisei.ui.util :refer [clj->json debug]]
             [sablono.core :as html :refer-macros [html]]))
 
+(defn- onclick-handler
+  ([action]
+    (onclick-handler action nil))
+  ([action opts]
+    (fn [e]
+      (.stopPropagation e)
+      (d/action action opts)
+      false)))
+
 (def *ace* (atom nil))
 (defn editor [data owner]
   (reify
@@ -27,6 +36,7 @@
         (.setTheme ace-instance "ace/theme/twilight")
         (.setMode (.getSession ace-instance) "ace/mode/javascript")
         (.setReadOnly ace-instance false)
+        (set! (.-$blockScrolling ace-instance) Infinity)
         (.setHighlightActiveLine ace-instance false)
         (.setValue ace-instance (data :content))
         (.on ace-instance "change" (fn [] (go [] (d/action :editor-updated (.getValue @*ace*)))))
@@ -55,6 +65,7 @@
       (let [ace-instance (.edit js/ace (.getDOMNode owner))]
         (.setTheme ace-instance "ace/theme/twilight")
         (.setMode (.getSession ace-instance) "ace/mode/javascript")
+        (set! (.-$blockScrolling ace-instance) Infinity)
         (.setValue ace-instance (data :output))
         (.setReadOnly ace-instance true)
         (reset! *ace-ro* ace-instance)))
@@ -64,7 +75,9 @@
 (defn- sample-li-input-output [idx io]
   (html
     [:div {:className "sample" :key idx}
-      [:div {:className "input"} [:a (clj->json (io :input) 0)]] [:div {:className "output"} (clj->json (io :output) 0)]
+      [:div {:className "input"}
+        [:a {:onClick (onclick-handler :apply-sample (io :input)) } (clj->json (io :input) 0)]]
+        [:div {:className "output"} (clj->json (io :output) 0)]
     ]))
 
 (defn- sample-li [sample]
