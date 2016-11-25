@@ -1,5 +1,8 @@
-[![Stories in Ready](https://badge.waffle.io/trevershick/seisei.png?label=ready&title=Ready)](https://waffle.io/trevershick/seisei)
 [![Build Status](https://travis-ci.org/trevershick/seisei.svg?branch=master)](https://travis-ci.org/trevershick/seisei)
+[![Dependency Status](https://www.versioneye.com/user/projects/5837af84e7cea00045b892d1/badge.svg?style=flat-square)](https://www.versioneye.com/user/projects/5837af84e7cea00045b892d1)
+[![License](http://img.shields.io/:license-mit-brightgreen.svg)](http://www.apache.org/licenses/LICENSE-2.0.html)
+[![Coverage Status](https://coveralls.io/repos/github/trevershick/ldap-test-utils/badge.svg?branch=master)](https://coveralls.io/github/trevershick/seisei?branch=master)
+
 
 # Description
 Seisei is a simple tool that allows you to specify a JSON template and statically or dynamically publish an endpoint that has CORS disabled which you can then use any way you see fit (within reason).  It's currently deployed at http://seisei.elasticbeanstalk.com and is free for general use.

@@ -9,26 +9,26 @@
                         :url "http://www.eclipse.org/legal/epl-v10.html"}
 
   :dependencies         [[org.clojure/core.async "0.2.395"]
-                        [sablono "0.4.0"]
+                        [sablono "0.7.6"]
                         [org.omcljs/om "0.9.0"]
-                        [cljs-ajax "0.5.1"]
+                        [cljs-ajax "0.5.8"]
                         [secretary "1.2.3"]
                         [org.clojure/clojure "1.7.0"]
                         [org.clojure/clojurescript "1.7.170"]
-                        [org.clojure/data.json "0.2.5"]
+                        [org.clojure/data.json "0.2.6"]
                         [com.amazonaws/aws-java-sdk-core "1.10.37"]
                         [com.amazonaws/aws-java-sdk-s3 "1.10.37"]
                         [com.amazonaws/aws-java-sdk-dynamodb "1.10.37"]
                         [clj-time "0.12.2"]
-                        [compojure "1.4.0"]
-                        [ring/ring-defaults "0.1.5"]
-                        [ring/ring-core "1.4.0"]
+                        [compojure "1.5.1"]
+                        [ring/ring-defaults "0.2.1"]
+                        [ring/ring-core "1.5.0"]
                         [ring/ring-json "0.4.0"]
                         [clj-http "1.1.2"]
                         [com.taoensso/faraday "1.5.0" :exclusions [org.clojure/clojure com.amazonaws/aws-java-sdk]]
-                        [org.clojure/tools.logging "0.2.4"]
-                        [org.slf4j/slf4j-log4j12 "1.7.1"]
-                        [environ "1.0.1"]
+                        [org.clojure/tools.logging "0.3.1"]
+                        [org.slf4j/slf4j-log4j12 "1.7.21"]
+                        [environ "1.1.0"]
                         [com.github.javafaker/javafaker "0.11"]
                         [log4j/log4j "1.2.17" :exclusions [javax.mail/mail
                                                           javax.jms/jms
@@ -44,7 +44,8 @@
                         [lein-bower "0.5.1"]
                         [lein-beanstalk "0.2.7"]
                         [org.clojure/clojurescript "1.7.170"]
-                        [lein-cljsbuild "1.1.1"]]
+                        [lein-cljsbuild "1.1.1"]
+                        [lein-cloverage "1.0.9"]]
 
   :ring {         :handler       seisei.web.handler/app
                   :port          8888
@@ -71,7 +72,7 @@
                     :dev      { :plugins [[lein-figwheel "0.5.0-1"]]
                                 :dependencies [[javax.servlet/servlet-api "2.5"]
                                               [ring-mock "0.1.5"]
-                                              [midje "1.8.2" :exclusions [org.clojure/clojure]]]
+                                              [midje "1.8.3" :exclusions [org.clojure/clojure]]]
                                 :hooks [leiningen.cljsbuild]
                                 :source-paths ["src/main/cljs"]
                                 :figwheel {     :server-port  8888
