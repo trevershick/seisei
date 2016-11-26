@@ -5,7 +5,7 @@
 
 
 # Description
-Seisei is a simple tool that allows you to specify a JSON template and statically or dynamically publish an endpoint that has CORS disabled which you can then use any way you see fit (within reason).  It's currently deployed at http://seisei.elasticbeanstalk.com and is free for general use.
+Seisei is a simple tool that allows you to specify a JSON template and statically or dynamically publish an endpoint that has CORS disabled which you can then use any way you see fit (within reason).  It's currently deployed at http://seisei.shick.io and is free for general use.
 
 I use this project as a means for learning.  It's written in Clojure on the backend and was originally Javascript/RiotJS on the front end.  I recently converted it to [ClojureScript](https://github.com/clojure/clojurescript) and [Om](https://github.com/omcljs/om) on the front end.  It's a non trivial application that's nice to use for testing technologies as it has...
 * More than basic REST interface to the server (not just Todo)

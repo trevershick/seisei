@@ -22,7 +22,7 @@
   (dom/a #js { :href "https://twitter.com/intent/tweet?button_hashtag=seisei&text=Thanks%20@trevermshick%20I%20love%20it!"
       :className "twitter-hashtag-button"
       :data-related "trevermshick"
-      :data-url "http://seisei.elasticbeanstalk.com" } "Tweet #seisei"))
+      :data-url "http://seisei.shick.io" } "Tweet #seisei"))
 
 (defn footer [data owner]
   (om/component

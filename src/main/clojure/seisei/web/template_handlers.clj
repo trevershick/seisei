@@ -83,7 +83,7 @@
 
 (defn dynamic-url-for-slug
   [request slug]
-  (str "http://seisei.elasticbeanstalk.com/templates/" slug))
+  (str "/templates/" slug))
 
 
 (defn publish-dynamic
