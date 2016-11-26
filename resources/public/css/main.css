@@ -220,6 +220,14 @@ div.collapsed-samples > .editor-ro.ace_editor {
 	margin-top: 10px;
 	border-left: 2px solid #df691a;
 }
+.editor-help .desc {
+	padding-left: 10px;
+	margin-right: 10px;
+	border-left: 2px solid #df691a;
+  font-size: 0.8em;
+  margin-top: -20px;
+  text-align: right;
+}
 .editor-help .samples {
 	padding-left:10px;
 	border-left: 2px solid #df691a;

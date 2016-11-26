@@ -84,6 +84,7 @@
   (html
     [:li {:className "tag-samples" :key (sample :name)}
       [:div {:className "tag"} (sample :name) ]
+      (if (sample :desc) [:div {:className "desc" :dangerouslySetInnerHTML {:__html (sample :desc) }}])
       [:div {:className "samples"} (map-indexed sample-li-input-output (sample :samples)) ]
     ]))
 

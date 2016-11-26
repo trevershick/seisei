@@ -16,34 +16,6 @@
     "samples": [{
       "input": {
         "c": ["{{repeat(3)}}", {
-          "x": 1
-        }]
-      },
-      "output": {
-        "c": [{
-          "x": 1
-        }, {
-          "x": 1
-        }, {
-          "x": 1
-        }]
-      }
-    }]
-  }, {
-    "name": "random",
-    "samples": [{
-      "input": {
-        "c": "{{random('blue', 'brown', 'green')}}"
-      },
-      "output": {
-        "c": 1
-      }
-    }]
-  }, {
-    "name": "index",
-    "samples": [{
-      "input": {
-        "c": ["{{repeat(3)}}", {
           "x": "{{index}}"
         }]
       },
@@ -58,6 +30,134 @@
       }
     }]
   }, {
+    "name": "random",
+    "samples": [{
+      "input": {
+        "c": "{{random('blue', 'brown', 'green')}}"
+      },
+      "output": {
+        "c": 1
+      }
+    }]
+  },{
+    "name": "faker*",
+    "desc": "See <a target='_new' href='https://github.com/DiUS/java-faker'>java-faker</a>",
+    "samples": [
+      { "input": { "buildingNumber" : "{{address.buildingNumber}}" }, "output": { "buildingNumber":"8736"}},
+      { "input": { "city" : "{{address.city}}" }, "output": { "city":"Mauriceport"}},
+      { "input": { "cityName" : "{{address.cityName}}" }, "output": { "cityName":"Port Damarisborough"}},
+      { "input": { "cityPrefix" : "{{address.cityPrefix}}" }, "output": { "cityPrefix":"South"}},
+      { "input": { "citySuffix" : "{{address.citySuffix}}" }, "output": { "citySuffix":"furt"}},
+      { "input": { "country" : "{{address.country}}" }, "output": { "country":"Canada"}},
+      { "input": { "countryCode" : "{{address.countryCode}}" }, "output": { "countryCode":"VC"}},
+      { "input": { "firstName" : "{{address.firstName}}" }, "output": { "firstName":"Lorena"}},
+      { "input": { "lastName" : "{{address.lastName}}" }, "output": { "lastName":"Tillman"}},
+      { "input": { "latitude" : "{{address.latitude}}" }, "output": { "latitude":"28.101819"}},
+      { "input": { "longitude" : "{{address.longitude}}" }, "output": { "longitude":"-153.81838"}},
+      { "input": { "secondaryAddress" : "{{address.secondaryAddress}}" }, "output": { "secondaryAddress":"Apt. 444"}},
+      { "input": { "state" : "{{address.state}}" }, "output": { "state":"North Carolina"}},
+      { "input": { "stateAbbr" : "{{address.stateAbbr}}" }, "output": { "stateAbbr":"WV"}},
+      { "input": { "streetAddress" : "{{address.streetAddress}}" }, "output": { "streetAddress":"1234 Pascale Glen"}},
+      { "input": { "streetAddressNumber" : "{{address.streetAddressNumber}}" }, "output": { "streetAddressNumber":"1433"}},
+      { "input": { "streetName" : "{{address.streetName}}" }, "output": { "streetName":"Margie Mews"}},
+      { "input": { "streetSuffix" : "{{address.streetSuffix}}" }, "output": { "streetSuffix":"Island"}},
+      { "input": { "timeZone" : "{{address.timeZone}}" }, "output": { "timeZone":"Pacific/Majuro"}},
+      { "input": { "zipCode" : "{{address.zipCode}}" }, "output": { "zipCode":"78452-1189"}},
+      { "input": { "author" : "{{app.author}}" }, "output": { "author":"Alphazap"}},
+      { "input": { "name" : "{{app.name}}" }, "output": { "name":"Konklab"}},
+      { "input": { "version" : "{{app.version}}" }, "output": { "version":"2.00"}},
+      { "input": { "hop" : "{{beer.hop}}" }, "output": { "hop":"Santiam"}},
+      { "input": { "malt" : "{{beer.malt}}" }, "output": { "malt":"Carapils"}},
+      { "input": { "name" : "{{beer.name}}" }, "output": { "name":"Hennepin"}},
+      { "input": { "style" : "{{beer.style}}" }, "output": { "style":"Strong Ale"}},
+      { "input": { "yeast" : "{{beer.yeast}}" }, "output": { "yeast":"1084 - Irish Ale"}},
+      { "input": { "author" : "{{book.author}}" }, "output": { "author":"Rocky Wilkinson"}},
+      { "input": { "genre" : "{{book.genre}}" }, "output": { "genre":"Fantasy"}},
+      { "input": { "publisher" : "{{book.publisher}}" }, "output": { "publisher":"Random House"}},
+      { "input": { "title" : "{{book.title}}" }, "output": { "title":"The Wives of Bath"}},
+      { "input": { "bool" : "{{bool.bool}}" }, "output": { "bool":true}},
+      { "input": { "creditCardExpiry" : "{{business.creditCardExpiry}}" }, "output": { "creditCardExpiry":"2011-10-12"}},
+      { "input": { "creditCardNumber" : "{{business.creditCardNumber}}" }, "output": { "creditCardNumber":"1211-1221-1234-2201"}},
+      { "input": { "creditCardType" : "{{business.creditCardType}}" }, "output": { "creditCardType":"diners_club"}},
+      { "input": { "fact" : "{{chuckNorris.fact}}" }, "output": { "fact":"Chuck Norris doesn't..."}},
+      { "input": { "isbn10" : "{{code.isbn10}}" }, "output": { "isbn10":"515985774-5"}},
+      { "input": { "isbn13" : "{{code.isbn13}}" }, "output": { "isbn13":"889-4-90-500-7118"}},
+      { "input": { "name" : "{{color.name}}" }, "output": { "name":"azure"}},
+      { "input": { "color" : "{{commerce.color}}" }, "output": { "color":"azure"}},
+      { "input": { "department" : "{{commerce.department}}" }, "output": { "department":"Electronics, Music & Tools"}},
+      { "input": { "material" : "{{commerce.material}}" }, "output": { "material":"Leather"}},
+      { "input": { "price" : "{{commerce.price}}" }, "output": { "price":"19.48"}},
+      { "input": { "productName" : "{{commerce.productName}}" }, "output": { "productName":"Enormous Cotton Pants"}},
+      { "input": { "bs" : "{{company.bs}}" }, "output": { "bs":"harness killer niches"}},
+      { "input": { "buzzword" : "{{company.buzzword}}" }, "output": { "buzzword":"Open-architected"}},
+      { "input": { "catchPhrase" : "{{company.catchPhrase}}" }, "output": { "catchPhrase":"Object-based intangible data-warehouse"}},
+      { "input": { "industry" : "{{company.industry}}" }, "output": { "industry":"Photography"}},
+      { "input": { "logo" : "{{company.logo}}" }, "output": { "logo":"https://pigment.github.io/fake-logos/logos/medium/color/4.png"}},
+      { "input": { "name" : "{{company.name}}" }, "output": { "name":"Lockman-Lockman"}},
+      { "input": { "profession" : "{{company.profession}}" }, "output": { "profession":"firefighter"}},
+      { "input": { "suffix" : "{{company.suffix}}" }, "output": { "suffix":"and Sons"}},
+      { "input": { "md5" : "{{crypto.md5}}" }, "output": { "md5":"d8804..."}},
+      { "input": { "sha1" : "{{crypto.sha1}}" }, "output": { "sha1":"1089..."}},
+      { "input": { "sha256" : "{{crypto.sha256}}" }, "output": { "sha256":"8c0e5..."}},
+      { "input": { "sha512" : "{{crypto.sha512}}" }, "output": { "sha512":"97c1..."}},
+      { "input": { "campus" : "{{educator.campus}}" }, "output": { "campus":"Bluemeadow Campus"}},
+      { "input": { "course" : "{{educator.course}}" }, "output": { "course":"Bachelor of Creative Arts"}},
+      { "input": { "secondarySchool" : "{{educator.secondarySchool}}" }, "output": { "secondarySchool":"Marblewald Secodary College"}},
+      { "input": { "university" : "{{educator.university}}" }, "output": { "university":"Lakeacre TAFE"}},
+      { "input": { "bic" : "{{finance.bic}}" }, "output": { "bic":"ZPZHML5R28G"}},
+      { "input": { "creditCard" : "{{finance.creditCard}}" }, "output": { "creditCard":"6767-8512-3522-1677-49"}},
+      { "input": { "iban" : "{{finance.iban}}" }, "output": { "iban":"MU14PYII9701965648632857109PNT"}},
+      { "input": { "abbreviation" : "{{hacker.abbreviation}}" }, "output": { "abbreviation":"PNG"}},
+      { "input": { "adjective" : "{{hacker.adjective}}" }, "output": { "adjective":"mobile"}},
+      { "input": { "ingverb" : "{{hacker.ingverb}}" }, "output": { "ingverb":"connecting"}},
+      { "input": { "noun" : "{{hacker.noun}}" }, "output": { "noun":"feed"}},
+      { "input": { "verb" : "{{hacker.verb}}" }, "output": { "verb":"calculate"}},
+      { "input": { "invalid" : "{{idNumber.invalid}}" }, "output": { "invalid":"918-45-1888"}},
+      { "input": { "ssnValid" : "{{idNumber.ssnValid}}" }, "output": { "ssnValid":"790-31-4337"}},
+      { "input": { "valid" : "{{idNumber.valid}}" }, "output": { "valid":"867-05-2144"}},
+      { "input": { "avatar" : "{{internet.avatar}}" }, "output": { "avatar":"https://s3.amazonaws.com/uifaces/faces/twitter/stalewine/128.jpg"}},
+      { "input": { "domainName" : "{{internet.domainName}}" }, "output": { "domainName":"koss.net"}},
+      { "input": { "domainSuffix" : "{{internet.domainSuffix}}" }, "output": { "domainSuffix":"org"}},
+      { "input": { "domainWord" : "{{internet.domainWord}}" }, "output": { "domainWord":"lemke"}},
+      { "input": { "emailAddress" : "{{internet.emailAddress}}" }, "output": { "emailAddress":"armand.stehr@yahoo.com"}},
+      { "input": { "image" : "{{internet.image}}" }, "output": { "image":"http://lorempixel.com/1920/1200/animals/"}},
+      { "input": { "password" : "{{internet.password}}" }, "output": { "password":"ryjyd01s0t0"}},
+      { "input": { "url" : "{{internet.url}}" }, "output": { "url":"www.mya-lynch.net"}},
+      { "input": { "characters" : "{{lorem.characters}}" }, "output": { "characters":"rflxv8q7cv50epn4x..."}},
+      { "input": { "paragraph" : "{{lorem.paragraph}}" }, "output": { "paragraph":"Officia repudiandae accusantium..."}},
+      { "input": { "sentence" : "{{lorem.sentence}}" }, "output": { "sentence":"Nulla repellat voluptatem."}},
+      { "input": { "word" : "{{lorem.word}}" }, "output": { "word":"earum"}},
+      { "input": { "firstName" : "{{name.firstName}}" }, "output": { "firstName":"Jany"}},
+      { "input": { "fullName" : "{{name.fullName}}" }, "output": { "fullName":"Evangeline Jakubowski"}},
+      { "input": { "lastName" : "{{name.lastName}}" }, "output": { "lastName":"Kerluke"}},
+      { "input": { "name" : "{{name.name}}" }, "output": { "name":"Chanelle Bins"}},
+      { "input": { "nameWithMiddle" : "{{name.nameWithMiddle}}" }, "output": { "nameWithMiddle":"Coby Coby Farrell"}},
+      { "input": { "prefix" : "{{name.prefix}}" }, "output": { "prefix":"Miss"}},
+      { "input": { "suffix" : "{{name.suffix}}" }, "output": { "suffix":"Jr."}},
+      { "input": { "title" : "{{name.title}}" }, "output": { "title":"Senior Integration Director"}},
+      { "input": { "randomDigit" : "{{number.randomDigit}}" }, "output": { "randomDigit":1}},
+      { "input": { "randomDigitNotZero" : "{{number.randomDigitNotZero}}" }, "output": { "randomDigitNotZero":2}},
+      { "input": { "randomNumber" : "{{number.randomNumber}}" }, "output": { "randomNumber":1044694}},
+      { "input": { "cellPhone" : "{{phoneNumber.cellPhone}}" }, "output": { "cellPhone":"725.883.1800"}},
+      { "input": { "phoneNumber" : "{{phoneNumber.phoneNumber}}" }, "output": { "phoneNumber":"(614) 359-8411 x167"}},
+      { "input": { "asYouLikeItQuote" : "{{shakespeare.asYouLikeItQuote}}" }, "output": { "asYouLikeItQuote":"For ever and a day."}},
+      { "input": { "hamletQuote" : "{{shakespeare.hamletQuote}}" }, "output": { "hamletQuote":"A little more..."}},
+      { "input": { "kingRichardIIIQuote" : "{{shakespeare.kingRichardIIIQuote}}" }, "output": { "kingRichardIIIQuote":"So wise so young..."}},
+      { "input": { "romeoAndJulietQuote" : "{{shakespeare.romeoAndJulietQuote}}" }, "output": { "romeoAndJulietQuote":"Tempt not..."}},
+      { "input": { "descriptor" : "{{superhero.descriptor}}" }, "output": { "descriptor":"Junkpile"}},
+      { "input": { "name" : "{{superhero.name}}" }, "output": { "name":"Green Bushido Ivy"}},
+      { "input": { "power" : "{{superhero.power}}" }, "output": { "power":"Vaporising Beams"}},
+      { "input": { "prefix" : "{{superhero.prefix}}" }, "output": { "prefix":"The"}},
+      { "input": { "suffix" : "{{superhero.suffix}}" }, "output": { "suffix":"XI"}},
+      { "input": { "creature" : "{{team.creature}}" }, "output": { "creature":"black cats"}},
+      { "input": { "name" : "{{team.name}}" }, "output": { "name":"Minnesota cats"}},
+      { "input": { "sport" : "{{team.sport}}" }, "output": { "sport":"football"}},
+      { "input": { "state" : "{{team.state}}" }, "output": { "state":"Nebraska"}},
+      { "input": { "name" : "{{university.name}}" }, "output": { "name":"South Konopelski Academy"}},
+      { "input": { "prefix" : "{{university.prefix}}" }, "output": { "prefix":"North"}},
+      { "input": { "suffix" : "{{university.suffix}}" }, "output": { "suffix":"Academy"}}
+    ]
+  },  {
     "name": "integer",
     "samples": [{
       "input": {
