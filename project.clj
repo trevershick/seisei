@@ -25,7 +25,7 @@
                         [ring/ring-core "1.5.0"]
                         [ring/ring-json "0.4.0"]
                         [clj-http "1.1.2"]
-                        [com.taoensso/faraday "1.5.0" :exclusions [org.clojure/clojure com.amazonaws/aws-java-sdk]]
+                        [com.taoensso/faraday "1.6.0" :exclusions [org.clojure/clojure com.amazonaws/aws-java-sdk]]
                         [org.clojure/tools.logging "0.3.1"]
                         [org.slf4j/slf4j-log4j12 "1.7.21"]
                         [environ "1.1.0"]
