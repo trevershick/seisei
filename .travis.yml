@@ -11,4 +11,4 @@ env:
 
 after_success:
   - test $TRAVIS_BRANCH == "release" && lein ci-deploy
-  - test $TRAVIS_BRANCH == "master" && lein ci-deploy-test
+  #- test $TRAVIS_BRANCH == "master" && lein ci-deploy-test
