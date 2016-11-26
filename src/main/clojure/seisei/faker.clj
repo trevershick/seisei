@@ -1,10 +1,11 @@
 (ns seisei.faker
   (require [clojure.core.reducers :as reducers]))
 
+(def ^{:private true} default-faker (atom (com.github.javafaker.Faker.)))
 
 (defn ^{:private true} faker
   "Create a new faker instance"
-  ([]  (com.github.javafaker.Faker.))
+  ([] @default-faker)
   ([locale-name] (com.github.javafaker.Faker. (java.util.Locale. locale-name))))
 
 
