@@ -1,7 +1,7 @@
 (def aws-s3-access-key  (-> (System/getenv) (get "AWS_S3_ACCESS_KEY")))
 (def aws-s3-secret-key  (-> (System/getenv) (get "AWS_S3_SECRET_KEY")))
 
-(defproject seisei "0.1.1"
+(defproject seisei "0.1.2-SNAPSHOT"
   :description "Seisei - JSON Generation Web App"
   :url "http://github.com/trevershick/seisei"
   :debug true
