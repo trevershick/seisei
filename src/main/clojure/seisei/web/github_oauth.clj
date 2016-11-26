@@ -76,41 +76,51 @@
 
 (defn user-from-github-account
   [ access-token github-account ]
-  { :access-token     access-token
-    :id               (str "gh:" (:login github-account))
+  { :gh-access-token     access-token
     :ghid             (:login github-account)
     :email            (:email github-account)
+    :id               (:email github-account)
     :company          (:company github-account)
     :name             (:name github-account)
     :last-login       (.getTime (java.util.Date.)) })
 
 
-(defn auth-github-callback
-  [{ session :session
-    { code :code } :params }]
-  (let [ access-token       (get-github-access-token code)
-         github-account     (if access-token (get-github-account access-token) {})
-         login              (str "gh:" (:login github-account))
-         email              (if access-token (get-github-email access-token) nil)
-         authenticated      (if access-token true false)
-         session            (user/logged-in! session authenticated)
-         user-record        (if authenticated (user/lookup-user-by :ghid (:login github-account)))
-         user-record        (if
-                              (and authenticated (nil? user-record))
-                              (user/create-user (str "gh:" (:login github-account)) (assoc (user-from-github-account access-token github-account) :email email))
-                              user-record)
-        session             (when
-                              authenticated
-                              (user/user-logged-in! login :github)
-                              (assoc session :user user-record)) ]
-    (log/debugf "User Record is %s" user-record)
-    (log/debugf "Access Token is %s" access-token)
-    (log/debugf "Session is %s" session)
+(defn auth-github-callback-authed
+  [session access-token]
+  (let [ github-account     (get-github-account access-token)  ; get github account details
 
+         user-record        (user/lookup-user-by               ; lookup the user by the ghid (github login)
+                              :ghid                            ; if not found then we'll lookup by email
+                              (:login github-account))
+         email              (or
+                              (:email user-record)
+                              (get-github-email access-token))    ; get the user's email
+         user-record        (or user-record (user/lookup-user email))           ; lookup the user by email
+         user-record        (if user-record
+                              (user/update-user email (assoc user-record :gh-access-token access-token))
+                              (user/create-user email (assoc (user-from-github-account access-token github-account) :email email)))
+         session            (user/logged-in! session true)
+         session            (assoc session :user user-record)]
+
+    session)) ; finally return the udpated session
+
+
+(defn auth-github-callback-not-authed
+  [session]
+  (user/logged-in! session false))
+
+
+(defn auth-github-callback
+  "Entry point to handle the callback from github. If there's
+  an access token to be had then auth-github-callback-authed is called
+  otherwise auth-github-callback-not-authed is called"
+  [{ session :session {code :code} :params }]
+  (let [ access-token   (get-github-access-token code)
+         session        (if access-token
+                          (auth-github-callback-authed     session access-token)
+                          (auth-github-callback-not-authed session))]
     (-> (ring.util.response/redirect "/")
         (assoc :session session))))
-
-
 
 
 (defroutes github-oauth-routes

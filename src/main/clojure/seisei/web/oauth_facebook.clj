@@ -83,43 +83,44 @@
 
 
 (defn auth-facebook-callback-failure
-  [{ session :session  { error :error code :error_code description :error_description reason :error_reason } :params }]
-    (log/debugf "OK, got oauth error from %s" "facebook")
-    (let [msg           { :type :error :message description }
-          session       (add-flash session msg)
-          response      (redirect "/")
-          response      (assoc response :session session)]
-      response))
+  [session]
+  (user/logged-in! session false))
 
 
 (defn auth-facebook-callback-success
-  [{ session :session { code :code } :params }]
-  (let [access-token            (get-facebook-access-token code)
-        authenticated           (if access-token true false)
-        facebook-account        (if access-token (get-facebook-account access-token) {})
-        updated-session         session
-        updated-session         (user/logged-in! updated-session authenticated)
-        user-record             (if authenticated (user/lookup-user-by :fbid (:id facebook-account)))
-        user-record             (if
-                                  (and authenticated (nil? user-record))
+  [session access-token]
+  (let [facebook-account        (get-facebook-account access-token)  ; get fb account details
+
+        user-record             (user/lookup-user-by               ; lookup the user by the ghid (github login)
+                                  :fbid                            ; if not found then we'll lookup by email
+                                  (:id facebook-account))
+        email                   (or
+                                  (:email user-record)
+                                  (:email facebook-account))
+
+        user-record             (or user-record (user/lookup-user email))           ; lookup the user by email
+        user-record             (if user-record
+                                  (user/update-user
+                                    email
+                                    (assoc user-record :fb-access-token access-token :fbid (:id facebook-account)))
                                   (user/create-user
-                                    (str "fb:" (:name facebook-account))
-                                    (user-from-facebook-account access-token facebook-account))
-                                  user-record)
-        _                       (if authenticated (user/user-logged-in! (:id user-record) :facebook))
-        updated-session         (if authenticated (assoc updated-session :user user-record)) ]
-    (log/debugf "User Record is %s" user-record)
-    (log/debugf "Access Token is %s" access-token)
-    (log/debugf "updated-session is %s" updated-session)
+                                    email
+                                    (user-from-facebook-account access-token facebook-account)))
 
-    (-> (redirect "/")
-        (assoc :session updated-session))))
+        session                 (user/logged-in! session true)
+        session                 (assoc session :user user-record)]
 
-(defn auth-facebook-callback [{params :params :as r}]
-  (if (:code params)
-    (auth-facebook-callback-success r)
-    (auth-facebook-callback-failure r)))
+    session))
 
+(defn auth-facebook-callback
+  "initial entry point of the facebook oauth callback"
+  [{ session :session {code :code} :params }]
+  (let [ access-token   (get-facebook-access-token code)
+         session        (if access-token
+                          (auth-facebook-callback-success     session access-token)
+                          (auth-facebook-callback-failure     session))]
+    (-> (ring.util.response/redirect "/")
+        (assoc :session session))))
 
 
 (defroutes facebook-oauth-routes
