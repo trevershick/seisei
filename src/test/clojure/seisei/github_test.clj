@@ -92,10 +92,10 @@
 (deftest test-user-from-github-account
   ; [ access-token github-account ]
   (facts "user-from-github-account"
-    (fact "provides access-token"
-      (:access-token (o/user-from-github-account "at1" {})) => "at1")
+    (fact "provides gh-access-token"
+      (:gh-access-token (o/user-from-github-account "at1" {})) => "at1")
     (fact "sets user id to gh:<login>"
-      (:id (o/user-from-github-account "at1" {:login "x"})) => "gh:x")
+      (:id (o/user-from-github-account "at1" {:email "x@y.com"})) => "x@y.com")
     (fact "provides ghid"
       (:ghid (o/user-from-github-account "at1" {:login "thelogin"})) => "thelogin")
     (fact "provides email"
@@ -108,43 +108,29 @@
       (:last-login (o/user-from-github-account "at1" {})) => truthy )
   ))
 
-
+(clojure.test/run-all-tests)
 
 (deftest test-auth-github-callback
   (facts "auth-github-callback"
-    (fact "auths from github for existing user"
+    (fact "calls auth-github-callback-authed when access-token obtained"
       (o/auth-github-callback { :session { } :params { :code "cx" }}) => {:body ""
                                                                           :headers {"Location" "/"}
-                                                                          :session {:logged-in true, :user {:z 1}}
+                                                                          :session {:zzz 1}
                                                                           :status 302}
       (provided
         (o/get-github-access-token anything) => "at1"
-        (o/get-github-account anything) =>  { :login "l1" :ghid "gl1" }
-        (o/get-github-email anything) => "a@b.com"
-        (user/user-logged-in! anything anything) => { :y 1 }
-        (user/lookup-user-by :ghid "l1") => { :z 1 }
+        (o/auth-github-callback-authed anything "at1") => {:zzz 1}
       )
-    )))
-  ; [{ session :session
-  ;   { code :code } :params }]
-  ; (let [ access-token       (get-github-access-token code)
-  ;        github-account     (if access-token (get-github-account access-token) {})
-  ;        login              (str "gh:" (:login github-account))
-  ;        email              (if access-token (get-github-email access-token) nil)
-  ;        authenticated      (if access-token true false)
-  ;        session            (user/logged-in! session authenticated)
-  ;        user-record        (if authenticated (user/lookup-user-by :ghid (:login github-account)))
-  ;        user-record        (if
-  ;                             (and authenticated (nil? user-record))
-  ;                             (user/create-user (str "gh:" (:login github-account)) (assoc (user-from-github-account access-token github-account) :email email))
-  ;                             user-record)
-  ;       session             (when
-  ;                             authenticated
-  ;                             (user/user-logged-in! login :github)
-  ;                             (assoc session :user user-record)) ]
-  ;   (log/debugf "User Record is %s" user-record)
-  ;   (log/debugf "Access Token is %s" access-token)
-  ;   (log/debugf "Session is %s" session)
-  ;
-  ;   (-> (ring.util.response/redirect "/")
-  ;       (assoc :session session))))
+    )
+    (fact "calls auth-github-callback-not-authed when access-token not obtained"
+      (o/auth-github-callback { :session { } :params { :code "cx" }}) => {:body ""
+                                                                          :headers {"Location" "/"}
+                                                                          :session {:zzz 2}
+                                                                          :status 302}
+      (provided
+        (o/get-github-access-token anything) => nil
+        (o/auth-github-callback-not-authed anything) => {:zzz 2}
+      )
+    )
+))
+
