@@ -3,10 +3,14 @@
 [![License](http://img.shields.io/:license-mit-brightgreen.svg)](http://www.apache.org/licenses/LICENSE-2.0.html)
 [![Coverage Status](https://coveralls.io/repos/github/trevershick/ldap-test-utils/badge.svg?branch=master)](https://coveralls.io/github/trevershick/seisei?branch=master)
 
+#Releases
+v0.1.1 - currently installed at [seisei.shick.io](seisei.shick.io) - the 0.1.1 release introduces the use of [Java Faker](https://github.com/DiUS/java-faker) to expand the capabilities of Seisei.  The examples have all been updated as well and the 'samples' UI is now collapsed by default.
 
 # Description
 Seisei is a simple tool that allows you to specify a JSON template and statically or dynamically publish an endpoint that has CORS disabled which you can then use any way you see fit (within reason).  It's currently deployed at http://seisei.shick.io and is free for general use.
 
+
+# Motivation
 I use this project as a means for learning.  It's written in Clojure on the backend and was originally Javascript/RiotJS on the front end.  I recently converted it to [ClojureScript](https://github.com/clojure/clojurescript) and [Om](https://github.com/omcljs/om) on the front end.  It's a non trivial application that's nice to use for testing technologies as it has...
 * More than basic REST interface to the server (not just Todo)
 * 3rd party components to integrate (Ace Editor)
