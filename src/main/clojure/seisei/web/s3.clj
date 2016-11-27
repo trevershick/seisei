@@ -3,13 +3,12 @@
             [seisei.web.s3v2 :as s3]
             [clojure.data.json :as json]
             [environ.core :refer [env]])
-            (:import com.amazonaws.auth.DefaultAWSCredentialsProviderChain))
+  (:import com.amazonaws.auth.DefaultAWSCredentialsProviderChain))
 
 (def aws-s3-bucket      (env :aws-s3-bucket "trevershick-seisei-json"))
 (def aws-s3-endpoint    (str "http://s3.amazonaws.com/" aws-s3-bucket "/"))
 
 (defn aws-s3-client-opts [] {})
-
 
 (defn unpublish-from-s3
   "Returns a URL"

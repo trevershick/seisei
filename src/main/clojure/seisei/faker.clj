@@ -8,7 +8,6 @@
   ([] @default-faker)
   ([locale-name] (com.github.javafaker.Faker. (java.util.Locale. locale-name))))
 
-
 (defn ^{:private true} invoke-by-name
   [obj n]
   (let [clazz       (.getClass obj)
@@ -23,12 +22,11 @@
   ([xs x] (invoke-by-name xs x))
   ([] (faker)))
 
-
 (defn ^{:private true} coll-from-expression [expression]
   "Splits expression by a 'dot' and returns the split list excluding 'faker'"
   (let [vals             (clojure.string/split expression #"\.")
         filtered-vals    (filter #(not (= "faker" %)) vals)]
-      filtered-vals))
+    filtered-vals))
 
 (defn ^{:private true} is-returnable
   [obj]
@@ -48,6 +46,5 @@
     (let [chain     (coll-from-expression expression)
           result    (reducers/fold thread chain)
           result    (if (is-returnable result) result (str "bad result" result))]
-      result
-      )
-  (catch Exception e (str "ERROR" " " expression))))
+      result)
+    (catch Exception e (str "ERROR" " " expression))))

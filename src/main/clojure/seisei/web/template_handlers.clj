@@ -1,7 +1,7 @@
 (ns seisei.web.template-handlers
   (:require [compojure.handler :as handler]
             [compojure.route :as route]
-            [compojure.core :refer [DELETE POST GET defroutes routes wrap-routes]]
+            [compojure.core :refer [DELETE POST GET PUT defroutes routes wrap-routes]]
             [seisei.web.user]
             [seisei.json]
             [seisei.engine]
@@ -14,16 +14,16 @@
 (defn load-dynamic-template
   [slug r]
   (let [template    (db/find-dynamic-template slug)
-        parsed-json (seisei.json/parse-with-error ( -> template :content ))
+        parsed-json (seisei.json/parse-with-error (-> template :content))
         processed   (seisei.engine/process (:output parsed-json))]
-        {:body processed}))
+    {:body processed}))
 
 (defn load-my-template
   [slug r]
   (let [session     (:session r)
         user-id     (seisei.web.user/user-id session)]
     (let [template    (db/user-template user-id slug)
-          parsed-json (seisei.json/parse-with-error ( -> template :content ))
+          parsed-json (seisei.json/parse-with-error (-> template :content))
           processed   (seisei.engine/process (:output parsed-json))]
       {:body {:template template
               :processed processed
@@ -37,7 +37,7 @@
         template-content    (-> r :body :template :content)
         template-title      (-> r :body :template :title)
         template            (db/update-user-template user-id slug template-content template-title)
-        parsed-json         (seisei.json/parse-with-error ( -> template :content ))
+        parsed-json         (seisei.json/parse-with-error (-> template :content))
         processed           (seisei.engine/process (:output parsed-json))]
     {:body {:template template
             :processed processed
@@ -51,13 +51,12 @@
         deleted             (db/delete-user-template user-id slug)
         _                   (s3/unpublish-from-s3 slug)]
     {:status 200
-     :body { :messages [ (str "Template " slug " deleted.") ] }
-    }))
+     :body {:messages [(str "Template " slug " deleted.")]}}))
 
 (defn my-templates
   [{session :session}]
   (when-let [user-id   (seisei.web.user/user-id session)]
-    {:body (or (db/user-templates user-id) []) }))
+    {:body (or (db/user-templates user-id) [])}))
 
 (defn run-template
   [request]
@@ -67,8 +66,7 @@
         processed (seisei.engine/process (:output parsed-json))]
     {:body {:processed processed
             :errors (:errors parsed-json)
-            :input (:input parsed-json)}}
-    ))
+            :input (:input parsed-json)}}))
 
 (defn save-new-template
   [request]
@@ -77,14 +75,52 @@
         template-content (-> request :body :template :content)
         user-id (seisei.web.user/user-id session)]
     ; at this point - insert only.
-      (let [new-template (db/insert-template user-id template-content)]
-        {:body {:messages [{:id "T0001" :text "Saved."}] :template new-template }})
-      ))
+    (let [new-template (db/insert-template user-id template-content)]
+      {:body {:messages [{:id "T0001" :text "Saved."}] :template new-template}})))
 
 (defn dynamic-url-for-slug
   [request slug]
   (str "/templates/" slug))
 
+(defn publish-to-s3
+  [request]
+  (let [session             (:session request)
+        user-id             (seisei.web.user/user-id session)
+        template            (-> request :body :template)
+        content-to-publish  (:processed template)
+        slug                (:slug template)
+        url                 (s3/publish-to-s3 slug content-to-publish)]
+    (do
+      (db/update-user-template-attrs user-id slug {:static-url url})
+      (load-my-template slug request))))
+
+(defn unpublish-from-s3
+  [slug request]
+  (let [session             (:session request)
+        user-id             (seisei.web.user/user-id session)
+        template            (db/user-template user-id slug)]
+    (if (and (not-nil? user-id) (not-nil? template))
+      (do
+        (s3/unpublish-from-s3 slug)
+        (db/update-user-template-attrs user-id slug {:static-url nil})
+        (load-my-template slug request))
+      {:status 403})))
+
+(defn mark-public
+  "Finds a template by the slug for the current user and marks it as public"
+  [slug r]
+  (let [session     (:session r)
+        user-id     (seisei.web.user/user-id session)
+        result      (db/update-user-template-attrs user-id slug {:public true})]
+    (load-my-template slug r)))
+
+(defn mark-private
+  "Finds a template by the slug for the current user and marks it as private"
+  [slug r]
+  (let [session     (:session r)
+        user-id     (seisei.web.user/user-id session)
+        result      (db/update-user-template-attrs user-id slug {:public false})]
+    (load-my-template slug r)))
 
 (defn publish-dynamic
   [request]
@@ -96,39 +132,12 @@
         exists              (not-nil? (db/find-dynamic-template slug))]
     ;; create the slug record
     ;; fill in the content
-      (do
-        (if exists
-          (db/update-dynamic slug {:user user-id :content template-content})
-          (db/insert-dynamic slug {:user user-id :content template-content}))
-        (db/update-user-template-attrs user-id slug {:dynamic-url  (dynamic-url-for-slug request slug)})
-        (load-my-template slug request))))
-
-(defn publish-to-s3
-  [request]
-  (let [session             (:session request)
-        user-id             (seisei.web.user/user-id session)
-        template            (-> request :body :template)
-        content-to-publish  (:processed template)
-        slug                (:slug template)
-        url                 (s3/publish-to-s3 slug content-to-publish)]
-      (do
-        (db/update-user-template-attrs user-id slug {:static-url url})
-        (load-my-template slug request)
-      )))
-
-(defn unpublish-from-s3
-  [slug request]
-  (let [session             (:session request)
-        user-id             (seisei.web.user/user-id session)
-        template            (db/user-template user-id slug)]
-    (if (and (not-nil? user-id) (not-nil? template))
-      (do
-        (s3/unpublish-from-s3 slug)
-        (db/update-user-template-attrs user-id slug {:static-url nil})
-        (load-my-template slug request)
-      )
-      {:status 403})
-    ))
+    (do
+      (if exists
+        (db/update-dynamic slug {:user user-id :content template-content})
+        (db/insert-dynamic slug {:user user-id :content template-content}))
+      (db/update-user-template-attrs user-id slug {:dynamic-url  (dynamic-url-for-slug request slug)})
+      (load-my-template slug request))))
 
 (defn unpublish-dynamic
   [slug request]
@@ -139,11 +148,8 @@
       (do
         (db/delete-dynamic slug)
         (db/update-user-template-attrs user-id slug {:dynamic-url nil})
-        (load-my-template slug request)
-      )
-      {:status 404})
-    ))
-
+        (load-my-template slug request))
+      {:status 404})))
 
 (defn requires-user-middleware [handler]
   (fn [request]
@@ -151,26 +157,26 @@
           logged-in (seisei.web.user/logged-in? session)]
       (if logged-in
         (handler request)
-        {:status 403})
-      )))
+        {:status 403}))))
 
 (defroutes unprotected-routes
-  (POST "/template/process" r (run-template r))
-  (GET "/templates/:slug" [slug :as r] (load-dynamic-template slug r)))
+           (POST "/template/process" r (run-template r))
+           (GET "/templates/:slug" [slug :as r] (load-dynamic-template slug r)))
 
 (defroutes protected-routes
-
-  (POST "/my/templates" r (save-new-template r))
-  (POST "/my/templates/:slug/publishdynamic" r (publish-dynamic r))
-  (POST "/my/templates/:slug/publish" r (publish-to-s3 r))
-  (DELETE "/my/templates/:slug/publishdynamic" [slug :as r] (unpublish-dynamic slug r))
-  (DELETE "/my/templates/:slug/publish" [slug :as r] (unpublish-from-s3 slug r))
-  (DELETE "/my/templates/:slug" [slug :as r] (delete-my-template slug r))
-  (POST "/my/templates/:slug" [slug :as r] (save-my-template slug r))
-  (GET "/my/templates/:slug" [slug :as r] (load-my-template slug r))
-  (GET "/my/templates" r (my-templates r)))
+           (POST    "/my/templates" r (save-new-template r))
+           (POST    "/my/templates/:slug/publishdynamic" r (publish-dynamic r))
+           (POST    "/my/templates/:slug/publish" r (publish-to-s3 r))
+           (PUT     "/my/templates/:slug/public" [slug :as r] (mark-public  slug r))
+           (DELETE  "/my/templates/:slug/public" [slug :as r] (mark-private slug r))
+           (DELETE  "/my/templates/:slug/publishdynamic" [slug :as r] (unpublish-dynamic slug r))
+           (DELETE  "/my/templates/:slug/publish" [slug :as r] (unpublish-from-s3 slug r))
+           (DELETE  "/my/templates/:slug" [slug :as r] (delete-my-template slug r))
+           (POST    "/my/templates/:slug" [slug :as r] (save-my-template slug r))
+           (GET     "/my/templates/:slug" [slug :as r] (load-my-template slug r))
+           (GET     "/my/templates" r (my-templates r)))
 
 (defroutes template-routes
-  (routes
-    (wrap-routes protected-routes requires-user-middleware )
-     unprotected-routes  ))
+           (routes
+            (wrap-routes protected-routes requires-user-middleware)
+            unprotected-routes))

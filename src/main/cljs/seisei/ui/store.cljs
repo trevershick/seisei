@@ -1,12 +1,10 @@
 (ns seisei.ui.store
   (:require-macros [cljs.core.async.macros :refer [go-loop]])
   (:require [om.core :as om :include-macros true]
-    [seisei.ui.dispatcher :as d]
-    [seisei.ui.util :refer [debug]]
-    [seisei.ui.api :as api]
-    [cljs.core.async :refer [<!]]))
-
-
+            [seisei.ui.dispatcher :as d]
+            [seisei.ui.util :refer [debug]]
+            [seisei.ui.api :as api]
+            [cljs.core.async :refer [<!]]))
 
 (defmulti handle-action :action)
 

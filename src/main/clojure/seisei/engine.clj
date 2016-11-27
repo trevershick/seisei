@@ -3,16 +3,14 @@
             [clj-time.format :as f]
             [seisei.generated.names]
             [seisei.faker])
-  (:gen-class)
-  )
-
+  (:gen-class))
 
 (def tag-regex #"\{\{([^\}]+)\}\}")
 
 (defn tag-contents
   "Given a string in tag format {{x}} will return 'x' as a String"
   [tag]
-  (if-let [ [match contents] (re-find tag-regex tag)]
+  (if-let [[match contents] (re-find tag-regex tag)]
     contents
     nil))
 
@@ -38,18 +36,12 @@
         :tag        (str "{{" clause "}}")
         :text       clause
         :arg        arg
-        :i          i
-        )
-      nil
-      )
-    )
-  )
-
+        :i          i)
+      nil)))
 
 ;; these have to be at the top : (
 (defmulti process (fn [clazz & other] (class clazz)))
 (defmulti execute :name)
-
 
 (defmethod execute "objectId" [operation]
   (str (java.util.UUID/randomUUID)))
@@ -74,7 +66,6 @@
       (= paramsz 0) (rand-nth all)
       (> paramsz 0) (rand-nth (get byarg (first params))))))
 
-
 ;; these all use faker now.  we're going to maintain
 ;; these i think for a little bit
 (defmethod execute "street" [_]
@@ -97,15 +88,11 @@
 
 (defmethod execute "repeat" [operation]
   (let [n (first (:params operation))
-        a (:arg operation) ]
+        a (:arg operation)]
     (if-not (nil? a)
       (let [ans (for [i (range 0 n)] (process a :i i))]
-        ans
-      )
-      "You must follow a repeat statement with an element"
-      )
-    )
-  )
+        ans)
+      "You must follow a repeat statement with an element")))
 
 (defn yesterday
   []
@@ -143,8 +130,7 @@
         minms   (Math/min fms tms)
         rangems (- maxms minms)
         randms  (.longValue (* (rand) rangems))]
-    (java.util.Date. (+ minms randms))
-    ))
+    (java.util.Date. (+ minms randms))))
 
 (defmethod execute "date"
   [op]
@@ -157,8 +143,7 @@
         from      (if (nil? pfrom) (start-of-time) (date-val pfrom (now)))
         til       (if (nil? ptil) (now) (date-val ptil (now)))
         formatter (f/formatter fmt)]
-    (f/unparse formatter (local-date (rand-date from til)))
-    ))
+    (f/unparse formatter (local-date (rand-date from til)))))
 
 (defmethod execute "integer"
   [op]
@@ -169,33 +154,26 @@
     (cond
       (and (= 2 psz) (every? #(instance? Number %) ps))
       (let [n (- end start)] (+ start (rand-int n)))
-      :else (rand-int Integer/MAX_VALUE)
-      )))
+      :else (rand-int Integer/MAX_VALUE))))
 
 (defmethod execute "random" [operation]
   "Usage {{random(a,b,c)}}
   Returns a random element from the provided list"
-  ( let [params (:params operation)
-         paramsz (count (:params operation)) ]
-   (if (= 0 (count params)) "random value here" (rand-nth params))
-   )
-  )
+  (let [params (:params operation)
+        paramsz (count (:params operation))]
+    (if (= 0 (count params)) "random value here" (rand-nth params))))
 
 (comment (defmethod execute :default [operation]
-  (str (:tag operation))))
+           (str (:tag operation))))
 
 ;; by default, any unknown tag will be resolved against a Faker instance
 (defmethod execute :default [op]
   (seisei.faker/faker-expr (:name op)))
 
-
-
-
-
 (defmethod process String [s & {:keys [arg i]}]
   (let [tags (->> (re-seq tag-regex s) (map #(get % 0)))
         texts (clojure.string/split s tag-regex)
-        processed-tags (map #(execute ( parse-operation (tag-contents %) arg i)) tags)
+        processed-tags (map #(execute (parse-operation (tag-contents %) arg i)) tags)
         zipped (clojure.string/join (interleave texts processed-tags))]
     (cond (= 0 (count tags)) s
           (and (= 0 (count texts)) (= 1 (count tags))) (first processed-tags)
@@ -213,23 +191,18 @@
 
 (defmethod process clojure.lang.PersistentVector [v & {:keys [arg i]}]
   (comment "iterate over items, and process each, pasing the tail to 'process'")
-  (let [ length (count v)
+  (let [length (count v)
         head (get v 0)
         arg (get v 1)
         tail2 (vec (nthrest v 2))
-        tail (vec (rest v)) ]
+        tail (vec (rest v))]
     (cond
       (= 0 length) []
       (= 1 length) [(process head :arg arg :i i)]
       (and
-        (instance? String head)
-        (is-tag head)
-        (= "repeat" (:name (parse-operation head))))
+       (instance? String head)
+       (is-tag head)
+       (= "repeat" (:name (parse-operation head))))
       (do
-        (concat (process head :arg arg :i i) (process tail2 :arg arg :i i))
-      )
-      :else (cons head (process tail :arg arg :i i))
-      )
-    )
-  )
-
+        (concat (process head :arg arg :i i) (process tail2 :arg arg :i i)))
+      :else (cons head (process tail :arg arg :i i)))))

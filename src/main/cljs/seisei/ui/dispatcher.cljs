@@ -1,6 +1,6 @@
 (ns seisei.ui.dispatcher
   (:require [seisei.ui.util :refer [debug]]
-    [cljs.core.async :as async]))
+            [cljs.core.async :as async]))
 
 (defonce ^:private dispatcher
   (async/chan 1000))
@@ -19,8 +19,8 @@
   "Puts a message on the dispatcher in the form
   {:action action-keyword :data opts}."
   ([action-keyword]
-    (action action-keyword nil))
+   (action action-keyword nil))
   ([action-keyword opts]
-    (let [message   {:action action-keyword :data opts}
-          result    (async/put! dispatcher message)]
-      (debug "dispatcher/action put!" message))))
+   (let [message   {:action action-keyword :data opts}
+         result    (async/put! dispatcher message)]
+     (comment (debug "dispatcher/action put!" message)))))

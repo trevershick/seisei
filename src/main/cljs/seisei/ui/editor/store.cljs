@@ -1,17 +1,16 @@
 (ns seisei.ui.editor.store
   (:require-macros [cljs.core.async.macros :refer [go-loop]])
   (:require [om.core :as om :include-macros true]
-    [seisei.ui.dispatcher :as d]
-    [secretary.core :as sec]
-    [seisei.ui.state :refer [app-state]]
-    [seisei.ui.api :as api]
-    [seisei.ui.editor.api :as eapi]
-    [seisei.ui.util :refer [clj->json nnil? debug]]
-    [cljs.core.async :refer [<!]]))
+            [seisei.ui.dispatcher :as d]
+            [secretary.core :as sec]
+            [seisei.ui.state :refer [app-state]]
+            [seisei.ui.api :as api]
+            [seisei.ui.editor.api :as eapi]
+            [seisei.ui.util :refer [clj->json nnil? debug]]
+            [cljs.core.async :refer [<!]]))
 
 ;; store methods -- actually update the state
 (defmulti handle-action :action)
-
 
 (defmethod handle-action :menu-feedback [_] (api/goto-github-issues))
 (defmethod handle-action :menu-help [_] (d/action :toggle-hotkeys))
@@ -45,8 +44,16 @@
     (debug "editor/store/:menu-toggle-static published:" published)
     (if published
       (eapi/unpublish-static-template current-template)
-      (d/action :menu-publish-static)
-      )))
+      (d/action :menu-publish-static))))
+
+(defmethod handle-action :menu-toggle-public [_]
+  (let [state            (om/root-cursor app-state)
+        current-template (state :template)
+        public           (current-template :public)]
+    (debug "editor/store/:menu-toggle-public current-template:" current-template)
+    (if public
+      (eapi/make-template-private  current-template)
+      (eapi/make-template-public   current-template))))
 
 (defmethod handle-action :menu-toggle-dynamic [_]
   (let [state            (om/root-cursor app-state)
@@ -56,8 +63,7 @@
     (debug "editor/store/:menu-toggle-dynamic current-template:" current-template)
     (if published
       (eapi/unpublish-dynamic-template current-template)
-      (d/action :menu-publish-dynamic)
-      )))
+      (d/action :menu-publish-dynamic))))
 
 (defmethod handle-action :unpublished-static-template [{:keys [data]}]
   (debug "editor/store/:unpublished-static-template data:" data)
@@ -67,34 +73,52 @@
     (eapi/refresh-templates)
     (om/update! template-cursor :static-url nil)
     (om/update! menu-cursor     :template-shared-statically false)
-    (debug "editor/store/:unpublished-static-template template state is now " template-cursor)
-  ))
+    (debug "editor/store/:unpublished-static-template template state is now " template-cursor)))
 
 (defmethod handle-action :unpublished-dynamic-template [{:keys [data]}]
   (debug "editor/store/:unpublished-dynamic-template data:" data)
   (let [state           (om/root-cursor app-state)
-        menu-cursor     (-> state :menu )
+        menu-cursor     (-> state :menu)
         template-cursor (-> state :template)]
-        (eapi/refresh-templates)
+    (eapi/refresh-templates)
     (om/update! template-cursor :dynamic-url nil)
     (om/update! menu-cursor :template-shared-dynamically false)
-    (debug "template state is now " (-> state :template))
-  ))
+    (debug "template state is now " (-> state :template))))
+
+(defmethod handle-action :made-template-public [{:keys [data]}]
+  (debug "editor/store/:made-template-public data:" data)
+  (let [state           (om/root-cursor app-state)
+        menu-cursor     (-> state :menu)
+        template-cursor (-> state :template)]
+    (eapi/refresh-templates)
+    (om/update! template-cursor :public true)
+    (om/update! menu-cursor :template-shared-publicly true)
+    (debug "template state is now " (-> state :template))))
+
+(defmethod handle-action :made-template-private [{:keys [data]}]
+  (debug "editor/store/:made-template-private data:" data)
+  (let [state           (om/root-cursor app-state)
+        menu-cursor     (-> state :menu)
+        template-cursor (-> state :template)]
+    (eapi/refresh-templates)
+    (om/update! template-cursor :public false)
+    (om/update! menu-cursor :template-shared-publicly false)
+    (debug "template state is now " (-> state :template))))
 
 (defn save-existing []
   (let [state            (om/root-cursor app-state)
         editor-cursor    (state :editor)
         template         (state :template)
         template         (assoc template :content (editor-cursor :content))]
-        (debug "editor/store/save-existing template:" template)
-        (eapi/save-template template)))
+    (debug "editor/store/save-existing template:" template)
+    (eapi/save-template template)))
 
 (defn save-new []
   (let [state            (om/root-cursor app-state)
         editor-cursor    (state :editor)
-        new-template     { :content (editor-cursor :content) :id nil :title "Untitled"}]
-        (debug "editor/store/save-new new-template:" new-template)
-        (eapi/save-template new-template)))
+        new-template     {:content (editor-cursor :content) :id nil :title "Untitled"}]
+    (debug "editor/store/save-new new-template:" new-template)
+    (eapi/save-template new-template)))
 
 (defmethod handle-action :menu-save [_]
   (let [state            (om/root-cursor app-state)
@@ -109,7 +133,7 @@
         rename-cursor   (state :rename)
         current-title   (if template-cursor (template-cursor :title) nil)]
     (when
-      current-title
+     current-title
       (om/update! rename-cursor :value current-title)
       (om/update! rename-cursor :show true))))
 
@@ -119,15 +143,15 @@
         title           (template :title)]
     (debug "editor/store/:menu-delete")
     (om/transact! state :confirm (fn [confirm]
-      (let [c confirm
-            c (assoc c :show true)
-            c (assoc c :question (str "Are you sure you want to delete " title " ?"))
-            c (assoc c :title "Delete your template?")
-            c (assoc c :yes   "Delete")
-            c (assoc c :no    "Don't Delete")
-            c (assoc c :confirm-action :delete-template)]
-        c))
-    (debug "editor/store/:menu-delete state is now:" (state :confirm)))))
+                                   (let [c confirm
+                                         c (assoc c :show true)
+                                         c (assoc c :question (str "Are you sure you want to delete " title " ?"))
+                                         c (assoc c :title "Delete your template?")
+                                         c (assoc c :yes   "Delete")
+                                         c (assoc c :no    "Don't Delete")
+                                         c (assoc c :confirm-action :delete-template)]
+                                     c))
+                  (debug "editor/store/:menu-delete state is now:" (state :confirm)))))
 
 ;; this version is used to delete the template directly without confirmation
 (defmethod handle-action :delete-template [_]
@@ -139,15 +163,15 @@
         current-template (state :template)
         processed        (-> state :editor :processed)
         template         (assoc current-template :processed processed)]
-        (debug "editor/store/:menu-publish-static editor:" (-> state :editor))
-        (debug "editor/store/:menu-publish-static template:" template)
-        (debug "editor/store/:menu-publish-static processed:" processed)
-        (eapi/publish-template template)))
+    (debug "editor/store/:menu-publish-static editor:" (-> state :editor))
+    (debug "editor/store/:menu-publish-static template:" template)
+    (debug "editor/store/:menu-publish-static processed:" processed)
+    (eapi/publish-template template)))
 
 (defmethod handle-action :menu-publish-dynamic [_]
   (let [state            (om/root-cursor app-state)
         template (state :template)]
-        (eapi/publish-template-dynamic template)))
+    (eapi/publish-template-dynamic template)))
 
 (defmethod handle-action :published-template [{:keys [data]}]
   (debug "editor/store/:published-template data:" data)
@@ -157,8 +181,7 @@
     (eapi/refresh-templates)
     (om/update! template-cursor :static-url (data :static-url))
     (om/update! menu-cursor :template-shared-statically true)
-    (debug "template state is now " (-> state :template))
-  ))
+    (debug "template state is now " (-> state :template))))
 
 (defmethod handle-action :published-template-dynamic [{:keys [data]}]
   (debug "editor/store/:published-template-dynamic data:" data)
@@ -168,8 +191,7 @@
     (eapi/refresh-templates)
     (om/update! template-cursor :dynamic-url (data :dynamic-url))
     (om/update! menu-cursor :template-shared-dynamically true)
-    (debug "editor/store/:published-template-dynamic template is now:" template-cursor)
-  ))
+    (debug "editor/store/:published-template-dynamic template is now:" template-cursor)))
 
 (defmethod handle-action :route-editor-template-slug [{slug :data}]
   (debug "editor/store/:route-editor-template-slug slug:" slug)
@@ -184,43 +206,42 @@
   (debug "editor/store/handle-action :menu-tidy msg="  msg)
   (let [state        (om/root-cursor app-state)
         editor-state (state :editor)]
-        (try
-          (let [data         (editor-state :content)
-                parsed       (.parse js/JSON data)
-                stringified  (.stringify js/JSON parsed nil 2)]
-            (om/update! editor-state :content stringified))
-        (catch :default e
+    (try
+      (let [data         (editor-state :content)
+            parsed       (.parse js/JSON data)
+            stringified  (.stringify js/JSON parsed nil 2)]
+        (om/update! editor-state :content stringified))
+      (catch :default e
           ; (debug "ERROR " e)
-          (om/update! editor-state :invalid true)))))
+        (om/update! editor-state :invalid true)))))
 
 (defmethod handle-action :editor-updated [{:keys [data]}]
   (let [state (om/root-cursor app-state)
-        editor-state (state :editor) ]
+        editor-state (state :editor)]
       ; (debug "Updating app state with template data " data)
-      (om/update! editor-state :content data)
-      (om/update! editor-state :dirty true)))
+    (om/update! editor-state :content data)
+    (om/update! editor-state :dirty true)))
 
 (defmethod handle-action :samples-received [{:keys [data]}]
   (let [state (om/root-cursor app-state)]
-        (om/update! state :samples data)))
+    (om/update! state :samples data)))
 
 (defmethod handle-action :templates-received [{:keys [data]}]
   ; (debug "handle action :my-account, data is " data)
   (let [state (om/root-cursor app-state)
         menu-state (state :menu)]
-        (om/update! state :templates data)
-        (om/update! menu-state :templates data)))
+    (om/update! state :templates data)
+    (om/update! menu-state :templates data)))
 
 (defmethod handle-action :my-account-received [{:keys [data]}]
-    (let [state (om/root-cursor app-state)]
-      (om/update! state :account data)
-      (om/update! (state :menu) :logged-in (data :logged-in))
-      (om/update! (state :menu) :user data)
-      (om/update! (state :menu) :save-enabled (data :logged-in))
-      (if (data :logged-in)
-        (eapi/refresh-templates)
-        (eapi/clear-templates)
-      )))
+  (let [state (om/root-cursor app-state)]
+    (om/update! state :account data)
+    (om/update! (state :menu) :logged-in (data :logged-in))
+    (om/update! (state :menu) :user data)
+    (om/update! (state :menu) :save-enabled (data :logged-in))
+    (if (data :logged-in)
+      (eapi/refresh-templates)
+      (eapi/clear-templates))))
 
 (defmethod handle-action :menu-run [_]
   (let [state         (om/root-cursor app-state)
@@ -229,9 +250,7 @@
         id            (editor-state :id)
         title         (editor-state :title)
         template      {:content content :id id :title title}]
-        (eapi/process-template template)))
-
-
+    (eapi/process-template template)))
 
 ;; coming from server
 (defmethod handle-action :processed-template [{:keys [data]}]
@@ -240,8 +259,8 @@
         editor-state (state :editor)
         output       (clj->json (data :processed))
         errors       (data :errors)]
-        (om/update! editor-state :processed (data :processed))
-        (om/update! editor-state :output output)))
+    (om/update! editor-state :processed (data :processed))
+    (om/update! editor-state :output output)))
 
 (defmethod handle-action :apply-sample [x]
   (d/action :menu-new {:content (x :data)}))
@@ -255,46 +274,45 @@
         content      (data :content)
         content      (or content {})
         content      (clj->json content)]
-        (om/update! state :template nil)
-        (om/update! editor-state :content content)
-        (om/update! editor-state :output "{}")
-        (om/update! editor-state :dirty false)
-        (om/update! editor-state :processed {})
+    (om/update! state :template nil)
+    (om/update! editor-state :content content)
+    (om/update! editor-state :output "{}")
+    (om/update! editor-state :dirty false)
+    (om/update! editor-state :processed {})
         ;; update the menu's state
-        (om/transact! state :menu (fn [s]
-          (let [s (assoc s :new-enabled true)
-                s (assoc s :save-enabled true)
-                s (assoc s :delete-enabled false)
-                s (assoc s :sharing-enabled false)
-                s (assoc s :template-shared-statically false)
-                s (assoc s :template-shared-dynamically false)
-                s (assoc s :template-title "Untitled")]
-            s )))
-        )
+    (om/transact! state :menu (fn [s]
+                                (let [s (assoc s :new-enabled true)
+                                      s (assoc s :save-enabled true)
+                                      s (assoc s :delete-enabled false)
+                                      s (assoc s :sharing-enabled false)
+                                      s (assoc s :template-shared-publicly false)
+                                      s (assoc s :template-shared-statically false)
+                                      s (assoc s :template-shared-dynamically false)
+                                      s (assoc s :template-title "Untitled")]
+                                  s))))
   (-> js/document .-location (set! "#/")))
 
 (defmethod handle-action :deleted-template [_]
   (let [state        (om/root-cursor app-state)
         editor-state (state :editor)
         menu-state   (state :menu)]
-        (om/update! state :template nil)
-        (om/update! editor-state :content "{}")
-        (om/update! editor-state :output "{}")
-        (om/update! editor-state :dirty false)
-        (om/update! editor-state :processed {})
+    (om/update! state :template nil)
+    (om/update! editor-state :content "{}")
+    (om/update! editor-state :output "{}")
+    (om/update! editor-state :dirty false)
+    (om/update! editor-state :processed {})
         ;; update the menu's state
-        (om/transact! state :menu (fn [s]
-          (let [s (assoc s :new-enabled true)
-                s (assoc s :save-enabled true)
-                s (assoc s :delete-enabled false)
-                s (assoc s :sharing-enabled false)
-                s (assoc s :template-shared-statically false)
-                s (assoc s :template-shared-dynamically false)
-                s (assoc s :template-title "Untitled")]
-            s )))
-        )
+    (om/transact! state :menu (fn [s]
+                                (let [s (assoc s :new-enabled true)
+                                      s (assoc s :save-enabled true)
+                                      s (assoc s :delete-enabled false)
+                                      s (assoc s :sharing-enabled false)
+                                      s (assoc s :template-shared-publicly false)
+                                      s (assoc s :template-shared-statically false)
+                                      s (assoc s :template-shared-dynamically false)
+                                      s (assoc s :template-title "Untitled")]
+                                  s))))
   (-> js/document .-location (set! "#/")))
-
 
 (defmethod handle-action :loaded-template [{{:keys [processed template]} :data}]
   (debug "editor/store/:loaded-template template:" template)
@@ -302,22 +320,22 @@
         editor-state (state :editor)
         menu-state   (state :menu)
         output       (clj->json processed)]
-        (om/update! state :template template) ; store off the template.
-        (om/update! editor-state :content (template :content))
-        (om/update! editor-state :output output)
-        (om/update! editor-state :dirty false)
-        (om/update! editor-state :processed processed)
+    (om/update! state :template template) ; store off the template.
+    (om/update! editor-state :content (template :content))
+    (om/update! editor-state :output output)
+    (om/update! editor-state :dirty false)
+    (om/update! editor-state :processed processed)
         ;; update the menu's state
-        (om/transact! state :menu (fn [s]
-          (let [s (assoc s :new-enabled true)
-                s (assoc s :save-enabled true)
-                s (assoc s :delete-enabled true)
-                s (assoc s :sharing-enabled true)
-                s (assoc s :template-shared-statically (nnil? (template :static-url)))
-                s (assoc s :template-shared-dynamically (nnil? (template :dynamic-url)))
-                s (assoc s :template-title (template :title))]
-            s )))
-        ))
+    (om/transact! state :menu (fn [s]
+                                (let [s (assoc s :new-enabled true)
+                                      s (assoc s :save-enabled true)
+                                      s (assoc s :delete-enabled true)
+                                      s (assoc s :sharing-enabled true)
+                                      s (assoc s :template-shared-publicly (template :public))
+                                      s (assoc s :template-shared-statically (nnil? (template :static-url)))
+                                      s (assoc s :template-shared-dynamically (nnil? (template :dynamic-url)))
+                                      s (assoc s :template-title (template :title))]
+                                  s)))))
 
 (defmethod handle-action :rename-template [{:keys [data]}]
   (let [state        (om/root-cursor app-state)
@@ -330,16 +348,14 @@
 
 (defmethod handle-action :expand-samples [_]
   (let [state           (om/root-cursor app-state)]
-      (om/update! state :samples-collapsed false)))
+    (om/update! state :samples-collapsed false)))
 
 (defmethod handle-action :collapse-samples [_]
   (let [state           (om/root-cursor app-state)]
-      (om/update! state :samples-collapsed true)))
-
+    (om/update! state :samples-collapsed true)))
 
 (defmethod handle-action :default [msg]
-  (debug "editor/store/handle-action :default ignored msg=" msg))
-
+  (comment (debug "editor/store/handle-action :default ignored msg=" msg)))
 
 (defonce channel (d/subscribe))
 (go-loop []

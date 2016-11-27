@@ -7,7 +7,5 @@
   (-> (ring.util.response/redirect "/")
       (assoc :session nil)))
 
-
 (defroutes logout-routes
-  (GET "/auth/logout" [] (logout-user)))
-
+           (GET "/auth/logout" [] (logout-user)))
