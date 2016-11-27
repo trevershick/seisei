@@ -14,3 +14,11 @@ ace.setValue = function (){};
 ace.on = function (){};
 ace.destroy = function (){};
 ace.getValue = function() {};
+ace.setOptions = function(opts) {};
+ace.completers = [];
+
+
+function getDocument(){};
+function positionToIndex(pos){};
+function getValue(){};
+function charAt(){};
