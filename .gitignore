@@ -1,6 +1,6 @@
 *.env
 aws.policy
-resources/.DS_Store
+.DS_Store
 resources/optimized/
 npm-debug.log
 resources/private/js/
