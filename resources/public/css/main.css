@@ -327,3 +327,7 @@ li#rename-menu-item {
   height:20px;
   margin: 0px 5px 0px 0px;
 }
+
+.ace_editor.ace_autocomplete.ace-twilight.ace_dark {
+	width:30%;
+}
