@@ -1,6 +1,6 @@
 (ns seisei.tools.all
   (:require
-    [seisei.tools.names])
+   [seisei.tools.names])
   (:gen-class))
 
 (defn execute [what, with]

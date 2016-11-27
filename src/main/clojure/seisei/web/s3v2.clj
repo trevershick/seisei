@@ -46,13 +46,13 @@
 
 (defn- s3-client*
   [cred]
-    (let [client-configuration (ClientConfiguration.)
-          aws-creds   (DefaultAWSCredentialsProviderChain.)
-          client      (AmazonS3Client. aws-creds client-configuration)]
-      (log/infof "Created S3Client %s with default credential provider chain" client)
-      (when-let [endpoint (:endpoint cred)]
-        (.setEndpoint client endpoint))
-      client))
+  (let [client-configuration (ClientConfiguration.)
+        aws-creds   (DefaultAWSCredentialsProviderChain.)
+        client      (AmazonS3Client. aws-creds client-configuration)]
+    (log/infof "Created S3Client %s with default credential provider chain" client)
+    (when-let [endpoint (:endpoint cred)]
+      (.setEndpoint client endpoint))
+    client))
 
 (def ^{:private true :tag AmazonS3Client}
   s3-client
@@ -76,12 +76,12 @@
      :server-side-encryption (.getServerSideEncryption metadata)
      :user (walk/keywordize-keys (into {} (.getUserMetadata metadata)))
      :version-id             (.getVersionId metadata)})
-   S3Object
-   (to-map [object]
-     {:content  (.getObjectContent object)
-      :metadata (to-map (.getObjectMetadata object))
-      :bucket   (.getBucketName object)
-      :key      (.getKey object)})
+  S3Object
+  (to-map [object]
+    {:content  (.getObjectContent object)
+     :metadata (to-map (.getObjectMetadata object))
+     :bucket   (.getBucketName object)
+     :key      (.getKey object)})
   Bucket
   (to-map [bucket]
     {:name          (.getName bucket)
@@ -93,7 +93,6 @@
      :display-name (.getDisplayName owner)})
   nil
   (to-map [_] nil))
-
 
 (defprotocol ^{:no-doc true} ToPutRequest
   "A protocol for constructing a map that represents an S3 put request."
@@ -121,7 +120,6 @@
 (defn- maybe-int [x]
   (if x (int x)))
 
-
 (defn- map->ObjectMetadata
   "Convert a map of object metadata into a ObjectMetadata instance."
   [metadata]
@@ -143,21 +141,20 @@
                                            :content-type
                                            :server-side-encryption)))))
 
-
 (defn- ^PutObjectRequest ->PutObjectRequest
   "Create a PutObjectRequest instance from a bucket name, key and put request
   map."
   [^String bucket ^String key request]
   (cond
-   (:file request)
-     (let [put-obj-req (PutObjectRequest. bucket key ^java.io.File (:file request))]
-       (.setMetadata put-obj-req (map->ObjectMetadata (dissoc request :file)))
-       put-obj-req)
-   (:input-stream request)
-     (PutObjectRequest.
-      bucket key
-      (:input-stream request)
-      (map->ObjectMetadata (dissoc request :input-stream)))))
+    (:file request)
+    (let [put-obj-req (PutObjectRequest. bucket key ^java.io.File (:file request))]
+      (.setMetadata put-obj-req (map->ObjectMetadata (dissoc request :file)))
+      put-obj-req)
+    (:input-stream request)
+    (PutObjectRequest.
+     bucket key
+     (:input-stream request)
+     (map->ObjectMetadata (dissoc request :input-stream)))))
 
 (declare create-acl) ; used by put-object
 
@@ -193,7 +190,6 @@
   "Delete an object from an S3 bucket."
   [cred bucket key]
   (.deleteObject (s3-client cred) bucket key))
-
 
 (defprotocol ^{:no-doc true} ToClojure
   "Convert an object into an idiomatic Clojure value."
@@ -242,15 +238,15 @@
 
 (defn- grantee [grantee]
   (cond
-   (keyword? grantee)
-     (case grantee
+    (keyword? grantee)
+    (case grantee
       :all-users           GroupGrantee/AllUsers
       :authenticated-users GroupGrantee/AuthenticatedUsers
       :log-delivery        GroupGrantee/LogDelivery)
-   (:id grantee)
-     (CanonicalGrantee. (:id grantee))
-   (:email grantee)
-     (EmailAddressGrantee. (:email grantee))))
+    (:id grantee)
+    (CanonicalGrantee. (:id grantee))
+    (:email grantee)
+    (EmailAddressGrantee. (:email grantee))))
 
 (defn- clear-acl [^AccessControlList acl]
   (doseq [grantee (->> (.getGrants acl)
@@ -261,8 +257,8 @@
 (defn- add-acl-grants [^AccessControlList acl grants]
   (doseq [g grants]
     (.grantPermission acl
-      (grantee (:grantee g))
-      (permission (:permission g)))))
+                      (grantee (:grantee g))
+                      (permission (:permission g)))))
 
 (defn- update-acl [^AccessControlList acl funcs]
   (let [grants (:grants (to-map acl))

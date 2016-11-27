@@ -7,12 +7,12 @@
 
 (defn- onclick-handler
   ([action]
-    (onclick-handler action nil))
+   (onclick-handler action nil))
   ([action opts]
-    (fn [e]
-      (.stopPropagation e)
-      (d/action action opts)
-      false)))
+   (fn [e]
+     (.stopPropagation e)
+     (d/action action opts)
+     false)))
 
 (def *ace* (atom nil))
 (defn editor [data owner]
@@ -21,10 +21,10 @@
     (render [_]
       (if @*ace*
         (let [new-val    (data :content)
-              cur-val    (.getValue @*ace*) ]
-              (when (not= new-val cur-val)
-                (.setValue @*ace* new-val -1))))
-      (html [:div { :name "editorElement" :className "editor" }]))
+              cur-val    (.getValue @*ace*)]
+          (when (not= new-val cur-val)
+            (.setValue @*ace* new-val -1))))
+      (html [:div {:name "editorElement" :className "editor"}]))
     om/IWillUnmount
     (will-unmount [_]
       (when @*ace*
@@ -37,12 +37,10 @@
         (.setMode (.getSession ace-instance) "ace/mode/javascript")
         (.setReadOnly ace-instance false)
         (set! (.-$blockScrolling ace-instance) Infinity)
-        (.setHighlightActiveLine ace-instance false)
-        (.setValue ace-instance (data :content))
+        (.setHighlightActiveLine ace-instance true)
+        (.setValue ace-instance (data :content) -1)
         (.on ace-instance "change" (fn [] (go [] (d/action :editor-updated (.getValue @*ace*)))))
-        (reset! *ace* ace-instance)))
-      )
-    )
+        (reset! *ace* ace-instance)))))
 
 (def *ace-ro* (atom nil))
 (defn editor-ro [data owner]
@@ -51,10 +49,10 @@
     (render [_]
       (if @*ace-ro*
         (let [new-val          (data :output)
-              cur-val          (.getValue @*ace-ro*) ]
-              (when (not= new-val cur-val)
-                (.setValue @*ace-ro* new-val -1))))
-      (html [:div { :name "editorElement" :className "editor editor-ro" }]))
+              cur-val          (.getValue @*ace-ro*)]
+          (when (not= new-val cur-val)
+            (.setValue @*ace-ro* new-val -1))))
+      (html [:div {:name "editorElement" :className "editor editor-ro"}]))
     om/IWillUnmount
     (will-unmount [_]
       (when @*ace-ro*
@@ -68,37 +66,32 @@
         (set! (.-$blockScrolling ace-instance) Infinity)
         (.setValue ace-instance (data :output))
         (.setReadOnly ace-instance true)
-        (reset! *ace-ro* ace-instance)))
-      )
-    )
+        (reset! *ace-ro* ace-instance)))))
 
 (defn- sample-li-input-output [idx io]
   (html
-    [:div {:className "sample" :key idx}
-      [:div {:className "input"}
-        [:a {:onClick (onclick-handler :apply-sample (io :input)) } (clj->json (io :input) 0)]]
-        [:div {:className "output"} (clj->json (io :output) 0)]
-    ]))
+   [:div {:className "sample" :key idx}
+    [:div {:className "input"}
+     [:a {:onClick (onclick-handler :apply-sample (io :input))} (clj->json (io :input) 0)]]
+    [:div {:className "output"} (clj->json (io :output) 0)]]))
 
 (defn- sample-li [sample]
   (html
-    [:li {:className "tag-samples" :key (sample :name)}
-      [:div {:className "tag"} (sample :name) ]
-      (if (sample :desc) [:div {:className "desc" :dangerouslySetInnerHTML {:__html (sample :desc) }}])
-      [:div {:className "samples"} (map-indexed sample-li-input-output (sample :samples)) ]
-    ]))
+   [:li {:className "tag-samples" :key (sample :name)}
+    [:div {:className "tag"} (sample :name)]
+    (if (sample :desc) [:div {:className "desc" :dangerouslySetInnerHTML {:__html (sample :desc)}}])
+    [:div {:className "samples"} (map-indexed sample-li-input-output (sample :samples))]]))
 
 (defn editor-help [data owner]
   (reify
     om/IRender
     (render [_]
       (html
-        [:div {:className "editor-help help"}
-          [:h1 "Directives"]
-          [:ul (map sample-li (data :samples)) ]
-          [:h1 "Other Examples"]
-          [:ul (map sample-li (data :mixed)) ]]
-        ))
+       [:div {:className "editor-help help"}
+        [:h1 "Directives"]
+        [:ul (map sample-li (data :samples))]
+        [:h1 "Other Examples"]
+        [:ul (map sample-li (data :mixed))]]))
     om/IShouldUpdate
     (should-update [this next-props next-state]
       (not= (om/get-props owner) next-props))))

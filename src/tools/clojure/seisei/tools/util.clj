@@ -1,7 +1,6 @@
 (ns seisei.tools.util
   (:require [clojure.string :as s]))
 
-
 (defn replace-quotes [in-string]
   (s/replace in-string #"\"" ""))
 

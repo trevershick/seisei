@@ -3,7 +3,6 @@
             [clojure.tools.logging :as log]
             [environ.core :refer [env]]))
 
-
 (def table-users :users)
 (def table-sessions :sessions)
 (def table-templates :templates)
@@ -23,22 +22,19 @@
   []
   (java.util.Date.))
 
-
-
 (defn dynamo-update-removals
   [arg-map]
   (->> arg-map
-    (filter (fn [[k v]] (nil? v)))
-    (map (fn [[k v]] (hash-map k [:delete])))
-    (into {})))
+       (filter (fn [[k v]] (nil? v)))
+       (map (fn [[k v]] (hash-map k [:delete])))
+       (into {})))
 
 (defn dynamo-update-puts
   [arg-map]
   (->> arg-map
-    (filter (fn [[k v]] (not-nil? v)))
-    (map (fn [[k v]] (hash-map k (conj [:put] v))))
-    (into {})))
-
+       (filter (fn [[k v]] (not-nil? v)))
+       (map (fn [[k v]] (hash-map k (conj [:put] v))))
+       (into {})))
 
 (defn dynamo-updates
   [arg-map]
@@ -46,7 +42,6 @@
         x       (into x (dynamo-update-removals arg-map))
         x       (into x (dynamo-update-puts arg-map))]
     x))
-
 
 ;; User
 ;;  username (string) -> id?
@@ -62,6 +57,7 @@
 ;;  id      - {uuid}
 ;;  Title
 ;;  template content
+;;  public
 ;;  last-processed
 ;;  last-saved
 ;;  processed content
@@ -78,16 +74,15 @@
         new-template {:user user-id
                       :slug template-id
                       :title (str "Template " template-id)
-                      :content template }]
-    (log/infof "New Template %s" (str new-template) )
+                      :content template}]
+    (log/infof "New Template %s" (str new-template))
     (far/put-item aws-dynamodb-client-opts
                   table-templates
                   new-template)
     new-template))
 
-
 (defn delete-user-template
-  [ user-id slug ]
+  [user-id slug]
   (log/debugf "Delete template for user/slug %s/%s" user-id slug)
   (far/delete-item aws-dynamodb-client-opts
                    table-templates
@@ -102,12 +97,12 @@
                                  table-templates
                                  {:user user-id :slug slug}
                                  updates
-                                 {:return :all-new } )]
+                                 {:return :all-new})]
     updated))
 
 (defn find-dynamic-template
   [slug]
-    (far/get-item aws-dynamodb-client-opts
+  (far/get-item aws-dynamodb-client-opts
                 table-slugs
                 {:slug slug}))
 
@@ -120,7 +115,7 @@
                                  table-slugs
                                  {:slug slug}
                                  updates
-                                 {:return :all-new } )]
+                                 {:return :all-new})]
     updated))
 
 (defn insert-dynamic
@@ -134,16 +129,12 @@
                               updates)]
     updated))
 
-
 (defn delete-dynamic
-  [ slug ]
+  [slug]
   (log/debugf "Delete template for user/slug %s" slug)
   (far/delete-item aws-dynamodb-client-opts
                    table-slugs
                    {:slug slug}))
-
-
-
 
 (defn update-user-template
   [user-id slug content title]
@@ -153,7 +144,6 @@
                               {:content content
                                :title title
                                :updated (.getTime (now))}))
-
 
 (defn user-template
   [user-id slug]
@@ -166,53 +156,56 @@
   [user-id]
   (let [order-by        :title
         pk-cond         {:user [:eq user-id]}
-        opts            {:return ["title" "slug" "updated" "static-url" "dynamic-url"]}
+        opts            {:return ["title" "slug" "updated" "static-url" "dynamic-url" "public"]}
         table           :templates
         results         (far/query aws-dynamodb-client-opts table pk-cond opts)]
     ;; if updated is missing add it as '0', then sort descending
     (sort-by
-      #(* -1 (:updated %))
-      (map
-        #(merge {:updated 0} %)
-        results))))
+     #(* -1 (:updated %))
+     (map
+      #(merge {:updated 0} %)
+      results))))
 
+(defn user-public-templates
+  "returns the public templates for the specified user"
+  [user-id]
+  (filter :public (user-templates user-id)))
 
-
-(def capacities {:sessions      { :read 5 :write 5 }
-                 :users         { :read 5 :write 5 }
-                 :templates     { :read 5 :write 5 }
-                 :slugs         { :read 5 :write 5 } })
+(def capacities {:sessions      {:read 5 :write 5}
+                 :users         {:read 5 :write 5}
+                 :templates     {:read 5 :write 5}
+                 :slugs         {:read 5 :write 5}})
 
 (defn startup-database
   []
   (log/info "Ensuring database is setup...")
   (far/ensure-table
-    aws-dynamodb-client-opts
-    table-sessions ;; table name
-    [:id :s] ;; key structure
-    {:throughput (:sessions capacities)
-     :block? true })
+   aws-dynamodb-client-opts
+   table-sessions ;; table name
+   [:id :s] ;; key structure
+   {:throughput (:sessions capacities)
+    :block? true})
 
   (far/ensure-table
-    aws-dynamodb-client-opts
-    table-users ;; table name
-    [:id :s] ;; key structure (username)
-    {:throughput (:users capacities)
-     :block? true })
+   aws-dynamodb-client-opts
+   table-users ;; table name
+   [:id :s] ;; key structure (username)
+   {:throughput (:users capacities)
+    :block? true})
 
   (far/ensure-table
-    aws-dynamodb-client-opts
-    table-templates ;; table name
-    [:user :s] ;; key structure (username)
-    {:range-keydef [ :slug :s ]
-     :throughput (:templates capacities)
-     :block? true })
+   aws-dynamodb-client-opts
+   table-templates ;; table name
+   [:user :s] ;; key structure (username)
+   {:range-keydef [:slug :s]
+    :throughput (:templates capacities)
+    :block? true})
 
   (far/ensure-table  ;; this is the public slugs table that will piont to a user/slug combo (maybe)
-                    aws-dynamodb-client-opts
-                    table-slugs ;; table name
-                    [:slug :s] ;; key structure (username)
-                    { :throughput (:templates capacities)
-                     :block? true })
+   aws-dynamodb-client-opts
+   table-slugs ;; table name
+   [:slug :s] ;; key structure (username)
+   {:throughput (:templates capacities)
+    :block? true})
 
   (log/info "Done."))
