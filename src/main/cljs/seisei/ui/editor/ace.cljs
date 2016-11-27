@@ -3,7 +3,7 @@
   (:require [om.core :as om :include-macros true]
             [seisei.ui.dispatcher :as d]
             [seisei.ui.util :refer [clj->json debug]]
-            [seisei.ui.editor.autocomplete :refer [autocomplete autocomplete-quoted]]
+            [seisei.ui.editor.autocomplete :refer [autocomplete]]
             [sablono.core :as html :refer-macros [html]]))
 
 (defn- onclick-handler
@@ -40,13 +40,7 @@
         (set! (.-$blockScrolling ace-instance) Infinity)
         (def c (js-obj "getCompletions"
                        (fn [_editor _session _pos _prefix _callback]
-                         (let [d (.getDocument _session)
-                               idx (.positionToIndex d _pos)
-                               v (.getValue d)
-                               c (.charAt v (- idx 1))]
-                           (if (= "\"" c)
-                             (_callback nil autocomplete)
-                             (_callback nil autocomplete-quoted))))))
+                         (_callback nil autocomplete))))
         (set! (.-completers ace-instance) (clj->js [c]))
         (.setHighlightActiveLine ace-instance true)
         (.setOptions ace-instance (clj->js {:enableBasicAutocompletion true :enableSnippets false :enableLiveAutocompletion true}))

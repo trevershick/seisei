@@ -141,5 +141,3 @@
    {:caption "university.suffix" :value "{{university.suffix}}" :meta "faker directive"}])
 
 (def autocomplete (clj->js src))
-(def autocomplete-quoted
-  (clj->js (map (fn [old] (assoc (select-keys old [:caption :meta :order]) :value (str "\"" (:value old) "\""))) src)))
