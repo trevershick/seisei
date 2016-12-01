@@ -7,9 +7,10 @@
             :debug true
             :license {:name "Eclipse Public License"
                       :url "http://www.eclipse.org/legal/epl-v10.html"}
-
+            :dev-dependencies [[ring/ring-devel "0.2.0"]]
             :dependencies         [[org.clojure/core.async "0.2.395"]
                                    [sablono "0.4.0"]
+                                   [com.cemerick/friend "0.2.3"]
                                    [org.omcljs/om "0.9.0"]
                                    [cljs-ajax "0.5.8"]
                                    [secretary "1.2.3"]
@@ -25,6 +26,7 @@
                                    [ring/ring-core "1.5.0"]
                                    [ring/ring-json "0.4.0"]
                                    [clj-http "1.1.2"]
+                                   [buddy/buddy-auth "1.3.0"]
                                    [com.taoensso/faraday "1.6.0" :exclusions [org.clojure/clojure com.amazonaws/aws-java-sdk]]
                                    [org.clojure/tools.logging "0.3.1"]
                                    [org.slf4j/slf4j-log4j12 "1.7.21"]

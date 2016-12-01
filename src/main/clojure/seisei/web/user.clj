@@ -3,16 +3,6 @@
             [clojure.tools.logging :as log]
             [taoensso.faraday :as far]
             [seisei.gravatar]))
-
-(defn logged-in? [session] (or (:logged-in session) false))
-(defn logged-in!
-  [session b]
-  (assoc session :logged-in b))
-
-(defn user-id
-  [session]
-  (-> session :user :id))
-
 ;; User
 ;;  username (string) -> id? (:id)
 ;;  admin (boolean)

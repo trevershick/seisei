@@ -1,13 +1,15 @@
-(ns seisei.web.template-handlers
+(ns seisei.web.handlers-template
   (:require [compojure.handler :as handler]
             [compojure.route :as route]
             [compojure.core :refer [DELETE POST GET PUT defroutes routes wrap-routes]]
             [seisei.web.user]
+            [seisei.web.auth :as auth]
             [seisei.json]
             [seisei.engine]
             [seisei.web.db :as db]
             [seisei.web.s3 :as s3]
-            [clojure.tools.logging :as log]))
+            [clojure.tools.logging :as log])
+  (:gen-class))
 
 (def not-nil? (comp not nil?))
 
@@ -21,7 +23,7 @@
 (defn load-my-template
   [slug r]
   (let [session     (:session r)
-        user-id     (seisei.web.user/user-id session)]
+        user-id     (auth/user-id r)]
     (let [template    (db/user-template user-id slug)
           parsed-json (seisei.json/parse-with-error (-> template :content))
           processed   (seisei.engine/process (:output parsed-json))]
@@ -33,7 +35,7 @@
 (defn save-my-template
   [slug r]
   (let [session             (:session r)
-        user-id             (seisei.web.user/user-id session)
+        user-id             (auth/user-id r)
         template-content    (-> r :body :template :content)
         template-title      (-> r :body :template :title)
         template            (db/update-user-template user-id slug template-content template-title)
@@ -47,15 +49,15 @@
 (defn delete-my-template
   [slug r]
   (let [session             (:session r)
-        user-id             (seisei.web.user/user-id session)
+        user-id             (auth/user-id r)
         deleted             (db/delete-user-template user-id slug)
         _                   (s3/unpublish-from-s3 slug)]
     {:status 200
      :body {:messages [(str "Template " slug " deleted.")]}}))
 
 (defn my-templates
-  [{session :session}]
-  (when-let [user-id   (seisei.web.user/user-id session)]
+  [r]
+  (when-let [user-id   (auth/user-id r)]
     {:body (or (db/user-templates user-id) [])}))
 
 (defn run-template
@@ -73,7 +75,7 @@
   (let [session (:session request)
         template-id (-> request :body :template :id)
         template-content (-> request :body :template :content)
-        user-id (seisei.web.user/user-id session)]
+        user-id (auth/user-id request)]
     ; at this point - insert only.
     (let [new-template (db/insert-template user-id template-content)]
       {:body {:messages [{:id "T0001" :text "Saved."}] :template new-template}})))
@@ -85,7 +87,7 @@
 (defn publish-to-s3
   [request]
   (let [session             (:session request)
-        user-id             (seisei.web.user/user-id session)
+        user-id             (auth/user-id request)
         template            (-> request :body :template)
         content-to-publish  (:processed template)
         slug                (:slug template)
@@ -97,7 +99,7 @@
 (defn unpublish-from-s3
   [slug request]
   (let [session             (:session request)
-        user-id             (seisei.web.user/user-id session)
+        user-id             (auth/user-id request)
         template            (db/user-template user-id slug)]
     (if (and (not-nil? user-id) (not-nil? template))
       (do
@@ -110,7 +112,7 @@
   "Finds a template by the slug for the current user and marks it as public"
   [slug r]
   (let [session     (:session r)
-        user-id     (seisei.web.user/user-id session)
+        user-id     (auth/user-id r)
         result      (db/update-user-template-attrs user-id slug {:public true})]
     (load-my-template slug r)))
 
@@ -118,14 +120,14 @@
   "Finds a template by the slug for the current user and marks it as private"
   [slug r]
   (let [session     (:session r)
-        user-id     (seisei.web.user/user-id session)
+        user-id     (auth/user-id r)
         result      (db/update-user-template-attrs user-id slug {:public false})]
     (load-my-template slug r)))
 
 (defn publish-dynamic
   [request]
   (let [session             (:session request)
-        user-id             (seisei.web.user/user-id session)
+        user-id             (auth/user-id session)
         template            (-> request :body :template)
         template-content    (:content template)
         slug                (:slug template)
@@ -142,7 +144,7 @@
 (defn unpublish-dynamic
   [slug request]
   (let [session             (:session request)
-        user-id             (seisei.web.user/user-id session)
+        user-id             (auth/user-id request)
         template            (db/user-template user-id slug)]
     (if (not-nil? template)
       (do
@@ -150,14 +152,6 @@
         (db/update-user-template-attrs user-id slug {:dynamic-url nil})
         (load-my-template slug request))
       {:status 404})))
-
-(defn requires-user-middleware [handler]
-  (fn [request]
-    (let [session (:session request)
-          logged-in (seisei.web.user/logged-in? session)]
-      (if logged-in
-        (handler request)
-        {:status 403}))))
 
 (defroutes unprotected-routes
            (POST "/template/process" r (run-template r))
@@ -178,5 +172,5 @@
 
 (defroutes template-routes
            (routes
-            (wrap-routes protected-routes requires-user-middleware)
-            unprotected-routes))
+            unprotected-routes
+            (wrap-routes protected-routes auth/ensure-authenticated))) ; ensure there's an actual :identity

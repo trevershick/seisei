@@ -1,10 +1,11 @@
-(ns seisei.web.github-oauth
+(ns seisei.web.auth-github
   (:require [compojure.core :refer [GET defroutes]]
             [ring.util.response :refer [resource-response response]]
             [ring.middleware.defaults :refer [wrap-defaults site-defaults]]
             [clj-http.client :as client]
             [clojure.tools.logging :as log]
             [seisei.web.user :as user]
+            [seisei.web.auth :as auth]
             [environ.core :refer [env]]))
 
 (def ^:dynamic github-oauth-client-id (env :github-oauth-client-id))
@@ -26,10 +27,10 @@
        "user:email"))
 
 (defn auth-github
-  [{session :session}]
-  (log/debugf "session is %s" session)
+  [request]
+  (log/debugf "session is %s" (:session request))
   (cond
-    (user/logged-in? session)
+    (auth/logged-in? request)
     (ring.util.response/redirect "/") ;; ur already logged in
     :else
     (ring.util.response/redirect (github-login-url))))
@@ -92,15 +93,14 @@
         user-record        (if user-record
                              (user/update-user email (assoc user-record :gh-access-token access-token))
                              (user/create-user email (assoc (user-from-github-account access-token github-account) :email email)))
-        session            (user/logged-in! session true)
-        session            (assoc session :user user-record)]
+        session            (auth/logged-in! session user-record)]
 
     session)) ; finally return the udpated session
 
 
 (defn auth-github-callback-not-authed
   [session]
-  (user/logged-in! session false))
+  (auth/logged-in! session nil))
 
 (defn auth-github-callback
   "Entry point to handle the callback from github. If there's

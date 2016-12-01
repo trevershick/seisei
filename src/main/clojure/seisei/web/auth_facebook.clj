@@ -1,4 +1,4 @@
-(ns seisei.web.oauth-facebook
+(ns seisei.web.auth-facebook
   (:require [compojure.core :refer [GET defroutes]]
             [ring.util.response :refer [redirect]]
             [ring.util.response :refer [header]]
@@ -6,6 +6,7 @@
             [clj-http.client :as client]
             [clojure.tools.logging :as log]
             [seisei.web.user :as user]
+            [seisei.web.auth :as auth]
             [seisei.web.flash :refer [add-flash]]
             [environ.core :refer [env]]))
 
@@ -34,10 +35,10 @@
        "email"))
 
 (defn auth-facebook
-  [{session :session}]
-  (log/debugf "session is %s" session)
+  [request]
+  (log/debugf "session is %s" (:session request))
   (cond
-    (user/logged-in? session)
+    (auth/logged-in? request)
     (redirect "/") ;; ur already logged in
     :else
     (redirect facebook-login-url)))
@@ -81,7 +82,7 @@
 
 (defn auth-facebook-callback-failure
   [session]
-  (user/logged-in! session false))
+  (auth/logged-in! session nil))
 
 (defn auth-facebook-callback-success
   [session access-token]
@@ -103,8 +104,7 @@
                                    email
                                    (user-from-facebook-account access-token facebook-account)))
 
-        session                 (user/logged-in! session true)
-        session                 (assoc session :user user-record)]
+        session                 (auth/logged-in! session user-record)]
 
     session))
 

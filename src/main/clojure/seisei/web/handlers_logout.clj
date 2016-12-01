@@ -1,8 +1,8 @@
-(ns seisei.web.logout
+(ns seisei.web.handlers-logout
   (:require [compojure.core :refer [GET defroutes]]
             [ring.util.response :refer [resource-response response]]))
 
-(defn logout-user
+(defn- logout-user
   []
   (-> (ring.util.response/redirect "/")
       (assoc :session nil)))

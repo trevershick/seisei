@@ -6,41 +6,41 @@
             [ring.middleware.defaults :refer [wrap-defaults site-defaults]]
             [ring.middleware.json :as json-middle]
             [clojure.tools.logging :as log]
-            [seisei.web.github-oauth]
-            [seisei.web.oauth-facebook]
+            [seisei.web.auth-github :as auth-github]
+            [seisei.web.auth-facebook :as auth-facebook]
             [seisei.web.healthcheck :refer [healthcheck-routes]]
-            [seisei.web.session]
+            [seisei.web.sessionstore]
             [seisei.web.user]
+            [seisei.web.auth :as auth]
             [seisei.web.db :as db]
             [seisei.web.s3]
-            [seisei.web.template-handlers]
-            [seisei.web.handlers-person]
-            [seisei.web.logout]
+            [seisei.web.handlers-template :as handlers-template]
+            [seisei.web.handlers-person :as handlers-person]
+            [seisei.web.handlers-logout :as logout]
             [seisei.engine]
             [seisei.gravatar]
             [seisei.web.flash]
             [seisei.json]))
 
 (defn startupcheck []
-  (seisei.web.github-oauth/startupcheck)
-  (seisei.web.oauth-facebook/startupcheck))
+  (auth-github/startupcheck)
+  (auth-facebook/startupcheck))
 
-(defn my-account [{session :session}]
-  (let [logged-in (seisei.web.user/logged-in? session)]
-    (-> (if
-         logged-in
-          (assoc (select-keys (session :user) [:name :email :last-method :last-login])
+(defn my-account [request]
+  (let [logged-in (auth/logged-in? request)]
+    (-> (if logged-in
+          (assoc (select-keys (auth/user-from request) [:name :email :last-method :last-login])
                  :logged-in true
-                 :gravatar (seisei.gravatar/gravatar (session :user)))
+                 :gravatar (seisei.gravatar/gravatar (auth/user-from request)))
           {:logged-in false})
         response)))
 
 (defroutes app-routes
-           (ANY "*" [] seisei.web.logout/logout-routes)
-           (ANY "*" [] seisei.web.oauth-facebook/facebook-oauth-routes)
-           (ANY "*" [] seisei.web.github-oauth/github-oauth-routes)
-           (ANY "*" [] seisei.web.template-handlers/template-routes)
-           (ANY "*" [] seisei.web.handlers-person/person-routes)
+           (ANY "*" [] logout/logout-routes)
+           (ANY "*" [] auth-facebook/facebook-oauth-routes)
+           (ANY "*" [] auth-github/github-oauth-routes)
+           (ANY "*" [] handlers-template/template-routes)
+           (ANY "*" [] handlers-person/person-routes)
            (GET "/my/hot-flashes"    r (seisei.web.flash/hot-flashes r))
            (GET "/my/account"        r (my-account r))
            (GET "/" [] (->
@@ -49,7 +49,7 @@
            (route/resources "/")
            (route/not-found "Page not found"))
 
-(def session-store (seisei.web.session.DynamoDbStore.))
+(def session-store (seisei.web.sessionstore.DynamoDbStore.))
 
 (def my-defaults (let [opts site-defaults
                        opts (assoc-in opts [:session :flash] true)
@@ -65,4 +65,5 @@
        (seisei.web.flash/wrap-flash-header)
        (json-middle/wrap-json-body {:keywords? true})
        (json-middle/wrap-json-response)
+       (auth/with-user)                                 ; add's :identity to the request if there
        (wrap-defaults my-defaults))))
