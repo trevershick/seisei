@@ -4,6 +4,7 @@
 [![Coverage Status](https://coveralls.io/repos/github/trevershick/ldap-test-utils/badge.svg?branch=master)](https://coveralls.io/github/trevershick/seisei?branch=master)
 
 #Releases
+v0.1.6 - adds more faker support (v 0.12), autocomplete and samples updated. 
 v0.1.2 - currently installed at [seisei.shick.io](seisei.shick.io) - this version sees the addition of autocompletion.
 All directives are accessible through the autocomplete mechanism.
 

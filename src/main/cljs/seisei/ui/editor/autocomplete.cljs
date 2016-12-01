@@ -138,6 +138,44 @@
    {:caption "team.state" :value "{{team.state}}" :meta "faker directive"}
    {:caption "university.name" :value "{{university.name}}" :meta "faker directive"}
    {:caption "university.prefix" :value "{{university.prefix}}" :meta "faker directive"}
-   {:caption "university.suffix" :value "{{university.suffix}}" :meta "faker directive"}])
+   {:caption "university.suffix" :value "{{university.suffix}}" :meta "faker directive"}
+
+   {:caption "file.extension" :value "{{file.extension}}" :meta "faker directive"}
+   {:caption "file.mimeType" :value "{{file.mimeType}}" :meta "faker directive"}
+   {:caption "file.fileName" :value "{{file.fileName}}" :meta "faker directive"}
+
+   {:caption "food.ingredient" :value "{{food.ingredient}}" :meta "faker directive"}
+   {:caption "food.spice" :value "{{food.spice}}" :meta "faker directive"}
+   {:caption "food.measurement" :value "{{food.measurement}}" :meta "faker directive"}
+
+   {:caption "gameOfThrones.character" :value "{{gameOfThrones.character}}" :meta "faker directive"}
+   {:caption "gameOfThrones.house" :value "{{gameOfThrones.house}}" :meta "faker directive"}
+   {:caption "gameOfThrones.city" :value "{{gameOfThrones.city}}" :meta "faker directive"}
+
+   {:caption "music.instrument" :value "{{music.instrument}}" :meta "faker directive"}
+   {:caption "music.key" :value "{{music.key}}" :meta "faker directive"}
+   {:caption "pokemon.name" :value "{{pokemon.name}}" :meta "faker directive"}
+   {:caption "pokemon.location" :value "{{pokemon.location}}" :meta "faker directive"}
+   {:caption "slackEmoji.people" :value "{{slackEmoji.people}}" :meta "faker directive"}
+   {:caption "slackEmoji.nature" :value "{{slackEmoji.nature}}" :meta "faker directive"}
+   {:caption "slackEmoji.foodAndDrink" :value "{{slackEmoji.foodAndDrink}}" :meta "faker directive"}
+   {:caption "slackEmoji.celebration" :value "{{slackEmoji.celebration}}" :meta "faker directive"}
+   {:caption "slackEmoji.activity" :value "{{slackEmoji.activity}}" :meta "faker directive"}
+   {:caption "slackEmoji.travelAndPlaces" :value "{{slackEmoji.travelAndPlaces}}" :meta "faker directive"}
+   {:caption "slackEmoji.objectsAndSymbols" :value "{{slackEmoji.objectsAndSymbols}}" :meta "faker directive"}
+   {:caption "slackEmoji.custom" :value "{{slackEmoji.custom}}" :meta "faker directive"}
+   {:caption "slackEmoji.emoji" :value "{{slackEmoji.emoji}}" :meta "faker directive"}
+   {:caption "space.planet" :value "{{space.planet}}" :meta "faker directive"}
+   {:caption "space.moon" :value "{{space.moon}}" :meta "faker directive"}
+   {:caption "space.galaxy" :value "{{space.galaxy}}" :meta "faker directive"}
+   {:caption "space.nebula" :value "{{space.nebula}}" :meta "faker directive"}
+   {:caption "space.starCluster" :value "{{space.starCluster}}" :meta "faker directive"}
+   {:caption "space.constellation" :value "{{space.constellation}}" :meta "faker directive"}
+   {:caption "space.star" :value "{{space.star}}" :meta "faker directive"}
+   {:caption "space.agency" :value "{{space.agency}}" :meta "faker directive"}
+   {:caption "space.agencyAbbreviation" :value "{{space.agencyAbbreviation}}" :meta "faker directive"}
+   {:caption "space.nasaSpaceCraft" :value "{{space.nasaSpaceCraft}}" :meta "faker directive"}
+   {:caption "space.company" :value "{{space.company}}" :meta "faker directive"}
+   {:caption "space.distanceMeasurement" :value "{{space.distanceMeasurement}}" :meta "faker directive"}])
 
 (def autocomplete (clj->js src))

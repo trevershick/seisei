@@ -155,7 +155,48 @@
       { "input": { "state" : "{{team.state}}" }, "output": { "state":"Nebraska"}},
       { "input": { "name" : "{{university.name}}" }, "output": { "name":"South Konopelski Academy"}},
       { "input": { "prefix" : "{{university.prefix}}" }, "output": { "prefix":"North"}},
-      { "input": { "suffix" : "{{university.suffix}}" }, "output": { "suffix":"Academy"}}
+      { "input": { "suffix" : "{{university.suffix}}" }, "output": { "suffix":"Academy"}},
+
+      { "input": { "extension" : "{{file.extension}}" }, "output": {"extension":"ico"}},
+      { "input": { "mimeType" : "{{file.mimeType}}" }, "output": {"mimeType":"application/javascript"}},
+      { "input": { "fileName" : "{{file.fileName}}" }, "output": {"fileName":"quo_eos/iusto.tiff"}},
+
+      { "input": { "ingredient" : "{{food.ingredient}}" }, "output": {"ingredient":"Nutritional Yeast"}},
+      { "input": { "spice" : "{{food.spice}}" }, "output": {"spice":"Parsley"}},
+      { "input": { "measurement" : "{{food.measurement}}" }, "output": {"measurement":"1 pint"}},
+
+      { "input": { "character" : "{{gameOfThrones.character}}" }, "output": { "character":"Sharna" }},
+      { "input": { "house" : "{{gameOfThrones.house}}" }, "output": { "house":"Umber of the Last Hearth" }},
+      { "input": { "city" : "{{gameOfThrones.city}}" }, "output": { "city":"Braavos" }},
+
+      {"input": { "instrument": "{{music.instrument}}"}, "output": { "instrument": "Guitar" }},
+      {"input": { "key": "{{music.key}}"}, "output": { "key": "Bb" }},
+      {"input": { "name": "{{pokemon.name}}"}, "output": { "name": "Staryu" }},
+      {"input": { "location": "{{pokemon.location}}"}, "output": { "location": "Floccesy Town" }},
+
+      {"input": { "people": "{{slackEmoji.people}}"}, "output": { "people": ":unamused:" }},
+      {"input": { "nature": "{{slackEmoji.nature}}"}, "output": { "nature": ":crescent_moon:" }},
+      {"input": { "foodAndDrink": "{{slackEmoji.foodAndDrink}}"}, "output": { "foodAndDrink": ":chocolate_bar:" }},
+      {"input": { "celebration": "{{slackEmoji.celebration}}"}, "output": { "celebration": ":blue_heart:" }},
+      {"input": { "activity": "{{slackEmoji.activity}}"}, "output": { "activity": ":saxophone:" }},
+      {"input": { "travelAndPlaces": "{{slackEmoji.travelAndPlaces}}"}, "output": { "travelAndPlaces": ":bus:" }},
+      {"input": { "objectsAndSymbols": "{{slackEmoji.objectsAndSymbols}}"}, "output": { "objectsAndSymbols": ":white_check_mark:" }},
+      {"input": { "custom": "{{slackEmoji.custom}}"}, "output": { "custom": ":crab:" }},
+      {"input": { "emoji": "{{slackEmoji.emoji}}"}, "output": { "emoji": ":pizza:" }},
+
+      {"input": { "planet": "{{space.planet}}"}, "output": { "planet": "Mercury" }},
+      {"input": { "moon": "{{space.moon}}"}, "output": { "moon": "Dione" }},
+      {"input": { "galaxy": "{{space.galaxy}}"}, "output": { "galaxy": "Pinwheel" }},
+      {"input": { "nebula": "{{space.nebula}}"}, "output": { "nebula": "Bodes Nebula" }},
+      {"input": { "starCluster": "{{space.starCluster}}"}, "output": { "starCluster": "Omega Centauri" }},
+      {"input": { "constellation": "{{space.constellation}}"}, "output": { "constellation": "Libra" }},
+      {"input": { "star": "{{space.star}}"}, "output": { "star": "Betelgeuse" }},
+      {"input": { "agency": "{{space.agency}}"}, "output": { "agency": "Swedish National Space Board" }},
+      {"input": { "agencyAbbreviation": "{{space.agencyAbbreviation}}"}, "output": { "agencyAbbreviation": "ROSCOSMOS" }},
+      {"input": { "nasaSpaceCraft": "{{space.nasaSpaceCraft}}"}, "output": { "nasaSpaceCraft": "Gemini" }},
+      {"input": { "company": "{{space.company}}"}, "output": { "company": "Orbital Sciences" }},
+      {"input": { "distanceMeasurement": "{{space.distanceMeasurement}}"}, "output": { "distanceMeasurement": "45AU" }}
+
     ]
   },  {
     "name": "integer",
