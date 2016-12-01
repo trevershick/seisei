@@ -138,7 +138,42 @@
                   :state "{{team.state}}"}
            :university {:name "{{university.name}}"
                         :prefix "{{university.prefix}}"
-                        :suffix "{{university.suffix}}"}}})
+                        :suffix "{{university.suffix}}"}
+
+           :file {:extension "{{file.extension}}"
+                  :mimeType "{{file.mimeType}}"
+                  :fileName "{{file.fileName}}"}
+           :food {:ingredient "{{food.ingredient}}"
+                  :spice "{{food.spice}}"
+                  :measurement "{{food.measurement}}"}
+           :gameOfThrones {:character "{{gameOfThrones.character}}"
+                           :house "{{gameOfThrones.house}}"
+                           :city "{{gameOfThrones.city}}"}
+           :music {:instrument "{{music.instrument}}"
+                   :key "{{music.key}}"}
+           :pokemon {:name "{{pokemon.name}}"
+                     :location "{{pokemon.location}}"}
+           :slackEmoji {:people "{{slackEmoji.people}}"
+                        :nature "{{slackEmoji.nature}}"
+                        :foodAndDrink "{{slackEmoji.foodAndDrink}}"
+                        :celebration "{{slackEmoji.celebration}}"
+                        :activity "{{slackEmoji.activity}}"
+                        :travelAndPlaces "{{slackEmoji.travelAndPlaces}}"
+                        :objectsAndSymbols "{{slackEmoji.objectsAndSymbols}}"
+                        :custom "{{slackEmoji.custom}}"
+                        :emoji "{{slackEmoji.emoji}}"}
+           :space {:planet "{{space.planet}}"
+                   :moon "{{space.moon}}"
+                   :galaxy "{{space.galaxy}}"
+                   :nebula "{{space.nebula}}"
+                   :starCluster "{{space.starCluster}}"
+                   :constellation "{{space.constellation}}"
+                   :star "{{space.star}}"
+                   :agency "{{space.agency}}"
+                   :agencyAbbreviation "{{space.agencyAbbreviation}}"
+                   :nasaSpaceCraft "{{space.nasaSpaceCraft}}"
+                   :company "{{space.company}}"
+                   :distanceMeasurement "{{space.distanceMeasurement}}"}}})
 
 (def app-state (atom {:messages   [; {:type :alert    :message "test alert"   :id (swap! message-counter inc)}
                           ; {:type :info     :message "test info"    :id (swap! message-counter inc)}
