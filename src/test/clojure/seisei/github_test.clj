@@ -1,7 +1,7 @@
 (ns seisei.github-test
   (:use midje.sweet)
   (:require   [clojure.test     :refer [testing is deftest]]
-              [seisei.web.github-oauth :as o]
+              [seisei.web.auth-github :as o]
               [clojure.tools.logging :as l]
               [clj-http.client :as c]
               [seisei.web.user :as user]
@@ -27,11 +27,11 @@
 (deftest test-auth-github
   (facts "auth-github"
          (fact "it should redirect back to / if already logged in"
-               (let [response (o/auth-github {:session {:logged-in true}})]
+               (let [response (o/auth-github {:identity "user"})]
                  (-> response :headers (get "Location")) => "/"
                  (-> response :status) => 302))
          (fact "it should redirect to github url if not logged in"
-               (let [response (o/auth-github {:session {:logged-in false}})]
+               (let [response (o/auth-github {:identity nil})]
                  (-> response :headers (get "Location")) => (o/github-login-url)
                  (-> response :status) => 302))
          (fact "it should redirect to github url if not logged in"

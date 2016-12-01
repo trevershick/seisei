@@ -1,4 +1,4 @@
-(ns seisei.web.session
+(ns seisei.web.sessionstore
   (:require [taoensso.faraday :as far]
             [ring.middleware.session.store :refer [SessionStore]]
             [clojure.tools.logging :as log]
